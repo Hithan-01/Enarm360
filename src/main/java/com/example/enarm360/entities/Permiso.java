@@ -8,6 +8,8 @@ import java.util.Set;
 @Entity
 @Table(name = "permiso")
 @Data
+@EqualsAndHashCode(exclude = {"roles", "usuarios"}) 
+@ToString(exclude = {"roles", "usuarios"})  
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder

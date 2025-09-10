@@ -13,6 +13,8 @@ import java.util.Set;
 @Entity
 @Table(name = "usuario")
 @Data
+@EqualsAndHashCode(exclude = {"roles", "permisos", "sesiones", "eventosAuditoria", "casosCreados", "preguntasCreadas", "preguntasRevisadas", "preguntasAprobadas", "revisionesRealizadas", "examenesCreados", "intentosExamen", "flashcardsCreadas"})
+@ToString(exclude = {"roles", "permisos", "sesiones"})
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -21,6 +23,9 @@ public class Usuario {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(unique = true, nullable = false, length = 50)
+    private String username;  // ← NUEVO CAMPO
     
     @Column(unique = true, nullable = false, length = 150)
     private String email;
