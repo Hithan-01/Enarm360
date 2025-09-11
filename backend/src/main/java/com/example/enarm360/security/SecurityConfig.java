@@ -53,9 +53,11 @@ public SecurityFilterChain filterChain(HttpSecurity http,
         .exceptionHandling(ex -> ex.authenticationEntryPoint(unauthorizedHandler))
         .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .authorizeHttpRequests(auth -> auth
-            .requestMatchers("/api/auth/login", "/api/auth/register", "/api/auth/refresh").permitAll() // Solo específicos
+            // Permitir acceso a archivos estáticos y frontend
+            .requestMatchers("/", "/static/**", "/index.html", "/favicon.ico", "/manifest.json").permitAll()
+            .requestMatchers("/api/auth/login", "/api/auth/register", "/api/auth/refresh").permitAll()
             .requestMatchers("/api/test/**").permitAll()
-            .requestMatchers("/api/auth/me").authenticated() // Requiere autenticación
+            .requestMatchers("/api/auth/me").authenticated()
             .anyRequest().authenticated()
         )
         .authenticationProvider(provider);
