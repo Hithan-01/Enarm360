@@ -100,6 +100,15 @@ protected boolean shouldNotFilter(HttpServletRequest request) throws ServletExce
            path.equals("/api/auth/check-username") ||
            path.startsWith("/api/public/") ||
            path.startsWith("/actuator/") ||
-           path.equals("/error");
+           path.equals("/error") ||
+           // Rutas estáticas del frontend
+           path.equals("/") ||
+           path.equals("/index.html") ||
+           path.equals("/favicon.ico") ||
+           path.equals("/manifest.json") ||
+           path.startsWith("/static/") ||
+           path.startsWith("/login") ||
+           path.startsWith("/admin/") ||
+           path.startsWith("/estudiante/");
 }
 }
