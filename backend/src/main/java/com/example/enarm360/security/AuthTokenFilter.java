@@ -98,6 +98,8 @@ protected boolean shouldNotFilter(HttpServletRequest request) throws ServletExce
            path.equals("/api/auth/check-availability") ||
            path.equals("/api/auth/check-email") ||
            path.equals("/api/auth/check-username") ||
+           path.equals("/api/auth/registro-info") ||           // ← NUEVO
+           path.equals("/api/auth/validar-password") ||        // ← NUEVO
            path.startsWith("/api/public/") ||
            path.startsWith("/actuator/") ||
            path.equals("/error") ||
