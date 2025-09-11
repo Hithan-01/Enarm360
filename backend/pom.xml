@@ -81,14 +81,6 @@
 			<artifactId>spring-security-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-
-
-<parent>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter-parent</artifactId>
-    <version>3.2.0</version> <!-- o versión más reciente -->
-    <relativePath/>
-</parent>
 		<dependency>
     <groupId>io.hypersistence</groupId>
     <artifactId>hypersistence-utils-hibernate-62</artifactId>
