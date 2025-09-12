@@ -13,14 +13,16 @@ import {
   Center,
   Group,
   ThemeIcon,
-  ActionIcon,
   useMantineColorScheme,
-  Box
+  Box,
+  Image,
+  ActionIcon
 } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
-import { IconStethoscope, IconUser, IconLock, IconAlertCircle, IconSun, IconMoon, IconHome } from '@tabler/icons-react';
+import { IconStethoscope, IconUser, IconLock, IconAlertCircle, IconSun, IconMoon } from '@tabler/icons-react';
 import authService from '../services/authService';
 import { LoginRequest, UserRole } from '../types/auth';
+import enarmLogo from '../assets/enarm_logo.png';
 
 const Login: React.FC = () => {
   const [credentials, setCredentials] = useState<LoginRequest>({
@@ -132,9 +134,6 @@ const Login: React.FC = () => {
       style={{
         minHeight: '100vh',
         width: '100vw',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
         background: colorScheme === 'dark' 
           ? 'linear-gradient(135deg, #1a1b23 0%, #2d3142 100%)'
           : 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
@@ -153,23 +152,6 @@ const Login: React.FC = () => {
         pointerEvents: 'none'
       }} />
 
-      {/* Back to Home Button */}
-      <ActionIcon
-        onClick={() => navigate('/')}
-        variant="light"
-        size="lg"
-        radius="xl"
-        style={{
-          position: 'absolute',
-          top: '2rem',
-          left: '2rem',
-          zIndex: 10
-        }}
-        title="Volver al inicio"
-      >
-        <IconHome size={20} />
-      </ActionIcon>
-
       {/* Dark Mode Toggle */}
       <ActionIcon
         onClick={toggleColorScheme}
@@ -186,7 +168,14 @@ const Login: React.FC = () => {
         {colorScheme === 'dark' ? <IconSun size={20} /> : <IconMoon size={20} />}
       </ActionIcon>
       
-      <Container size={420} style={{ width: '100%', maxWidth: '420px', zIndex: 1 }}>
+      <div style={{
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        zIndex: 1
+      }}>
+        <Container size={420} style={{ width: '100%', maxWidth: '420px' }}>
         <Paper 
           radius="xl" 
           p="xl" 
@@ -207,23 +196,23 @@ const Login: React.FC = () => {
         >
           <Stack gap="lg">
             <Center>
-              <Group gap="md" align="center">
-                <ThemeIcon size="xl" radius="xl" variant="gradient" gradient={{ from: 'blue', to: 'teal' }}>
-                  <IconStethoscope size={24} />
-                </ThemeIcon>
-                <div>
-                  <Title order={1} size="h2" style={{ 
-                    background: 'linear-gradient(135deg, #1e293b 0%, #0ea5e9 100%)',
-                    WebkitBackgroundClip: 'text',
-                    WebkitTextFillColor: 'transparent',
-                    backgroundClip: 'text',
-                    fontWeight: 700
-                  }}>
-                    ENARM360
-                  </Title>
-                  <Text size="sm" c="dimmed">Simulador Médico Profesional</Text>
-                </div>
-              </Group>
+              <Stack align="center" gap="sm">
+                <Image 
+                  src={enarmLogo} 
+                  alt="ENARM360 Logo" 
+                  height={80}
+                  fit="contain"
+                  style={{ 
+                    borderRadius: '12px',
+                    maxWidth: '250px',
+                    cursor: 'pointer'
+                  }}
+                  onClick={() => navigate('/')}
+                />
+                <Text size="sm" c="dimmed" ta="center">
+                  Simulador Médico Profesional
+                </Text>
+              </Stack>
             </Center>
 
             <form onSubmit={handleSubmit}>
@@ -291,7 +280,8 @@ const Login: React.FC = () => {
             </Center>
           </Stack>
         </Paper>
-      </Container>
+        </Container>
+      </div>
     </Box>
   );
 };

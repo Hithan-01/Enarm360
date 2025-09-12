@@ -28,6 +28,7 @@ import TypewriterText from '../components/animations/TypewriterText';
 import MedicalButton from '../components/animations/MedicalButton';
 import MedicalLoader from '../components/animations/MedicalLoader';
 import PageTransition from '../components/animations/PageTransition';
+import Navbar from '../components/Navbar';
 import { 
   IconBrain, 
   IconTrendingUp, 
@@ -114,16 +115,6 @@ const EstudianteDashboard: React.FC = () => {
       navigate('/login');
     } catch (error) {
       console.error('Error en logout:', error);
-      navigate('/login');
-    }
-  };
-
-  const handleLogoutAll = async () => {
-    try {
-      await authService.logoutAll();
-      navigate('/login');
-    } catch (error) {
-      console.error('Error en logout all:', error);
       navigate('/login');
     }
   };
@@ -228,95 +219,15 @@ const EstudianteDashboard: React.FC = () => {
         padding="md"
         style={{ background: 'transparent' }}
       >
-      {/* Header */}
-      <Card 
-        withBorder 
-        mb="lg" 
-        p="lg"
-        style={{
-          background: colorScheme === 'dark' 
-            ? 'rgba(30, 30, 40, 0.95)'
-            : 'rgba(255, 255, 255, 0.95)',
-          backdropFilter: 'blur(20px)',
-          borderTop: '3px solid #10b981',
-          border: colorScheme === 'dark' 
-            ? '1px solid rgba(55, 65, 81, 0.6)'
-            : '1px solid rgba(226, 232, 240, 0.6)'
+      <Navbar 
+        showAuthButtons={false} 
+        onLogout={handleLogout}
+        userRole="student"
+        userInfo={{
+          username: user?.username || '',
+          email: user?.email || ''
         }}
-      >
-        <Group justify="space-between" align="center">
-          <Group align="center">
-            <ThemeIcon size="xl" radius="xl" variant="gradient" gradient={{ from: 'teal', to: 'green' }}>
-              <IconMedicalCross size={28} />
-            </ThemeIcon>
-            <div>
-              <Title order={2} size="h1" style={{ 
-                background: 'linear-gradient(135deg, #1e293b 0%, #10b981 100%)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                backgroundClip: 'text',
-                fontWeight: 700
-              }}>
-                ENARM360
-              </Title>
-              <Badge 
-                size="lg" 
-                variant="gradient" 
-                gradient={{ from: 'teal', to: 'green' }}
-                style={{ textTransform: 'none' }}
-              >
-                Estudiante
-              </Badge>
-            </div>
-          </Group>
-          
-          <Menu shadow="md" width={200} position="bottom-end">
-            <Menu.Target>
-              <Group style={{ cursor: 'pointer' }}>
-                <Stack gap={0} align="flex-end">
-                  <Text fw={600} size="sm">{user?.username}</Text>
-                  <Text size="xs" c="dimmed">{user?.email}</Text>
-                </Stack>
-                
-                <Avatar 
-                  color="teal" 
-                  radius="xl"
-                  size="md"
-                >
-                  <IconUserCheck size={18} />
-                </Avatar>
-              </Group>
-            </Menu.Target>
-
-            <Menu.Dropdown>
-              <Menu.Label>Configuración</Menu.Label>
-              <Menu.Item
-                leftSection={colorScheme === 'dark' ? <IconSun size={14} /> : <IconMoon size={14} />}
-                onClick={toggleColorScheme}
-              >
-                Cambiar a modo {colorScheme === 'dark' ? 'claro' : 'oscuro'}
-              </Menu.Item>
-              
-              <Menu.Divider />
-              
-              <Menu.Label>Cuenta</Menu.Label>
-              <Menu.Item
-                leftSection={<IconLogout size={14} />}
-                onClick={handleLogout}
-              >
-                Cerrar Sesión
-              </Menu.Item>
-              <Menu.Item
-                color="red"
-                leftSection={<IconLogout size={14} />}
-                onClick={handleLogoutAll}
-              >
-                Cerrar Todas las Sesiones
-              </Menu.Item>
-            </Menu.Dropdown>
-          </Menu>
-        </Group>
-      </Card>
+      />
 
       <Container size="lg" style={{ paddingBottom: '2rem' }}>
         {/* Welcome Section */}

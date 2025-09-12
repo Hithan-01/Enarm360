@@ -2,101 +2,29 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   Container, 
-  Card, 
   Text, 
   Title, 
   Group, 
   Stack, 
   Badge, 
   Button, 
-  ThemeIcon,
   SimpleGrid,
   Center,
   useMantineColorScheme,
   Box,
   Divider,
   List,
-  Image,
-  Anchor
+  Image
 } from '@mantine/core';
-import TypewriterText from '../components/animations/TypewriterText';
 import MedicalButton from '../components/animations/MedicalButton';
 import PageTransition from '../components/animations/PageTransition';
-import { 
-  IconMedicalCross, 
-  IconStethoscope,
-  IconBrain,
-  IconChartBar,
-  IconAward,
-  IconUsers,
-  IconClock,
-  IconShieldCheck,
-  IconTrendingUp,
-  IconTarget,
-  IconBook,
-  IconSchool,
-  IconChecks,
-  IconStar,
-  IconDeviceLaptop,
-  IconSun,
-  IconMoon
-} from '@tabler/icons-react';
+import Navbar from '../components/Navbar';
+import { IconTrendingUp, IconChecks } from '@tabler/icons-react';
+import enarmLogo from '../assets/enarm_logo.png';
 
 const LandingPage: React.FC = () => {
   const navigate = useNavigate();
-  const { colorScheme, toggleColorScheme } = useMantineColorScheme();
-
-  const features = [
-    {
-      icon: IconBrain,
-      title: 'Simulacros Inteligentes',
-      description: 'Exámenes que se adaptan a tu nivel de conocimiento con preguntas actualizadas del ENARM.',
-      color: 'blue'
-    },
-    {
-      icon: IconChartBar,
-      title: 'Análisis Detallado',
-      description: 'Reportes completos de tu rendimiento con identificación de áreas de oportunidad.',
-      color: 'teal'
-    },
-    {
-      icon: IconTarget,
-      title: 'Estudio Personalizado',
-      description: 'Plan de estudios adaptado a tus fortalezas y debilidades por especialidad médica.',
-      color: 'green'
-    },
-    {
-      icon: IconUsers,
-      title: 'Comunidad Médica',
-      description: 'Conecta con otros aspirantes y comparte experiencias de preparación.',
-      color: 'violet'
-    },
-    {
-      icon: IconClock,
-      title: 'Disponible 24/7',
-      description: 'Estudia cuando quieras, desde donde quieras, con acceso total a la plataforma.',
-      color: 'orange'
-    },
-    {
-      icon: IconShieldCheck,
-      title: 'Contenido Verificado',
-      description: 'Todas nuestras preguntas son revisadas por médicos especialistas certificados.',
-      color: 'indigo'
-    }
-  ];
-
-  const stats = [
-    { label: 'Aspirantes Registrados', value: '5,000+', icon: IconUsers, color: 'blue' },
-    { label: 'Preguntas Disponibles', value: '15,000+', icon: IconBook, color: 'teal' },
-    { label: 'Especialidades Cubiertas', value: '25+', icon: IconMedicalCross, color: 'green' },
-    { label: 'Tasa de Aprobación', value: '87%', icon: IconAward, color: 'orange' }
-  ];
-
-  const specialties = [
-    'Medicina Interna', 'Cirugía General', 'Pediatría', 'Ginecobstetricia',
-    'Medicina Familiar', 'Urgencias', 'Anestesiología', 'Radiología',
-    'Cardiología', 'Neurología', 'Dermatología', 'Psiquiatría'
-  ];
+  const { colorScheme } = useMantineColorScheme();
 
   return (
     <PageTransition type="medical" duration={800}>
@@ -104,8 +32,8 @@ const LandingPage: React.FC = () => {
         style={{
           minHeight: '100vh',
           background: colorScheme === 'dark' 
-            ? 'linear-gradient(135deg, #1a1b23 0%, #2d3142 100%)'
-            : 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
+            ? 'rgb(54, 71, 91)'
+            : 'rgb(246, 248, 250)',
           position: 'relative',
           overflow: 'hidden'
         }}
@@ -121,373 +49,551 @@ const LandingPage: React.FC = () => {
           pointerEvents: 'none'
         }} />
 
-        {/* Header */}
-        <Card 
-          withBorder={false}
-          mb="xl" 
-          p="lg"
-          style={{
-            background: colorScheme === 'dark' 
-              ? 'rgba(30, 30, 40, 0.95)'
-              : 'rgba(255, 255, 255, 0.95)',
-            backdropFilter: 'blur(20px)',
-            borderTop: '3px solid #0ea5e9',
-            borderBottom: colorScheme === 'dark' 
-              ? '1px solid rgba(55, 65, 81, 0.6)'
-              : '1px solid rgba(226, 232, 240, 0.6)',
-            position: 'sticky',
-            top: 0,
-            zIndex: 100
-          }}
-        >
+        <Navbar />
+
+        {/* Hero Section */}
+        <div style={{ 
+          width: '100vw', 
+          marginLeft: 'calc(-50vw + 50%)', 
+          background: 'rgb(54, 71, 91)', 
+          color: 'white',
+          padding: '8rem 0',
+          minHeight: '70vh',
+          display: 'flex',
+          alignItems: 'center'
+        }}>
           <Container size="lg">
-            <Group justify="space-between" align="center">
-              <Group align="center">
-                <ThemeIcon size="xl" radius="xl" variant="gradient" gradient={{ from: 'blue', to: 'cyan' }}>
-                  <IconMedicalCross size={28} />
-                </ThemeIcon>
-                <div>
-                  <Title order={2} size="h1" style={{ 
-                    background: 'linear-gradient(135deg, #1e293b 0%, #0ea5e9 100%)',
-                    WebkitBackgroundClip: 'text',
-                    WebkitTextFillColor: 'transparent',
-                    backgroundClip: 'text',
-                    fontWeight: 700
-                  }}>
-                    ENARM360
-                  </Title>
-                  <Text size="sm" c="dimmed" fw={500}>
-                    Plataforma de Simulación Médica
-                  </Text>
-                </div>
-              </Group>
+            <Stack gap="xl" align="center" ta="center">
+              <Title 
+                order={1} 
+                size="4.5rem" 
+                fw={800}
+                c="white"
+                style={{ 
+                  lineHeight: 1.1,
+                  maxWidth: '900px'
+                }}
+              >
+                Aquí comienza el camino de tu especialización
+              </Title>
               
-              <Group gap="md">
-                <Button
-                  variant="subtle"
-                  leftSection={colorScheme === 'dark' ? <IconSun size={16} /> : <IconMoon size={16} />}
-                  onClick={toggleColorScheme}
-                >
-                  {colorScheme === 'dark' ? 'Claro' : 'Oscuro'}
-                </Button>
-                
-                <MedicalButton 
-                  variant="outline" 
-                  color="blue"
-                  onClick={() => navigate('/login')}
-                  rippleEffect={true}
-                >
-                  Iniciar Sesión
-                </MedicalButton>
-                
-                <MedicalButton 
-                  variant="filled" 
-                  color="blue"
-                  onClick={() => navigate('/login')}
-                  rippleEffect={true}
-                  heartbeatHover={true}
-                >
-                  Registrarse
-                </MedicalButton>
-              </Group>
-            </Group>
+              <Text 
+                size="xl" 
+                c="rgba(255, 255, 255, 0.9)" 
+                ta="center" 
+                maw={800}
+                fw={500}
+                style={{ fontSize: '1.4rem', lineHeight: 1.6 }}
+              >
+                Más de 27 especialidades, simuladores personalizables, medición de progreso, 
+                asistencia y recomendaciones con base en tus necesidades.
+              </Text>
+
+              <Button 
+                size="xl"
+                onClick={() => navigate('/login')}
+                style={{ 
+                  fontSize: '1.2rem',
+                  padding: '1.2rem 3rem',
+                  backgroundColor: 'rgb(196, 213, 70)',
+                  color: 'rgb(54, 71, 91)',
+                  border: 'none',
+                  fontWeight: 600
+                }}
+              >
+                Conoce Tus Planes
+              </Button>
+            </Stack>
           </Container>
-        </Card>
+        </div>
 
-        <Container size="lg" py="xl">
-          {/* Hero Section */}
-          <Stack gap="xl" mb={80} ta="center">
-            <Center>
-              <Stack gap="lg" align="center">
-                <TypewriterText
-                  text="Tu Camino Hacia la Especialización Médica"
-                  component="title"
-                  order={1}
-                  size="h1"
-                  speed={80}
-                  delay={300}
-                  cursor={false}
+        {/* About Platform Section */}
+        <div style={{ 
+          width: '100vw', 
+          marginLeft: 'calc(-50vw + 50%)', 
+          background: 'white',
+          padding: '8rem 0'
+        }}>
+          <Container size="lg">
+            <Stack gap="xl" align="center" ta="center">
+              <Title order={2} size="3rem" style={{ color: 'rgb(54, 71, 91)' }}>
+                Tu preparación, nuestra prioridad
+              </Title>
+              
+              <Text 
+                size="lg" 
+                c="rgb(100, 100, 100)"
+                ta="center" 
+                maw={1000}
+                style={{ fontSize: '1.2rem', lineHeight: 1.8 }}
+              >
+                Imagina una plataforma donde cada paso de tu preparación para el ENARM está cuidadosamente diseñado 
+                para llevarte al éxito. En ENARM 360, no solo te ofrecemos contenido actualizado y dinámico; te proporcionamos una 
+                experiencia de aprendizaje personalizada. Recibe asistencia individualizada, toma exámenes adaptados a tu nivel, y 
+                disfruta de clases enfocadas en tu especialidad.
+              </Text>
+
+              <Text 
+                size="lg" 
+                c="rgb(100, 100, 100)"
+                ta="center" 
+                maw={1000}
+                style={{ fontSize: '1.2rem', lineHeight: 1.8 }}
+              >
+                Con ENARM 360, puedes compartir notas con compañeros, participar en modos competitivos y medir tu progreso en 
+                tiempo real. Transforma tu camino hacia la especialización médica con la mejor tecnología y recursos a tu disposición. 
+                ¡Únete a ENARM 360 y da el primer paso hacia tu futuro médico!
+              </Text>
+            </Stack>
+          </Container>
+        </div>
+
+        {/* Motivational Quotes Section */}
+        <div style={{ 
+          width: '100vw', 
+          marginLeft: 'calc(-50vw + 50%)', 
+          background: 'rgb(196, 213, 70)',
+          padding: '6rem 0'
+        }}>
+          <Container size="lg">
+            <SimpleGrid cols={{ base: 1, md: 2 }} spacing={80}>
+              <div style={{ textAlign: 'center' }}>
+                <Text 
+                  size="xl" 
+                  fw={700} 
+                  ta="center"
                   style={{ 
+                    color: 'rgb(54, 71, 91)',
+                    fontSize: '2rem',
+                    lineHeight: 1.4
+                  }}
+                >
+                  "Haz que cada minuto de estudio cuente."
+                </Text>
+              </div>
+
+              <div style={{ textAlign: 'center' }}>
+                <Text 
+                  size="xl" 
+                  fw={700} 
+                  ta="center"
+                  style={{ 
+                    color: 'rgb(54, 71, 91)',
+                    fontSize: '2rem',
+                    lineHeight: 1.4
+                  }}
+                >
+                  "Domina cada tema, conquista cada examen."
+                </Text>
+              </div>
+            </SimpleGrid>
+          </Container>
+        </div>
+
+        {/* Features Section */}
+        <div style={{ 
+          width: '100vw', 
+          marginLeft: 'calc(-50vw + 50%)', 
+          background: 'rgb(248, 250, 252)',
+          padding: '8rem 0'
+        }}>
+          <Container size="lg">
+            <Stack gap="xl" align="center" ta="center">
+              <Title order={2} ta="center" size="3rem" style={{ color: 'rgb(54, 71, 91)', maxWidth: '1000px' }}>
+                Responde nuestros exámenes o genera un compendio personalizado de los temas que más te interesen
+              </Title>
+              
+              <Text 
+                size="lg" 
+                c="rgb(100, 100, 100)"
+                ta="center" 
+                maw={1100}
+                style={{ fontSize: '1.2rem', lineHeight: 1.8 }}
+              >
+                Contamos con cada una de las áreas ofertadas dentro del padrón oficial del ENARM, por lo que encontrarás la 
+                gama completa de especialidades a las cuáles estés interesado.
+              </Text>
+
+              <Text 
+                size="lg" 
+                c="rgb(100, 100, 100)"
+                ta="center" 
+                maw={1100}
+                style={{ fontSize: '1.2rem', lineHeight: 1.8 }}
+              >
+                Nuestra plataforma está enfocada en que puedas adaptar cada espacio de tu perfil conforme a tus 
+                necesidades, intereses y objetivos.
+              </Text>
+
+              <Text 
+                size="lg" 
+                c="rgb(100, 100, 100)"
+                ta="center" 
+                maw={1100}
+                style={{ fontSize: '1.2rem', lineHeight: 1.8 }}
+              >
+                Clases grabadas, asesorías en línea, exámenes personalizables, sección de medición de progreso con 
+                asistencia y sistema de recomendaciones personal en pro de tu desempeño, libreta digital que puedas 
+                compartir con otros usuarios para sesiones de estudio en grupo, entre muchas otras opciones que podrás 
+                consultar a lo largo de tu paso en ENARM 360.
+              </Text>
+            </Stack>
+          </Container>
+        </div>
+
+        {/* Pricing Section */}
+        <div style={{ 
+          width: '100vw', 
+          marginLeft: 'calc(-50vw + 50%)', 
+          background: 'white',
+          padding: '8rem 0'
+        }}>
+          <Container size="lg">
+            <Stack gap="xl">
+              <Center>
+                <Stack gap="sm" align="center">
+                  <Title order={2} ta="center" size="3rem" style={{ color: 'rgb(54, 71, 91)' }}>
+                    Planes de Suscripción
+                  </Title>
+                  <Text size="lg" c="rgb(100, 100, 100)" ta="center" maw={700} style={{ fontSize: '1.2rem' }}>
+                    Elige el plan que mejor se adapte a tus necesidades de preparación para el ENARM.
+                  </Text>
+                </Stack>
+              </Center>
+
+              <SimpleGrid cols={{ base: 1, md: 3 }} spacing="xl" style={{ marginTop: '3rem' }}>
+                {/* Plan Básico */}
+                <div 
+                  style={{
+                    background: 'white',
+                    border: '3px solid rgb(196, 213, 70)',
+                    borderRadius: '12px',
+                    padding: '2rem',
                     textAlign: 'center',
-                    fontSize: '3rem',
-                    fontWeight: 800,
-                    background: 'linear-gradient(135deg, #0ea5e9 0%, #10b981 100%)',
-                    WebkitBackgroundClip: 'text',
-                    WebkitTextFillColor: 'transparent',
-                    backgroundClip: 'text'
+                    height: '100%',
+                    display: 'flex',
+                    flexDirection: 'column'
                   }}
-                />
-                
-                <TypewriterText
-                  text="Prepárate para el ENARM con la plataforma más completa de simulacros médicos. Más de 15,000 preguntas actualizadas, análisis personalizado y herramientas inteligentes para maximizar tu éxito."
-                  component="text"
-                  size="xl"
-                  speed={30}
-                  delay={3000}
-                  cursor={false}
-                  style={{ 
-                    textAlign: 'center', 
-                    maxWidth: '800px',
-                    color: colorScheme === 'dark' ? '#9CA3AF' : '#6B7280'
-                  }}
-                />
-              </Stack>
-            </Center>
+                >
+                  <Stack gap="md" align="center" style={{ flex: 1 }}>
+                    <Badge size="lg" style={{ background: 'rgb(196, 213, 70)', color: 'rgb(54, 71, 91)', border: 'none' }}>
+                      Básico
+                    </Badge>
+                    <Title order={2} size="3rem" style={{ color: 'rgb(54, 71, 91)' }}>
+                      $299
+                      <Text span size="lg" c="rgb(100, 100, 100)">/mes</Text>
+                    </Title>
+                    <List spacing="sm" size="sm" center icon={<IconChecks size={16} color="rgb(196, 213, 70)" />}>
+                      <List.Item>5,000 preguntas</List.Item>
+                      <List.Item>10 simulacros mensuales</List.Item>
+                      <List.Item>Análisis básico</List.Item>
+                      <List.Item>Soporte por email</List.Item>
+                    </List>
+                  </Stack>
+                  <Button 
+                    fullWidth
+                    size="lg"
+                    style={{ 
+                      background: 'rgb(196, 213, 70)',
+                      color: 'rgb(54, 71, 91)',
+                      border: 'none',
+                      marginTop: '2rem'
+                    }}
+                    onClick={() => navigate('/login')}
+                  >
+                    Comenzar
+                  </Button>
+                </div>
 
-            <Group justify="center" mt="xl">
+                {/* Plan Estándar */}
+                <div 
+                  style={{
+                    background: 'white',
+                    border: '3px solid rgb(54, 71, 91)',
+                    borderRadius: '12px',
+                    padding: '2rem',
+                    textAlign: 'center',
+                    position: 'relative',
+                    height: '100%',
+                    display: 'flex',
+                    flexDirection: 'column'
+                  }}
+                >
+                  <Badge 
+                    size="md" 
+                    style={{ 
+                      background: 'rgb(54, 71, 91)', 
+                      color: 'white',
+                      position: 'absolute',
+                      top: '-10px',
+                      left: '50%',
+                      transform: 'translateX(-50%)',
+                      zIndex: 10,
+                      whiteSpace: 'nowrap',
+                      fontSize: '11px',
+                      padding: '6px 16px',
+                      borderRadius: '12px',
+                      border: 'none'
+                    }}
+                  >
+                    Más Popular
+                  </Badge>
+                  <Stack gap="md" align="center" mt="md" style={{ flex: 1 }}>
+                    <Badge size="lg" style={{ background: 'rgb(54, 71, 91)', color: 'white', border: 'none' }}>
+                      Estándar
+                    </Badge>
+                    <Title order={2} size="3rem" style={{ color: 'rgb(54, 71, 91)' }}>
+                      $499
+                      <Text span size="lg" c="rgb(100, 100, 100)">/mes</Text>
+                    </Title>
+                    <List spacing="sm" size="sm" center icon={<IconChecks size={16} color="rgb(54, 71, 91)" />}>
+                      <List.Item>15,000 preguntas</List.Item>
+                      <List.Item>Simulacros ilimitados</List.Item>
+                      <List.Item>Análisis detallado</List.Item>
+                      <List.Item>Plan personalizado</List.Item>
+                      <List.Item>Soporte prioritario</List.Item>
+                    </List>
+                  </Stack>
+                  <Button 
+                    fullWidth
+                    size="lg"
+                    style={{ 
+                      background: 'rgb(54, 71, 91)',
+                      color: 'white',
+                      border: 'none',
+                      marginTop: '2rem'
+                    }}
+                    onClick={() => navigate('/login')}
+                  >
+                    Comenzar
+                  </Button>
+                </div>
+
+                {/* Plan Premium */}
+                <div 
+                  style={{
+                    background: 'white',
+                    border: '3px solid rgb(196, 213, 70)',
+                    borderRadius: '12px',
+                    padding: '2rem',
+                    textAlign: 'center',
+                    height: '100%',
+                    display: 'flex',
+                    flexDirection: 'column'
+                  }}
+                >
+                  <Stack gap="md" align="center" style={{ flex: 1 }}>
+                    <Badge size="lg" style={{ background: 'rgb(196, 213, 70)', color: 'rgb(54, 71, 91)', border: 'none' }}>
+                      Premium
+                    </Badge>
+                    <Title order={2} size="3rem" style={{ color: 'rgb(54, 71, 91)' }}>
+                      $799
+                      <Text span size="lg" c="rgb(100, 100, 100)">/mes</Text>
+                    </Title>
+                    <List spacing="sm" size="sm" center icon={<IconChecks size={16} color="rgb(196, 213, 70)" />}>
+                      <List.Item>Acceso completo</List.Item>
+                      <List.Item>Simulacros ilimitados</List.Item>
+                      <List.Item>IA personalizada</List.Item>
+                      <List.Item>Mentoría 1 a 1</List.Item>
+                      <List.Item>Soporte 24/7</List.Item>
+                      <List.Item>Garantía de aprobación</List.Item>
+                    </List>
+                  </Stack>
+                  <Button 
+                    fullWidth
+                    size="lg"
+                    style={{ 
+                      background: 'rgb(196, 213, 70)',
+                      color: 'rgb(54, 71, 91)',
+                      border: 'none',
+                      marginTop: '2rem'
+                    }}
+                    onClick={() => navigate('/login')}
+                  >
+                    Comenzar
+                  </Button>
+                </div>
+              </SimpleGrid>
+            </Stack>
+          </Container>
+        </div>
+
+        {/* FAQ Section */}
+        <div style={{ 
+          width: '100vw', 
+          marginLeft: 'calc(-50vw + 50%)', 
+          background: 'rgb(248, 250, 252)',
+          padding: '8rem 0'
+        }}>
+          <Container size="lg">
+            <Stack gap="xl">
+              <Center>
+                <Title order={2} ta="center" size="3rem" style={{ color: 'rgb(54, 71, 91)' }}>
+                  Preguntas Frecuentes
+                </Title>
+              </Center>
+
+              <SimpleGrid cols={{ base: 1, md: 1 }} spacing="xl" maw={900} mx="auto">
+                <div 
+                  style={{
+                    background: 'white',
+                    border: '2px solid rgb(54, 71, 91)',
+                    borderRadius: '12px',
+                    padding: '2rem'
+                  }}
+                >
+                  <Stack gap="md">
+                    <Text fw={700} size="lg" style={{ color: 'rgb(54, 71, 91)' }}>
+                      ¿PUEDO SOLICITAR UN PERIODO DE PRUEBA?
+                    </Text>
+                    <Text size="md" c="rgb(100, 100, 100)" style={{ lineHeight: 1.6 }}>
+                      Así es, al momento de ser un nuevo usuario, se te brinda un periodo de prueba de 15 días para que 
+                      conozcas la plataforma, te puedas familiarizar y estructures los espacios que te servirán para tu 
+                      estudio y desarrollo al ENARM.
+                    </Text>
+                  </Stack>
+                </div>
+
+                <div 
+                  style={{
+                    background: 'white',
+                    border: '2px solid rgb(196, 213, 70)',
+                    borderRadius: '12px',
+                    padding: '2rem'
+                  }}
+                >
+                  <Stack gap="md">
+                    <Text fw={700} size="lg" style={{ color: 'rgb(54, 71, 91)' }}>
+                      ¿QUÉ AVAL TIENE EL MATERIAL EDUCATIVO?
+                    </Text>
+                    <Text size="md" c="rgb(100, 100, 100)" style={{ lineHeight: 1.6 }}>
+                      Ofrecemos material educativo basado en las guías oficiales de ediciones anteriores del 
+                      ENARM, de la misma manera, se busca asesoramiento con especialistas y alianzas con 
+                      instituciones que nos permitan generar todo el contenido necesario para una preparación más 
+                      completa, integral, interactiva y propositiva a tu perfil.
+                    </Text>
+                  </Stack>
+                </div>
+              </SimpleGrid>
+            </Stack>
+          </Container>
+        </div>
+
+        {/* CTA Section */}
+        <div style={{ 
+          width: '100vw', 
+          marginLeft: 'calc(-50vw + 50%)', 
+          background: 'white',
+          padding: '6rem 0'
+        }}>
+          <Container size="lg">
+            <Stack gap="lg" align="center" ta="center">
+              <Title order={2} size="2.5rem" style={{ color: 'rgb(54, 71, 91)' }}>
+                ¿Listo para Aprobar el ENARM?
+              </Title>
+              <Text size="lg" c="rgb(100, 100, 100)" ta="center" maw={600} style={{ fontSize: '1.1rem' }}>
+                Únete a miles de médicos que han logrado su especialización con nuestra ayuda. 
+                Comienza tu preparación hoy mismo y da el siguiente paso en tu carrera médica.
+              </Text>
+
               <MedicalButton 
                 size="lg"
-                variant="gradient"
-                gradient={{ from: 'blue', to: 'cyan' }}
                 onClick={() => navigate('/login')}
                 rippleEffect={true}
                 heartbeatHover={true}
                 morphOnClick={true}
-                leftSection={<IconStethoscope size={20} />}
-              >
-                Comenzar Ahora Gratis
-              </MedicalButton>
-              
-              <MedicalButton 
-                size="lg"
-                variant="outline"
-                color="blue"
-                onClick={() => navigate('/login')}
-                rippleEffect={true}
-                leftSection={<IconDeviceLaptop size={20} />}
-              >
-                Ver Demo
-              </MedicalButton>
-            </Group>
-          </Stack>
-
-          {/* Stats Section */}
-          <SimpleGrid cols={{ base: 2, md: 4 }} spacing="lg" mb={80}>
-            {stats.map((stat, index) => (
-              <Card 
-                key={index}
-                withBorder 
-                p="lg" 
-                radius="lg"
+                leftSection={<IconTrendingUp size={20} />}
                 style={{
-                  background: colorScheme === 'dark' 
-                    ? 'rgba(30, 30, 40, 0.95)'
-                    : 'rgba(255, 255, 255, 0.95)',
-                  backdropFilter: 'blur(20px)',
-                  textAlign: 'center',
-                  border: colorScheme === 'dark' 
-                    ? '1px solid rgba(55, 65, 81, 0.6)'
-                    : '1px solid rgba(226, 232, 240, 0.6)'
+                  background: 'rgb(54, 71, 91)',
+                  color: 'white',
+                  border: 'none'
                 }}
               >
-                <ThemeIcon 
-                  size="xl" 
-                  radius="xl" 
-                  variant="light" 
-                  color={stat.color}
-                  mx="auto"
-                  mb="md"
-                >
-                  <stat.icon size={28} />
-                </ThemeIcon>
-                <Text size="xl" fw={700} mb="xs">
-                  {stat.value}
-                </Text>
-                <Text size="sm" c="dimmed" fw={500}>
-                  {stat.label}
-                </Text>
-              </Card>
-            ))}
-          </SimpleGrid>
+                Comenzar Mi Preparación
+              </MedicalButton>
+            </Stack>
+          </Container>
+        </div>
 
-          {/* Features Section */}
-          <Stack gap="xl" mb={80}>
-            <Center>
-              <Stack gap="sm" align="center">
-                <Title order={2} ta="center" size="h1">
-                  ¿Por Qué Elegir ENARM360?
-                </Title>
-                <Text size="lg" c="dimmed" ta="center" maw={600}>
-                  Nuestra plataforma ha sido diseñada específicamente para aspirantes a residencias médicas, 
-                  con herramientas avanzadas y contenido actualizado.
-                </Text>
-              </Stack>
-            </Center>
-
-            <SimpleGrid cols={{ base: 1, md: 2, lg: 3 }} spacing="lg">
-              {features.map((feature, index) => (
-                <Card 
-                  key={index}
-                  withBorder 
-                  p="lg" 
-                  radius="lg"
-                  style={{
-                    background: colorScheme === 'dark' 
-                      ? 'rgba(30, 30, 40, 0.95)'
-                      : 'rgba(255, 255, 255, 0.95)',
-                    backdropFilter: 'blur(20px)',
-                    borderLeft: `4px solid ${
-                      feature.color === 'blue' ? '#0ea5e9' :
-                      feature.color === 'teal' ? '#10b981' :
-                      feature.color === 'green' ? '#22c55e' :
-                      feature.color === 'violet' ? '#8b5cf6' :
-                      feature.color === 'orange' ? '#f59e0b' : '#6366f1'
-                    }`,
-                    border: colorScheme === 'dark' 
-                      ? '1px solid rgba(55, 65, 81, 0.6)'
-                      : '1px solid rgba(226, 232, 240, 0.6)',
-                    transition: 'transform 0.2s ease',
-                    cursor: 'pointer'
-                  }}
-                  className="hover-lift"
-                >
-                  <Group align="flex-start">
-                    <ThemeIcon 
-                      size="lg" 
-                      radius="md" 
-                      variant="light" 
-                      color={feature.color}
-                    >
-                      <feature.icon size={20} />
-                    </ThemeIcon>
-                    <Stack gap="xs" style={{ flex: 1 }}>
-                      <Text fw={600} size="md">
-                        {feature.title}
-                      </Text>
-                      <Text size="sm" c="dimmed">
-                        {feature.description}
-                      </Text>
-                    </Stack>
+        {/* Footer */}
+        <div 
+          style={{
+            width: '100vw',
+            marginLeft: 'calc(-50vw + 50%)',
+            background: 'rgb(54, 71, 91)',
+            color: 'white',
+            padding: '4rem 0 2rem 0'
+          }}
+        >
+          <Container size="lg">
+            <Stack gap="xl">
+              {/* Main Footer Content */}
+              <SimpleGrid cols={{ base: 1, md: 3 }} spacing="xl">
+                {/* Logo and Slogan */}
+                <Stack gap="lg">
+                  <Group align="center" gap="md">
+                    <Image 
+                      src={enarmLogo} 
+                      alt="ENARM360 Logo" 
+                      height={60}
+                      fit="contain"
+                      style={{ borderRadius: '8px' }}
+                    />
                   </Group>
-                </Card>
-              ))}
-            </SimpleGrid>
-          </Stack>
+                  <Text size="lg" fw={600} c="white">
+                    El futuro de la medicina empieza con tu preparación hoy.
+                  </Text>
+                </Stack>
 
-          {/* Specialties Section */}
-          <Stack gap="xl" mb={80}>
-            <Center>
-              <Stack gap="sm" align="center">
-                <Title order={2} ta="center">
-                  Especialidades Disponibles
-                </Title>
-                <Text size="lg" c="dimmed" ta="center" maw={600}>
-                  Cubre todas las áreas del conocimiento médico con preguntas actualizadas y casos clínicos reales.
-                </Text>
-              </Stack>
-            </Center>
+                {/* Contact Info */}
+                <Stack gap="md">
+                  <Text size="xl" fw={700} c="white">
+                    Contacto
+                  </Text>
+                  <Stack gap="xs">
+                    <Text c="rgba(255, 255, 255, 0.8)">ENARM360</Text>
+                    <Text c="rgba(255, 255, 255, 0.8)">@ENARM360</Text>
+                    <Text c="rgba(255, 255, 255, 0.8)">enarm360@server.com.mx</Text>
+                  </Stack>
+                  
+                  <Stack gap="xs" mt="md">
+                    <Text fw={600} c="white">Redes Sociales:</Text>
+                    <Text c="rgba(255, 255, 255, 0.8)">Instagram</Text>
+                    <Text c="rgba(255, 255, 255, 0.8)">Facebook</Text>
+                    <Text c="rgba(255, 255, 255, 0.8)">Twitter</Text>
+                  </Stack>
+                </Stack>
 
-            <Card 
-              withBorder 
-              p="xl" 
-              radius="lg"
-              style={{
-                background: colorScheme === 'dark' 
-                  ? 'rgba(30, 30, 40, 0.95)'
-                  : 'rgba(255, 255, 255, 0.95)',
-                backdropFilter: 'blur(20px)',
-                border: colorScheme === 'dark' 
-                  ? '1px solid rgba(55, 65, 81, 0.6)'
-                  : '1px solid rgba(226, 232, 240, 0.6)'
-              }}
-            >
-              <SimpleGrid cols={{ base: 2, sm: 3, md: 4 }} spacing="md">
-                {specialties.map((specialty, index) => (
-                  <Badge 
-                    key={index}
-                    size="lg" 
-                    variant="light" 
-                    color={['blue', 'teal', 'green', 'violet', 'orange', 'indigo'][index % 6]}
-                    style={{ textTransform: 'none' }}
-                  >
-                    {specialty}
-                  </Badge>
-                ))}
+                {/* Office Info */}
+                <Stack gap="md">
+                  <Text size="xl" fw={700} c="white">
+                    Oficinas
+                  </Text>
+                  <Text c="rgba(255, 255, 255, 0.8)" style={{ lineHeight: 1.6 }}>
+                    BOULEVARD ATLIXCÁYOTL.<br />
+                    PUEBLA DE ZARAGOZA. 3517
+                  </Text>
+                </Stack>
               </SimpleGrid>
-            </Card>
-          </Stack>
 
-          {/* CTA Section */}
-          <Card 
-            withBorder 
-            p="xl" 
-            radius="lg"
-            mb={40}
-            style={{
-              background: colorScheme === 'dark' 
-                ? 'linear-gradient(135deg, rgba(30, 30, 40, 0.95), rgba(45, 49, 66, 0.95))'
-                : 'linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(248, 250, 252, 0.95))',
-              backdropFilter: 'blur(20px)',
-              border: colorScheme === 'dark' 
-                ? '1px solid rgba(55, 65, 81, 0.6)'
-                : '1px solid rgba(226, 232, 240, 0.6)',
-              textAlign: 'center'
-            }}
-          >
-            <Stack gap="lg" align="center">
-              <ThemeIcon size={60} radius="xl" variant="gradient" gradient={{ from: 'blue', to: 'cyan' }}>
-                <IconAward size={36} />
-              </ThemeIcon>
-              
-              <Stack gap="sm" align="center">
-                <Title order={2}>
-                  ¿Listo para Aprobar el ENARM?
-                </Title>
-                <Text size="lg" c="dimmed" maw={600}>
-                  Únete a miles de médicos que han logrado su especialización con nuestra ayuda. 
-                  Comienza tu preparación hoy mismo y da el siguiente paso en tu carrera médica.
+              {/* Divider */}
+              <Divider color="rgba(255, 255, 255, 0.2)" />
+
+              {/* Bottom Footer */}
+              <Group justify="space-between" align="center" style={{ flexWrap: 'wrap' }}>
+                <Text size="sm" c="rgba(255, 255, 255, 0.7)">
+                  © 2024 ENARM360. Plataforma especializada en simulacros para el Examen Nacional de Aspirantes a Residencias Médicas.
                 </Text>
-              </Stack>
-
-              <Group justify="center">
-                <MedicalButton 
-                  size="lg"
-                  variant="gradient"
-                  gradient={{ from: 'blue', to: 'cyan' }}
-                  onClick={() => navigate('/login')}
-                  rippleEffect={true}
-                  heartbeatHover={true}
-                  morphOnClick={true}
-                  leftSection={<IconTrendingUp size={20} />}
-                >
-                  Comenzar Mi Preparación
-                </MedicalButton>
+                
+                <Group gap="xs">
+                  <Text size="sm" c="rgba(255, 255, 255, 0.7)">Versión 1.0.0</Text>
+                  <Text size="sm" c="rgba(255, 255, 255, 0.7)">•</Text>
+                  <Text size="sm" c="rgba(255, 255, 255, 0.7)">Hecho con ❤️ para la comunidad médica</Text>
+                </Group>
               </Group>
             </Stack>
-          </Card>
-
-          {/* Footer */}
-          <Divider mb="xl" />
-          
-          <Stack gap="md" align="center">
-            <Group align="center" gap="md">
-              <ThemeIcon size="lg" radius="xl" variant="gradient" gradient={{ from: 'blue', to: 'cyan' }}>
-                <IconMedicalCross size={20} />
-              </ThemeIcon>
-              <div style={{ textAlign: 'center' }}>
-                <Text fw={700} size="lg" style={{ 
-                  background: 'linear-gradient(135deg, #1e293b 0%, #0ea5e9 100%)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  backgroundClip: 'text'
-                }}>
-                  ENARM360
-                </Text>
-                <Text size="sm" c="dimmed">Tu Plataforma de Preparación Médica</Text>
-              </div>
-            </Group>
-            
-            <Text size="xs" c="dimmed" ta="center">
-              © 2024 ENARM360. Plataforma especializada en simulacros para el Examen Nacional de Aspirantes a Residencias Médicas.
-            </Text>
-            
-            <Group gap="xs">
-              <Text size="xs" c="dimmed">Versión 1.0.0</Text>
-              <Text size="xs" c="dimmed">•</Text>
-              <Text size="xs" c="dimmed">Hecho con ❤️ para la comunidad médica</Text>
-            </Group>
-          </Stack>
-        </Container>
+          </Container>
+        </div>
       </Box>
     </PageTransition>
   );
