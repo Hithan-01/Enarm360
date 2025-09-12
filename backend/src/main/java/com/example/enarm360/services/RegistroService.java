@@ -33,10 +33,7 @@ public class RegistroService {
     @Autowired
     private PasswordEncoder passwordEncoder;
     
-    /**
-     * Registrar nuevo usuario (solo estudiantes)
-     */
-    /**
+  /**
  * Registrar nuevo usuario (solo estudiantes)
  */
 public RegistroResponse registrarUsuario(RegistroRequest request) {
@@ -49,31 +46,37 @@ public RegistroResponse registrarUsuario(RegistroRequest request) {
             .username(request.getUsername().toLowerCase().trim())
             .contrasenaHash(passwordEncoder.encode(request.getContrasena()))
             .nombre(request.getNombre().trim())
-            .apellidos(request.getApellidos() != null ? request.getApellidos().trim() : null)
+            .apellidos(request.getApellidos() != null && !request.getApellidos().trim().isEmpty() 
+                       ? request.getApellidos().trim() : null)
             .activo(true)
-            // No necesitas setear creadoEn y actualizadoEn porque usas @CreationTimestamp y @UpdateTimestamp
             .build();
             
         // 2. Asignar rol ESTUDIANTE antes de guardar
         Rol rolEstudiante = rolRepository.findByNombre("ESTUDIANTE")
             .orElseThrow(() -> new RuntimeException("Rol ESTUDIANTE no encontrado"));
         
-        // Agregar rol al Set de roles
         usuario.getRoles().add(rolEstudiante);
         
-        // Guardar usuario con rol
+        // 3. Guardar usuario PRIMERO
         usuario = usuarioRepository.save(usuario);
         
-        // 3. Crear Perfil asociado
+        // 4. Crear PerfilUsuario con biografía por defecto
         PerfilUsuario perfil = PerfilUsuario.builder()
-            .usuario(usuario) // Usar la relación @OneToOne en lugar de usuarioId
-            .telefono(request.getTelefono())
-            .pais(request.getPais())
+            .usuario(usuario)
+            .telefono(request.getTelefono() != null && !request.getTelefono().trim().isEmpty() 
+                      ? request.getTelefono().trim() : null)
+            .pais(request.getPais() != null && !request.getPais().trim().isEmpty() 
+                  ? request.getPais().trim() : null)
+            // AQUÍ ESTÁ LA BIOGRAFÍA POR DEFECTO
+            .bio("Estudiante de medicina preparándose para el ENARM. ¡Listo para alcanzar mis metas académicas!")
             .tz("America/Monterrey")
-            // actualizadoEn se setea automáticamente si tienes @UpdateTimestamp
             .build();
             
         perfilUsuarioRepository.save(perfil);
+        
+        // 5. Actualizar la relación bidireccional
+        usuario.setPerfil(perfil);
+        usuarioRepository.save(usuario);
         
         logger.info("Usuario registrado: {} (ID: {})", usuario.getEmail(), usuario.getId());
         
@@ -90,7 +93,7 @@ public RegistroResponse registrarUsuario(RegistroRequest request) {
             .build();
             
     } catch (Exception e) {
-        logger.error("Error al registrar usuario: {}", e.getMessage());
+        logger.error("Error al registrar usuario: {}", e.getMessage(), e);
         throw new RuntimeException("Error al crear cuenta: " + e.getMessage());
     }
 }
