@@ -93,25 +93,32 @@ protected boolean shouldNotFilter(@NonNull HttpServletRequest request) throws Se
     String path = request.getRequestURI();
     
     // Lista específica de endpoints públicos
-    return path.equals("/api/auth/login") || 
-           path.equals("/api/auth/register") ||
-           path.equals("/api/auth/refresh") ||
-           path.equals("/api/auth/check-availability") ||
-           path.equals("/api/auth/check-email") ||
-           path.equals("/api/auth/check-username") ||
-           path.equals("/api/auth/registro-info") ||           // ← NUEVO
-           path.equals("/api/auth/validar-password") ||        // ← NUEVO
-           path.startsWith("/api/public/") ||
-           path.startsWith("/actuator/") ||
-           path.equals("/error") ||
-           // Rutas estáticas del frontend
-           path.equals("/") ||
-           path.equals("/index.html") ||
-           path.equals("/favicon.ico") ||
-           path.equals("/manifest.json") ||
-           path.startsWith("/static/") ||
-           path.startsWith("/login") ||
-           path.startsWith("/admin/") ||
-           path.startsWith("/estudiante/");
+    return 
+        // AUTENTICACIÓN (públicos)
+        path.equals("/api/auth/login") || 
+        path.equals("/api/auth/refresh") ||
+        
+        // REGISTRO (todos públicos - URLs NUEVAS)
+        path.equals("/api/registro/crear-cuenta") ||          // Cambió de /api/auth/register
+        path.equals("/api/registro/info") ||                  // Cambió de /api/auth/registro-info
+        path.equals("/api/registro/validar-password") ||      // Cambió de /api/auth/validar-password
+        path.equals("/api/registro/check-availability") ||    // Cambió de /api/auth/check-availability
+        path.equals("/api/registro/check-email") ||           // Cambió de /api/auth/check-email
+        path.equals("/api/registro/check-username") ||        // Cambió de /api/auth/check-username
+        
+        // RUTAS GENÉRICAS PÚBLICAS
+        path.startsWith("/api/public/") ||
+        path.startsWith("/actuator/") ||
+        path.equals("/error") ||
+        
+        // RUTAS ESTÁTICAS DEL FRONTEND
+        path.equals("/") ||
+        path.equals("/index.html") ||
+        path.equals("/favicon.ico") ||
+        path.equals("/manifest.json") ||
+        path.startsWith("/static/") ||
+        path.startsWith("/login") ||
+        path.startsWith("/admin/") ||
+        path.startsWith("/estudiante/");
 }
 }

@@ -55,9 +55,22 @@ public SecurityFilterChain filterChain(HttpSecurity http,
         .authorizeHttpRequests(auth -> auth
             // Permitir acceso a archivos estáticos y frontend
             .requestMatchers("/", "/static/**", "/index.html", "/favicon.ico", "/manifest.json").permitAll()
-            .requestMatchers("/api/auth/login", "/api/auth/register", "/api/auth/refresh").permitAll()
+            
+            // AUTENTICACIÓN - URLs públicas
+            .requestMatchers("/api/auth/login", "/api/auth/refresh").permitAll()
+            
+            // REGISTRO - URLs NUEVAS (públicas)
+            .requestMatchers("/api/registro/**").permitAll()  // ← TODO /api/registro/* es público
+            
+            // URLs de testing
             .requestMatchers("/api/test/**").permitAll()
-            .requestMatchers("/api/auth/me").authenticated()
+            
+            // URLs que requieren autenticación
+            .requestMatchers("/api/auth/me", "/api/auth/logout", "/api/auth/logout-all").authenticated()
+            .requestMatchers("/api/auth/sessions", "/api/auth/me/**").authenticated()
+            .requestMatchers("/api/dashboard/**").authenticated()
+            
+            // Todo lo demás requiere autenticación
             .anyRequest().authenticated()
         )
         .authenticationProvider(provider);
