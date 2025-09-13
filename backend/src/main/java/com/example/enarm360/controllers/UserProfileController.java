@@ -36,11 +36,20 @@ public class UserProfileController {
 
     @PostMapping(value="/me/avatar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ProfileDto> avatar(@RequestPart("file") MultipartFile file) throws Exception {
-        if (file.isEmpty()) return ResponseEntity.badRequest().build();
+        if (file.isEmpty()) {
+            return ResponseEntity.badRequest().build();
+        }
+        
+        String originalFilename = file.getOriginalFilename();
+        if (originalFilename == null || originalFilename.isBlank()) {
+            return ResponseEntity.badRequest().build();
+        }
+        
         Path root = Path.of("uploads","avatars");
         Files.createDirectories(root);
-        String name = System.currentTimeMillis()+"-"+ StringUtils.cleanPath(file.getOriginalFilename());
+        String cleanFilename = StringUtils.cleanPath(originalFilename);
+        String name = System.currentTimeMillis() + "-" + cleanFilename;
         Files.copy(file.getInputStream(), root.resolve(name), StandardCopyOption.REPLACE_EXISTING);
-        return ResponseEntity.ok(svc.setAvatar("/static/avatars/"+name));
+        return ResponseEntity.ok(svc.setAvatar("/static/avatars/" + name));
     }
 }

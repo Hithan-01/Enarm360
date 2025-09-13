@@ -1,0 +1,38 @@
+{
+  "properties": [
+    {
+      "name": "app.jwt.secret",
+      "type": "java.lang.String",
+      "description": "JWT secret key for signing tokens"
+    },
+    {
+      "name": "app.jwt.expiration",
+      "type": "java.lang.Long",
+      "description": "JWT access token expiration time in milliseconds",
+      "defaultValue": 3600000
+    },
+    {
+      "name": "app.jwt.refresh-expiration",
+      "type": "java.lang.Long",
+      "description": "JWT refresh token expiration time in milliseconds",
+      "defaultValue": 604800000
+    },
+    {
+      "name": "app.cors.allowed-origins",
+      "type": "java.util.List<java.lang.String>",
+      "description": "List of allowed origins for CORS"
+    },
+    {
+      "name": "app.uploads.dir",
+      "type": "java.lang.String",
+      "description": "Base directory for file uploads",
+      "defaultValue": "uploads"
+    },
+    {
+      "name": "app.uploads.public-base",
+      "type": "java.lang.String",
+      "description": "Public base URL for serving uploaded files",
+      "defaultValue": "/uploads"
+    }
+  ]
+}

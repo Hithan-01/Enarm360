@@ -13,35 +13,7 @@ import {
 
 const API_BASE = '/api/auth';
 
-// Configurar axios para incluir token automáticamente
-axios.interceptors.request.use((config) => {
-  const token = localStorage.getItem('accessToken');
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
-});
-
-// Interceptor para manejar renovación automática de token
-axios.interceptors.response.use(
-  (response) => response,
-  async (error) => {
-    if (error.response?.status === 401 && !error.config._retry) {
-      error.config._retry = true;
-      
-      try {
-        await authService.refreshToken();
-        const token = localStorage.getItem('accessToken');
-        error.config.headers.Authorization = `Bearer ${token}`;
-        return axios.request(error.config);
-      } catch (refreshError) {
-        authService.logout();
-        window.location.href = '/login';
-      }
-    }
-    return Promise.reject(error);
-  }
-);
+// Los interceptors de axios están configurados globalmente en services/index.ts
 
 class AuthService {
   // ==========================================================
@@ -66,8 +38,15 @@ class AuthService {
 
   async refreshToken(): Promise<TokenResponse> {
     const refreshToken = localStorage.getItem('refreshToken');
-    if (!refreshToken) {
+    if (!refreshToken || refreshToken === 'undefined' || refreshToken === 'null') {
+      this.clearTokens();
       throw new Error('No refresh token available');
+    }
+
+    // Validar formato básico del JWT
+    if (!this.isValidJwtFormat(refreshToken)) {
+      this.clearTokens();
+      throw new Error('Invalid refresh token format');
     }
 
     const response = await axios.post<TokenResponse>(`${API_BASE}/refresh`, {
@@ -79,6 +58,12 @@ class AuthService {
     localStorage.setItem('refreshToken', newRefreshToken);
 
     return response.data;
+  }
+
+  private isValidJwtFormat(token: string): boolean {
+    // JWT debe tener exactamente 2 puntos (3 partes)
+    const parts = token.split('.');
+    return parts.length === 3 && parts.every(part => part.length > 0);
   }
 
   async logout(): Promise<void> {
@@ -141,37 +126,57 @@ class AuthService {
   }
 
   // ==========================================================
-  // DASHBOARDS
+  // DASHBOARDS - DEPRECATED: Use dashboardService instead
   // ==========================================================
 
+  /**
+   * @deprecated Use dashboardService.getAdminDashboard() instead
+   */
   async getAdminDashboard(): Promise<AdminDashboardData> {
-    const response = await axios.get<AdminDashboardData>(`${API_BASE}/admin/dashboard`);
+    console.warn('authService.getAdminDashboard() is deprecated. Use dashboardService.getAdminDashboard() instead.');
+    const response = await axios.get<AdminDashboardData>(`/api/dashboard/admin`);
     return response.data;
   }
 
+  /**
+   * @deprecated Use dashboardService.getEstudianteDashboard() instead
+   */
   async getEstudianteDashboard(): Promise<EstudianteDashboardData> {
-    const response = await axios.get<EstudianteDashboardData>(`${API_BASE}/estudiante/dashboard`);
+    console.warn('authService.getEstudianteDashboard() is deprecated. Use dashboardService.getEstudianteDashboard() instead.');
+    const response = await axios.get<EstudianteDashboardData>(`/api/dashboard/estudiante`);
     return response.data;
   }
 
+  /**
+   * @deprecated Use dashboardService.getGeneralDashboard() instead
+   */
   async getGeneralDashboard(): Promise<any> {
-    const response = await axios.get(`${API_BASE}/dashboard/general`);
+    console.warn('authService.getGeneralDashboard() is deprecated. Use dashboardService.getGeneralDashboard() instead.');
+    const response = await axios.get(`/api/dashboard/general`);
     return response.data;
   }
 
   // ==========================================================
-  // VALIDACIONES
+  // VALIDACIONES - DEPRECATED: Use registroService instead
   // ==========================================================
 
+  /**
+   * @deprecated Use registroService.checkEmailAvailability() instead
+   */
   async checkEmailAvailability(email: string): Promise<CheckFieldResponse> {
-    const response = await axios.get<CheckFieldResponse>(`${API_BASE}/check-email`, {
+    console.warn('authService.checkEmailAvailability() is deprecated. Use registroService.checkEmailAvailability() instead.');
+    const response = await axios.get<CheckFieldResponse>(`/api/registro/check-email`, {
       params: { email }
     });
     return response.data;
   }
 
+  /**
+   * @deprecated Use registroService.checkUsernameAvailability() instead
+   */
   async checkUsernameAvailability(username: string): Promise<CheckFieldResponse> {
-    const response = await axios.get<CheckFieldResponse>(`${API_BASE}/check-username`, {
+    console.warn('authService.checkUsernameAvailability() is deprecated. Use registroService.checkUsernameAvailability() instead.');
+    const response = await axios.get<CheckFieldResponse>(`/api/registro/check-username`, {
       params: { username }
     });
     return response.data;

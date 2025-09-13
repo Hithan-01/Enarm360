@@ -12,7 +12,7 @@ import {
   Stack,
   Switch
 } from '@mantine/core';
-import { IconSun, IconMoon, IconUserCheck, IconLogout } from '@tabler/icons-react';
+import { IconSun, IconMoon, IconUserCheck, IconLogout, IconUser, IconSettings } from '@tabler/icons-react';
 import enarmLogo from '../assets/enarm_logo.png';
 
 interface NavbarProps {
@@ -109,7 +109,7 @@ const Navbar: React.FC<NavbarProps> = ({
                   color: 'rgb(54, 71, 91)',
                   border: 'none'
                 }}
-                onClick={() => navigate('/login')}
+                onClick={() => navigate('/register')}
                 size="sm"
               >
                 Registrarse
@@ -159,6 +159,22 @@ const Navbar: React.FC<NavbarProps> = ({
                 <Menu.Divider />
                 
                 <Menu.Label>Cuenta</Menu.Label>
+                <Menu.Item
+                  leftSection={<IconUser size={14} />}
+                  onClick={() => navigate('/profile')}
+                >
+                  Mi Perfil
+                </Menu.Item>
+                
+                <Menu.Item
+                  leftSection={<IconSettings size={14} />}
+                  onClick={() => navigate('/settings')}
+                >
+                  Configuraciones
+                </Menu.Item>
+                
+                <Menu.Divider />
+                
                 <Menu.Item
                   leftSection={<IconLogout size={14} />}
                   onClick={onLogout}

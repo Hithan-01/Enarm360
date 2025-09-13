@@ -7,10 +7,15 @@ import Login from './components/Login';
 import ProtectedRoute from './components/ProtectedRoute';
 import AdminDashboard from './pages/AdminDashboard';
 import EstudianteDashboard from './pages/EstudianteDashboard';
+import ProfilePage from './pages/ProfilePage';
+import RegisterPage from './pages/RegisterPage';
 import './App.css';
 import '@mantine/core/styles.css';
 import '@mantine/notifications/styles.css';
 import './styles/mantine-custom.css';
+
+// Importar servicios para configurar interceptors globales
+import './services';
 
 const theme = createTheme({
   primaryColor: 'blue',
@@ -69,6 +74,9 @@ function App() {
               {/* Ruta de login */}
               <Route path="/login" element={<Login />} />
               
+              {/* Ruta de registro */}
+              <Route path="/register" element={<RegisterPage />} />
+              
               {/* Dashboard de administrador - solo accesible por admins */}
               <Route 
                 path="/admin/dashboard" 
@@ -85,6 +93,16 @@ function App() {
                 element={
                   <ProtectedRoute requiredRole="ESTUDIANTE">
                     <EstudianteDashboard />
+                  </ProtectedRoute>
+                } 
+              />
+              
+              {/* Página de perfil - accesible por usuarios autenticados */}
+              <Route 
+                path="/profile" 
+                element={
+                  <ProtectedRoute>
+                    <ProfilePage />
                   </ProtectedRoute>
                 } 
               />
