@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { 
-  Container, 
-  Title, 
-  Text, 
-  Button, 
-  Stack, 
+import {
+  Container,
+  Title,
+  Text,
+  Button,
+  Stack,
   Group,
   Paper,
   TextInput,
@@ -13,31 +13,77 @@ import {
   Select,
   Alert,
   LoadingOverlay,
-  Divider
+  Divider,
+  useMantineColorScheme,
+  Box,
+  ActionIcon,
+  Center,
+  Image,
+  Grid
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
-import { 
-  IconUser, 
-  IconMail, 
-  IconLock, 
+import {
+  IconUser,
+  IconMail,
+  IconLock,
   IconSchool,
   IconCalendar,
   IconCheck,
   IconAlertCircle,
-  IconArrowLeft
+  IconArrowLeft,
+  IconSun,
+  IconMoon
 } from '@tabler/icons-react';
 import Navbar from '../components/Navbar';
 import PageTransition from '../components/animations/PageTransition';
 import { registroService } from '../services/registroService';
 import { authService } from '../services/authService';
 import { RegistroRequest } from '../types/registro';
+import enarmLogo from '../assets/enarm_logo.png';
 
 const RegisterPage: React.FC = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [checkingEmail, setCheckingEmail] = useState(false);
   const [checkingUsername, setCheckingUsername] = useState(false);
+  const [easterEggTriggered, setEasterEggTriggered] = useState(false);
+  const [motivationalMessage, setMotivationalMessage] = useState('');
+  const [redirecting, setRedirecting] = useState(false);
+  const { colorScheme, toggleColorScheme } = useMantineColorScheme();
+
+  // Verificar si el usuario ya está autenticado
+  useEffect(() => {
+    if (authService.isAuthenticated()) {
+      setRedirecting(true);
+      const userRole = authService.isAdmin() ? 'admin' : 'estudiante';
+      setTimeout(() => {
+        navigate(`/${userRole}/dashboard`);
+      }, 100); // Pequeño delay para evitar errores de rendering
+    }
+  }, [navigate]);
+
+  // Easter egg: detectar cuando se completen campos importantes
+  const checkEasterEgg = () => {
+    const { nombre, apellido, email, password } = form.values;
+    if (nombre && apellido && email && password && !easterEggTriggered) {
+      const messages = [
+        "¡Vas genial! 🩺 El futuro médico está tomando forma...",
+        "¡Excelente progreso! 🏥 Tu camino hacia el ENARM se ve prometedor...",
+        "¡Increíble dedicación! ⚕️ Los pacientes del futuro te lo agradecerán...",
+        "¡Bien hecho! 💊 Cada campo completado es un paso hacia tu especialización...",
+        "¡Fantástico! 🧬 Tu perfil médico está cobrando vida..."
+      ];
+      const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+      setMotivationalMessage(randomMessage);
+      setEasterEggTriggered(true);
+
+      // Limpiar mensaje después de 4 segundos
+      setTimeout(() => {
+        setMotivationalMessage('');
+      }, 4000);
+    }
+  };
 
   const form = useForm<RegistroRequest>({
     initialValues: {
@@ -54,30 +100,30 @@ const RegisterPage: React.FC = () => {
     },
     validate: {
       username: (value: string) => {
-        if (!value || value.length < 3) return 'El nombre de usuario debe tener al menos 3 caracteres';
-        if (!/^[a-zA-Z0-9_]+$/.test(value)) return 'Solo letras, números y guiones bajos';
+        if (!value || value.length < 3) return 'Username must be at least 3 characters';
+        if (!/^[a-zA-Z0-9_]+$/.test(value)) return 'Only letters, numbers and underscores';
         return null;
       },
       email: (value: string) => {
-        if (!value) return 'El email es obligatorio';
-        if (!/\S+@\S+\.\S+/.test(value)) return 'Email inválido';
+        if (!value) return 'Email is required';
+        if (!/\S+@\S+\.\S+/.test(value)) return 'Invalid email';
         return null;
       },
       password: (value: string) => {
-        if (!value || value.length < 6) return 'La contraseña debe tener al menos 6 caracteres';
+        if (!value || value.length < 6) return 'Password must be at least 6 characters';
         return null;
       },
       confirmPassword: (value: string, values) => {
-        if (value !== values.password) return 'Las contraseñas no coinciden';
+        if (value !== values.password) return 'Passwords do not match';
         return null;
       },
-      nombre: (value: string) => (!value || value.length < 2 ? 'El nombre es obligatorio' : null),
-      apellido: (value: string) => (!value || value.length < 2 ? 'El apellido es obligatorio' : null),
+      nombre: (value: string) => (!value || value.length < 2 ? 'First name is required' : null),
+      apellido: (value: string) => (!value || value.length < 2 ? 'Last name is required' : null),
       anioGraduacion: (value: number | undefined) => {
         if (value) {
           const currentYear = new Date().getFullYear();
           if (value < 1950 || value > currentYear + 10) {
-            return 'Año de graduación inválido';
+            return 'Invalid graduation year';
           }
         }
         return null;
@@ -92,7 +138,7 @@ const RegisterPage: React.FC = () => {
       setCheckingEmail(true);
       const result = await registroService.checkEmailAvailability(email);
       if (!result.available) {
-        form.setFieldError('email', 'Este email ya está registrado');
+        form.setFieldError('email', 'This email is already registered');
       }
     } catch (error) {
       console.error('Error checking email:', error);
@@ -108,7 +154,7 @@ const RegisterPage: React.FC = () => {
       setCheckingUsername(true);
       const result = await registroService.checkUsernameAvailability(username);
       if (!result.available) {
-        form.setFieldError('username', 'Este nombre de usuario no está disponible');
+        form.setFieldError('username', 'This username is not available');
       }
     } catch (error) {
       console.error('Error checking username:', error);
@@ -139,8 +185,8 @@ const RegisterPage: React.FC = () => {
       const response = await registroService.crearCuenta(registroData as any);
       
       notifications.show({
-        title: 'Cuenta creada exitosamente',
-        message: 'Ya puedes iniciar sesión con tu cuenta',
+        title: 'Account created successfully',
+        message: 'You can now sign in with your account',
         color: 'green',
         icon: <IconCheck size={16} />
       });
@@ -150,8 +196,8 @@ const RegisterPage: React.FC = () => {
       
     } catch (error: any) {
       notifications.show({
-        title: 'Error al crear cuenta',
-        message: error.response?.data?.message || 'Ocurrió un error inesperado',
+        title: 'Error creating account',
+        message: error.response?.data?.message || 'An unexpected error occurred',
         color: 'red',
         icon: <IconAlertCircle size={16} />
       });
@@ -160,166 +206,497 @@ const RegisterPage: React.FC = () => {
     }
   };
 
-  if (authService.isAuthenticated()) {
-    const userRole = authService.isAdmin() ? 'admin' : 'estudiante';
-    navigate(`/${userRole}/dashboard`);
-    return null;
+  // Si está redirigiendo, mostrar una página de carga
+  if (redirecting) {
+    return (
+      <PageTransition type="medical" duration={800}>
+        <Box
+          style={{
+            minHeight: '100vh',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            background: colorScheme === 'dark'
+              ? 'linear-gradient(135deg, #1a1b23 0%, #2d3142 100%)'
+              : 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)'
+          }}
+        >
+          <Stack align="center" gap="md">
+            <LoadingOverlay visible={true} />
+            <Text size="lg" c="dimmed">
+              Redirecting to dashboard...
+            </Text>
+          </Stack>
+        </Box>
+      </PageTransition>
+    );
   }
 
   return (
     <PageTransition type="medical" duration={800}>
-      <div style={{ minHeight: '100vh', background: 'rgb(248, 250, 252)' }}>
-        <Navbar showAuthButtons={false} />
-        
-        <Container size="sm" py="xl">
-          <Stack gap="xl" align="center">
-            <Group>
-              <Button
-                variant="subtle"
-                leftSection={<IconArrowLeft size={16} />}
-                onClick={() => navigate(-1)}
-                size="sm"
-              >
-                Volver
-              </Button>
-            </Group>
+      <Box
+        style={{
+          minHeight: '100vh',
+          width: '100vw',
+          background: colorScheme === 'dark'
+            ? 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)'
+            : 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
+          position: 'relative',
+          overflow: 'hidden'
+        }}
+      >
+        {/* Keyframes para la animación */}
+        <style>
+          {`
+            @keyframes fadeInUp {
+              from {
+                opacity: 0;
+                transform: translateY(20px);
+              }
+              to {
+                opacity: 1;
+                transform: translateY(0);
+              }
+            }
+          `}
+        </style>
+        {/* Background Pattern */}
+        <div style={{
+          position: 'absolute',
+          inset: 0,
+          backgroundImage: colorScheme === 'dark'
+            ? `url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><pattern id='grid' width='20' height='20' patternUnits='userSpaceOnUse'><path d='M 20 0 L 0 0 0 20' fill='none' stroke='%23374151' stroke-width='0.5' opacity='0.2'/></pattern></defs><rect width='100' height='100' fill='url(%23grid)'/></svg>")`
+            : `url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><pattern id='grid' width='20' height='20' patternUnits='userSpaceOnUse'><path d='M 20 0 L 0 0 0 20' fill='none' stroke='%23e2e8f0' stroke-width='0.5' opacity='0.3'/></pattern></defs><rect width='100' height='100' fill='url(%23grid)'/></svg>")`,
+          opacity: 0.3,
+          pointerEvents: 'none'
+        }} />
 
-            <Paper shadow="md" p="xl" radius="lg" style={{ width: '100%', maxWidth: 500 }}>
+        {/* Dark Mode Toggle */}
+        <ActionIcon
+          onClick={toggleColorScheme}
+          variant="light"
+          size="lg"
+          radius="xl"
+          style={{
+            position: 'absolute',
+            top: '2rem',
+            right: '2rem',
+            zIndex: 10,
+            backgroundColor: colorScheme === 'dark'
+              ? 'rgba(30, 41, 59, 0.8)'
+              : 'rgba(255, 255, 255, 0.8)',
+            backdropFilter: 'blur(20px) saturate(180%)',
+            WebkitBackdropFilter: 'blur(20px) saturate(180%)',
+            border: `1px solid ${colorScheme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.5)'}`,
+            boxShadow: colorScheme === 'dark'
+              ? '0 4px 16px rgba(0, 0, 0, 0.3)'
+              : '0 4px 16px rgba(0, 0, 0, 0.1)',
+          }}
+        >
+          {colorScheme === 'dark' ? <IconSun size={20} /> : <IconMoon size={20} />}
+        </ActionIcon>
+
+        {/* Back Button */}
+        <Button
+          variant="light"
+          leftSection={<IconArrowLeft size={16} />}
+          onClick={() => navigate(-1)}
+          size="sm"
+          style={{
+            position: 'absolute',
+            top: '2rem',
+            left: '2rem',
+            zIndex: 10,
+            backgroundColor: colorScheme === 'dark'
+              ? 'rgba(30, 41, 59, 0.8)'
+              : 'rgba(255, 255, 255, 0.8)',
+            backdropFilter: 'blur(20px) saturate(180%)',
+            WebkitBackdropFilter: 'blur(20px) saturate(180%)',
+            border: `1px solid ${colorScheme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.5)'}`,
+            boxShadow: colorScheme === 'dark'
+              ? '0 4px 16px rgba(0, 0, 0, 0.3)'
+              : '0 4px 16px rgba(0, 0, 0, 0.1)',
+          }}
+        >
+          Back
+        </Button>
+
+        <div style={{
+          minHeight: '100vh',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 1,
+          padding: '2rem 1rem'
+        }}>
+          <Container size={700} style={{ width: '100%', maxWidth: '700px' }}>
+            <Paper
+              radius="xl"
+              p="xl"
+              withBorder
+              style={{
+                width: '100%',
+                backgroundColor: colorScheme === 'dark'
+                  ? 'rgba(30, 41, 59, 0.7)'
+                  : 'rgba(255, 255, 255, 0.25)',
+                backdropFilter: 'blur(40px) saturate(200%)',
+                WebkitBackdropFilter: 'blur(40px) saturate(200%)',
+                border: `1px solid ${colorScheme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.5)'}`,
+                boxShadow: colorScheme === 'dark'
+                  ? 'inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 4px 20px rgba(0, 0, 0, 0.3)'
+                  : '0 4px 16px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.6)',
+              }}
+            >
               <LoadingOverlay visible={loading} />
-              
+
               <Stack gap="lg">
-                <Stack gap="xs" align="center">
-                  <Title order={2} size="h1" ta="center" c="rgb(54, 71, 91)">
-                    Crear Cuenta
-                  </Title>
-                  <Text c="dimmed" ta="center">
-                    Únete a ENARM360 y prepárate para el éxito
-                  </Text>
-                </Stack>
+                <Center mb="md">
+                  <Stack align="center" gap="sm">
+                    <Image
+                      src={enarmLogo}
+                      alt="ENARM360 Logo"
+                      height={60}
+                      fit="contain"
+                      style={{
+                        borderRadius: '12px',
+                        maxWidth: '200px',
+                        cursor: 'pointer',
+                        transition: 'transform 0.3s ease, filter 0.3s ease',
+                        filter: easterEggTriggered ? 'brightness(1.1) saturate(1.2)' : 'none'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.transform = 'scale(1.05) rotate(1deg)';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.transform = 'scale(1) rotate(0deg)';
+                      }}
+                      onClick={() => navigate('/')}
+                    />
+                    <Title order={2} size="h2" ta="center">
+                      Create Account
+                    </Title>
+                    <Text c="dimmed" ta="center" size="sm">
+                      Simulador Médico Profesional
+                    </Text>
+
+                    {/* Easter Egg: Mensaje motivacional */}
+                    {motivationalMessage && (
+                      <Alert
+                        color="green"
+                        variant="light"
+                        radius="md"
+                        style={{
+                          animation: 'fadeInUp 0.5s ease-out',
+                          border: '1px solid rgba(34, 197, 94, 0.3)',
+                          background: colorScheme === 'dark'
+                            ? 'rgba(34, 197, 94, 0.1)'
+                            : 'rgba(34, 197, 94, 0.05)'
+                        }}
+                      >
+                        <Text size="sm" fw={500} ta="center">
+                          {motivationalMessage}
+                        </Text>
+                      </Alert>
+                    )}
+                  </Stack>
+                </Center>
 
                 <form onSubmit={form.onSubmit(handleSubmit)}>
-                  <Stack gap="md">
-                    <Group grow>
-                      <TextInput
-                        label="Nombre"
-                        placeholder="Tu nombre"
-                        leftSection={<IconUser size={16} />}
-                        required
-                        {...form.getInputProps('nombre')}
-                      />
-                      <TextInput
-                        label="Apellido"
-                        placeholder="Tu apellido"
-                        leftSection={<IconUser size={16} />}
-                        required
-                        {...form.getInputProps('apellido')}
-                      />
-                    </Group>
+                  <Grid>
+                    {/* Columna Izquierda - Información Personal */}
+                    <Grid.Col span={6}>
+                      <Stack gap="md">
+                        <Text fw={600} size="md" c="blue">
+                          Personal Information
+                        </Text>
 
-                    <TextInput
-                      label="Nombre de usuario"
-                      placeholder="usuario123"
-                      leftSection={<IconUser size={16} />}
-                      required
-                      rightSection={checkingUsername ? <div>...</div> : undefined}
-                      {...form.getInputProps('username')}
-                      onBlur={(e) => checkUsernameAvailability(e.target.value)}
-                    />
+                        <TextInput
+                          placeholder="First name"
+                          leftSection={<IconUser size={16} />}
+                          required
+                          {...form.getInputProps('nombre')}
+                          onChange={(e) => {
+                            form.setFieldValue('nombre', e.target.value);
+                            checkEasterEgg();
+                          }}
+                          styles={{
+                            input: {
+                              backgroundColor: colorScheme === 'dark'
+                                ? 'rgba(30, 41, 59, 0.6)'
+                                : 'rgba(255, 255, 255, 0.2)',
+                              backdropFilter: 'blur(40px) saturate(200%)',
+                              WebkitBackdropFilter: 'blur(40px) saturate(200%)',
+                              border: `1px solid ${colorScheme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.4)'}`,
+                              boxShadow: colorScheme === 'dark'
+                                ? 'inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 4px 16px rgba(0, 0, 0, 0.2)'
+                                : '0 4px 16px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.6)',
+                              color: colorScheme === 'dark' ? '#e2e8f0' : '#1e293b',
+                            }
+                          }}
+                        />
 
-                    <TextInput
-                      label="Email"
-                      placeholder="tu@email.com"
-                      leftSection={<IconMail size={16} />}
-                      required
-                      rightSection={checkingEmail ? <div>...</div> : undefined}
-                      {...form.getInputProps('email')}
-                      onBlur={(e) => checkEmailAvailability(e.target.value)}
-                    />
+                        <TextInput
+                          placeholder="Last name"
+                          leftSection={<IconUser size={16} />}
+                          required
+                          {...form.getInputProps('apellido')}
+                          onChange={(e) => {
+                            form.setFieldValue('apellido', e.target.value);
+                            checkEasterEgg();
+                          }}
+                          styles={{
+                            input: {
+                              backgroundColor: colorScheme === 'dark'
+                                ? 'rgba(30, 41, 59, 0.6)'
+                                : 'rgba(255, 255, 255, 0.2)',
+                              backdropFilter: 'blur(40px) saturate(200%)',
+                              WebkitBackdropFilter: 'blur(40px) saturate(200%)',
+                              border: `1px solid ${colorScheme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.4)'}`,
+                              boxShadow: colorScheme === 'dark'
+                                ? 'inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 4px 16px rgba(0, 0, 0, 0.2)'
+                                : '0 4px 16px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.6)',
+                              color: colorScheme === 'dark' ? '#e2e8f0' : '#1e293b',
+                            }
+                          }}
+                        />
 
-                    <Group grow>
-                      <PasswordInput
-                        label="Contraseña"
-                        placeholder="Tu contraseña"
-                        leftSection={<IconLock size={16} />}
-                        required
-                        {...form.getInputProps('password')}
-                      />
-                      <PasswordInput
-                        label="Confirmar contraseña"
-                        placeholder="Repite tu contraseña"
-                        leftSection={<IconLock size={16} />}
-                        required
-                        {...form.getInputProps('confirmPassword')}
-                      />
-                    </Group>
+                        <TextInput
+                          placeholder="Username"
+                          leftSection={<IconUser size={16} />}
+                          required
+                          rightSection={checkingUsername ? <div>...</div> : undefined}
+                          {...form.getInputProps('username')}
+                          onBlur={(e) => checkUsernameAvailability(e.target.value)}
+                          styles={{
+                            input: {
+                              backgroundColor: colorScheme === 'dark'
+                                ? 'rgba(30, 41, 59, 0.6)'
+                                : 'rgba(255, 255, 255, 0.2)',
+                              backdropFilter: 'blur(40px) saturate(200%)',
+                              WebkitBackdropFilter: 'blur(40px) saturate(200%)',
+                              border: `1px solid ${colorScheme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.4)'}`,
+                              boxShadow: colorScheme === 'dark'
+                                ? 'inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 4px 16px rgba(0, 0, 0, 0.2)'
+                                : '0 4px 16px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.6)',
+                              color: colorScheme === 'dark' ? '#e2e8f0' : '#1e293b',
+                            }
+                          }}
+                        />
 
-                    <Divider label="Información académica" labelPosition="center" />
+                        <TextInput
+                          placeholder="email@example.com"
+                          leftSection={<IconMail size={16} />}
+                          required
+                          rightSection={checkingEmail ? <div>...</div> : undefined}
+                          {...form.getInputProps('email')}
+                          onChange={(e) => {
+                            form.setFieldValue('email', e.target.value);
+                            checkEasterEgg();
+                          }}
+                          onBlur={(e) => checkEmailAvailability(e.target.value)}
+                          styles={{
+                            input: {
+                              backgroundColor: colorScheme === 'dark'
+                                ? 'rgba(30, 41, 59, 0.6)'
+                                : 'rgba(255, 255, 255, 0.2)',
+                              backdropFilter: 'blur(40px) saturate(200%)',
+                              WebkitBackdropFilter: 'blur(40px) saturate(200%)',
+                              border: `1px solid ${colorScheme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.4)'}`,
+                              boxShadow: colorScheme === 'dark'
+                                ? 'inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 4px 16px rgba(0, 0, 0, 0.2)'
+                                : '0 4px 16px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.6)',
+                              color: colorScheme === 'dark' ? '#e2e8f0' : '#1e293b',
+                            }
+                          }}
+                        />
 
-                    <TextInput
-                      label="Universidad"
-                      placeholder="Tu universidad"
-                      leftSection={<IconSchool size={16} />}
-                      {...form.getInputProps('universidad')}
-                    />
+                        <PasswordInput
+                          placeholder="Password"
+                          leftSection={<IconLock size={16} />}
+                          required
+                          {...form.getInputProps('password')}
+                          onChange={(e) => {
+                            form.setFieldValue('password', e.target.value);
+                            checkEasterEgg();
+                          }}
+                          styles={{
+                            input: {
+                              backgroundColor: colorScheme === 'dark'
+                                ? 'rgba(30, 41, 59, 0.6)'
+                                : 'rgba(255, 255, 255, 0.2)',
+                              backdropFilter: 'blur(40px) saturate(200%)',
+                              WebkitBackdropFilter: 'blur(40px) saturate(200%)',
+                              border: `1px solid ${colorScheme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.4)'}`,
+                              boxShadow: colorScheme === 'dark'
+                                ? 'inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 4px 16px rgba(0, 0, 0, 0.2)'
+                                : '0 4px 16px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.6)',
+                              color: colorScheme === 'dark' ? '#e2e8f0' : '#1e293b',
+                            }
+                          }}
+                        />
 
-                    <Group grow>
-                      <TextInput
-                        label="Año de graduación"
-                        placeholder="2024"
-                        leftSection={<IconCalendar size={16} />}
-                        type="number"
-                        {...form.getInputProps('anioGraduacion')}
-                      />
-                      <TextInput
-                        label="Especialidad de interés"
-                        placeholder="Medicina interna"
-                        leftSection={<IconSchool size={16} />}
-                        {...form.getInputProps('especialidadInteres')}
-                      />
-                    </Group>
+                        <PasswordInput
+                          placeholder="Confirm Password"
+                          leftSection={<IconLock size={16} />}
+                          required
+                          {...form.getInputProps('confirmPassword')}
+                          styles={{
+                            input: {
+                              backgroundColor: colorScheme === 'dark'
+                                ? 'rgba(30, 41, 59, 0.6)'
+                                : 'rgba(255, 255, 255, 0.2)',
+                              backdropFilter: 'blur(40px) saturate(200%)',
+                              WebkitBackdropFilter: 'blur(40px) saturate(200%)',
+                              border: `1px solid ${colorScheme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.4)'}`,
+                              boxShadow: colorScheme === 'dark'
+                                ? 'inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 4px 16px rgba(0, 0, 0, 0.2)'
+                                : '0 4px 16px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.6)',
+                              color: colorScheme === 'dark' ? '#e2e8f0' : '#1e293b',
+                            }
+                          }}
+                        />
+                      </Stack>
+                    </Grid.Col>
 
-                    <Alert 
-                      icon={<IconAlertCircle size={16} />} 
-                      color="blue" 
-                      variant="light"
-                    >
-                      Al crear tu cuenta, aceptas nuestros términos de servicio y política de privacidad.
-                    </Alert>
+                    {/* Columna Derecha - Información Académica */}
+                    <Grid.Col span={6}>
+                      <Stack gap="md">
+                        <Text fw={600} size="md" c="blue">
+                          Academic Information
+                        </Text>
 
-                    <Button 
-                      type="submit" 
-                      fullWidth 
-                      size="md"
-                      loading={loading}
-                      style={{
-                        background: 'rgb(196, 213, 70)',
-                        color: 'rgb(54, 71, 91)',
-                        border: 'none'
-                      }}
-                    >
-                      Crear Cuenta
-                    </Button>
-                  </Stack>
+                        <TextInput
+                          placeholder="University (optional)"
+                          leftSection={<IconSchool size={16} />}
+                          {...form.getInputProps('universidad')}
+                          styles={{
+                            input: {
+                              backgroundColor: colorScheme === 'dark'
+                                ? 'rgba(30, 41, 59, 0.6)'
+                                : 'rgba(255, 255, 255, 0.2)',
+                              backdropFilter: 'blur(40px) saturate(200%)',
+                              WebkitBackdropFilter: 'blur(40px) saturate(200%)',
+                              border: `1px solid ${colorScheme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.4)'}`,
+                              boxShadow: colorScheme === 'dark'
+                                ? 'inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 4px 16px rgba(0, 0, 0, 0.2)'
+                                : '0 4px 16px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.6)',
+                              color: colorScheme === 'dark' ? '#e2e8f0' : '#1e293b',
+                            }
+                          }}
+                        />
+
+                        <TextInput
+                          placeholder="Graduation Year"
+                          leftSection={<IconCalendar size={16} />}
+                          type="number"
+                          {...form.getInputProps('anioGraduacion')}
+                          styles={{
+                            input: {
+                              backgroundColor: colorScheme === 'dark'
+                                ? 'rgba(30, 41, 59, 0.6)'
+                                : 'rgba(255, 255, 255, 0.2)',
+                              backdropFilter: 'blur(40px) saturate(200%)',
+                              WebkitBackdropFilter: 'blur(40px) saturate(200%)',
+                              border: `1px solid ${colorScheme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.4)'}`,
+                              boxShadow: colorScheme === 'dark'
+                                ? 'inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 4px 16px rgba(0, 0, 0, 0.2)'
+                                : '0 4px 16px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.6)',
+                              color: colorScheme === 'dark' ? '#e2e8f0' : '#1e293b',
+                            }
+                          }}
+                        />
+
+                        <TextInput
+                          placeholder="Specialty of Interest"
+                          leftSection={<IconSchool size={16} />}
+                          {...form.getInputProps('especialidadInteres')}
+                          styles={{
+                            input: {
+                              backgroundColor: colorScheme === 'dark'
+                                ? 'rgba(30, 41, 59, 0.6)'
+                                : 'rgba(255, 255, 255, 0.2)',
+                              backdropFilter: 'blur(40px) saturate(200%)',
+                              WebkitBackdropFilter: 'blur(40px) saturate(200%)',
+                              border: `1px solid ${colorScheme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.4)'}`,
+                              boxShadow: colorScheme === 'dark'
+                                ? 'inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 4px 16px rgba(0, 0, 0, 0.2)'
+                                : '0 4px 16px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.6)',
+                              color: colorScheme === 'dark' ? '#e2e8f0' : '#1e293b',
+                            }
+                          }}
+                        />
+                      </Stack>
+                    </Grid.Col>
+
+                    {/* Fila completa para términos y botón */}
+                    <Grid.Col span={12}>
+                      <Stack gap="md" mt="lg">
+                        <Alert
+                          icon={<IconAlertCircle size={16} />}
+                          color="blue"
+                          variant="light"
+                          style={{
+                            backgroundColor: colorScheme === 'dark'
+                              ? 'rgba(59, 130, 246, 0.1)'
+                              : 'rgba(59, 130, 246, 0.05)',
+                            backdropFilter: 'blur(20px) saturate(180%)',
+                            WebkitBackdropFilter: 'blur(20px) saturate(180%)',
+                            border: `1px solid rgba(59, 130, 246, 0.2)`,
+                          }}
+                        >
+                          By creating your account, you accept our terms of service and privacy policy.
+                        </Alert>
+
+                        <Button
+                          type="submit"
+                          fullWidth
+                          size="lg"
+                          radius="xl"
+                          loading={loading}
+                          variant="light"
+                          style={{
+                            backgroundColor: colorScheme === 'dark'
+                              ? 'rgba(30, 41, 59, 0.8)'
+                              : 'rgba(255, 255, 255, 0.3)',
+                            backdropFilter: 'blur(40px) saturate(200%)',
+                            WebkitBackdropFilter: 'blur(40px) saturate(200%)',
+                            border: `1px solid ${colorScheme === 'dark' ? 'rgba(255, 255, 255, 0.2)' : 'rgba(255, 255, 255, 0.6)'}`,
+                            boxShadow: colorScheme === 'dark'
+                              ? 'inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 4px 20px rgba(0, 0, 0, 0.3)'
+                              : '0 4px 16px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.6)',
+                            color: colorScheme === 'dark' ? '#e2e8f0' : '#1e293b',
+                            fontFamily: 'Space Grotesk, Inter, sans-serif',
+                            fontWeight: 600,
+                            letterSpacing: '0.025em',
+                            transition: 'all 0.3s ease',
+                          }}
+                        >
+                          {loading ? 'Creating Account...' : 'Create Account'}
+                        </Button>
+                      </Stack>
+                    </Grid.Col>
+                  </Grid>
                 </form>
 
-                <Stack gap="xs" align="center">
-                  <Text c="dimmed" size="sm">
-                    ¿Ya tienes cuenta?
+                <Center mt="md">
+                  <Text size="sm" c="dimmed">
+                    Already have an account?{' '}
+                    <Text
+                      component="span"
+                      size="sm"
+                      c="blue"
+                      style={{ cursor: 'pointer', fontWeight: 500 }}
+                      onClick={() => navigate('/login')}
+                    >
+                      Sign in here
+                    </Text>
                   </Text>
-                  <Button
-                    variant="subtle"
-                    component={Link}
-                    to="/login"
-                    size="sm"
-                  >
-                    Iniciar Sesión
-                  </Button>
-                </Stack>
+                </Center>
               </Stack>
             </Paper>
-          </Stack>
-        </Container>
-      </div>
+          </Container>
+        </div>
+      </Box>
     </PageTransition>
   );
 };

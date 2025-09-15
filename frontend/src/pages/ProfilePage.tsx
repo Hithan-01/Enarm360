@@ -1,40 +1,29 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { 
-  Container, 
-  Title, 
-  Text, 
-  Button, 
-  Stack, 
-  Group,
-  Paper,
+import {
+  Container,
+  Stack,
   Grid,
-  TextInput,
-  Select,
-  Textarea,
-  Switch,
-  Avatar,
-  FileButton,
-  ActionIcon,
-  Badge,
+  Group,
+  LoadingOverlay,
+  Box,
   Divider,
-  Card,
-  Alert,
-  LoadingOverlay
+  Transition,
+  Title,
+  useMantineColorScheme,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
-import { 
-  IconUser, 
-  IconMail, 
-  IconPhone, 
-  IconCalendar,
+import {
+  IconUser,
+  IconMail,
+  IconPhone,
   IconSchool,
-  IconEdit,
-  IconCamera,
   IconCheck,
   IconX,
-  IconInfoCircle
+  IconLock,
+  IconSettings,
+  IconShield,
 } from '@tabler/icons-react';
 import Navbar from '../components/Navbar';
 import PageTransition from '../components/animations/PageTransition';
@@ -43,13 +32,25 @@ import { authService } from '../services/authService';
 import { UsuarioProfile, UpdateProfileRequest } from '../types/profile';
 import { PROFILE_CONSTANTS } from '../types/profile';
 
+// Custom Components
+import GradientCard from '../components/ui/GradientCard';
+import ElegantButton from '../components/ui/ElegantButton';
+import FormSection from '../components/ui/FormSection';
+import { ElegantTextInput, ElegantSelect, ElegantPasswordInput } from '../components/ui/ElegantInput';
+import ElegantSwitch from '../components/ui/ElegantSwitch';
+import ProfileHeader from '../components/profile/ProfileHeader';
+import StatsGrid from '../components/profile/StatsGrid';
+import { useProfileAnimation } from '../hooks/useProfileAnimation';
+
 const ProfilePage: React.FC = () => {
   const navigate = useNavigate();
+  const { colorScheme } = useMantineColorScheme();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [profile, setProfile] = useState<UsuarioProfile | null>(null);
   const [editMode, setEditMode] = useState(false);
+  const { isVisible } = useProfileAnimation();
 
   const form = useForm<UpdateProfileRequest>({
     initialValues: {
@@ -96,7 +97,7 @@ const ProfilePage: React.FC = () => {
       setLoading(true);
       const profileData = await profileService.getMyProfile();
       setProfile(profileData);
-      
+
       // Actualizar formulario con datos del perfil
       form.setValues({
         nombre: profileData.nombre || '',
@@ -135,14 +136,14 @@ const ProfilePage: React.FC = () => {
       console.warn('Save already in progress, ignoring duplicate request');
       return;
     }
-    
+
     try {
       setSaving(true);
       console.log('Iniciando actualización de perfil:', values);
       const updatedProfile = await profileService.updateMyProfile(values);
       setProfile(updatedProfile);
       setEditMode(false);
-      
+
       notifications.show({
         title: 'Éxito',
         message: 'Perfil actualizado correctamente',
@@ -151,15 +152,13 @@ const ProfilePage: React.FC = () => {
       });
     } catch (error: any) {
       console.error('Error updating profile:', error);
-      
-      // Si es error 401, podría ser que el update fue exitoso pero el token expiró
+
       if (error?.response?.status === 401) {
-        // Recargar el perfil para ver si los cambios se guardaron
         try {
           const refreshedProfile = await profileService.getMyProfile();
           setProfile(refreshedProfile);
           setEditMode(false);
-          
+
           notifications.show({
             title: 'Perfil actualizado',
             message: 'Los cambios se guardaron correctamente (sesión renovada)',
@@ -171,9 +170,9 @@ const ProfilePage: React.FC = () => {
           console.error('Error refreshing profile:', refreshError);
         }
       }
-      
+
       const errorMessage = error?.response?.data?.message || error?.message || 'No se pudo actualizar el perfil';
-      
+
       notifications.show({
         title: 'Error',
         message: errorMessage,
@@ -207,10 +206,9 @@ const ProfilePage: React.FC = () => {
       setUploading(true);
       console.log('Iniciando subida de avatar');
       const updatedProfile = await profileService.uploadAvatar(file);
-      
-      // Actualizar el perfil directamente con la respuesta
+
       setProfile(updatedProfile);
-      
+
       notifications.show({
         title: 'Éxito',
         message: 'Foto de perfil actualizada',
@@ -247,8 +245,29 @@ const ProfilePage: React.FC = () => {
 
   return (
     <PageTransition type="medical" duration={800}>
-      <div style={{ minHeight: '100vh', background: 'rgb(248, 250, 252)' }}>
-        <Navbar 
+      <Box
+        style={{
+          minHeight: '100vh',
+          fontFamily: 'Inter, sans-serif',
+          position: 'relative',
+          overflow: 'hidden',
+          backgroundColor: colorScheme === 'dark' ? '#1a1b23' : '#f8fafc',
+        }}
+      >
+        {/* Background Pattern */}
+        <Box
+          style={{
+            position: 'absolute',
+            inset: 0,
+            opacity: 0.2,
+            pointerEvents: 'none',
+            backgroundImage: colorScheme === 'dark'
+              ? `url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><pattern id='grid' width='20' height='20' patternUnits='userSpaceOnUse'><path d='M 20 0 L 0 0 0 20' fill='none' stroke='%23374151' stroke-width='0.5' opacity='0.3'/></pattern></defs><rect width='100' height='100' fill='url(%23grid)'/></svg>")`
+              : `url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><pattern id='grid' width='20' height='20' patternUnits='userSpaceOnUse'><path d='M 20 0 L 0 0 0 20' fill='none' stroke='%23e2e8f0' stroke-width='0.5' opacity='0.3'/></pattern></defs><rect width='100' height='100' fill='url(%23grid)'/></svg>")`,
+          }}
+        />
+
+        <Navbar
           showAuthButtons={false}
           showThemeToggle={true}
           userRole={authService.isAdmin() ? 'admin' : (authService.isEstudiante() ? 'student' : null)}
@@ -258,136 +277,102 @@ const ProfilePage: React.FC = () => {
           }}
           onLogout={handleLogout}
         />
-        
-        <Container size="lg" py="xl">
-          <Stack gap="xl">
-            {/* Header */}
-            <Paper p="xl" shadow="sm" radius="lg">
-              <Group justify="space-between" align="center">
-                <Group gap="lg">
-                  <div style={{ position: 'relative' }}>
-                    <Avatar 
-                      size={80} 
-                      src={profile?.avatar ? profileService.getAvatarUrl(profile.avatar) : null}
-                      radius="xl"
-                    >
-                      {profile ? profileService.getInitials(profile) : 'U'}
-                    </Avatar>
-                    <FileButton 
-                      onChange={handleAvatarUpload} 
-                      accept="image/jpeg,image/png,image/gif,image/webp"
-                    >
-                      {(props) => (
-                        <ActionIcon
-                          {...props}
-                          size="sm"
-                          radius="xl"
-                          color="blue"
-                          variant="filled"
-                          style={{
-                            position: 'absolute',
-                            bottom: 0,
-                            right: 0,
-                            boxShadow: '0 2px 10px rgba(0,0,0,0.2)'
-                          }}
-                          loading={uploading}
-                        >
-                          <IconCamera size={14} />
-                        </ActionIcon>
-                      )}
-                    </FileButton>
-                  </div>
-                  
-                  <div>
-                    <Title order={2} size="h1">
-                      {profile ? profileService.getFullName(profile) : 'Cargando...'}
-                    </Title>
-                    <Text c="dimmed" size="lg">
-                      @{profile?.username || 'usuario'}
-                    </Text>
-                    <Group gap="xs" mt="xs">
-                      {profile?.roles?.map((role) => (
-                        <Badge key={role} variant="light" size="sm">
-                          {role.replace('ROLE_', '')}
-                        </Badge>
-                      ))}
-                      {profile?.emailVerificado && (
-                        <Badge color="green" variant="light" size="sm">
-                          Email verificado
-                        </Badge>
-                      )}
-                    </Group>
-                  </div>
-                </Group>
-                
-                <Button
-                  variant={editMode ? "light" : "filled"}
-                  leftSection={<IconEdit size={16} />}
-                  onClick={() => setEditMode(!editMode)}
-                >
-                  {editMode ? 'Cancelar' : 'Editar Perfil'}
-                </Button>
-              </Group>
-            </Paper>
 
-            <form onSubmit={form.onSubmit(handleSave)}>
-              <Grid>
-                <Grid.Col span={{ base: 12, md: 8 }}>
-                  <Stack gap="lg">
-                    {/* Información Personal */}
-                    <Card shadow="sm" padding="xl" radius="lg">
-                      <LoadingOverlay visible={loading} />
-                      <Title order={3} size="h3" mb="lg">
-                        <Group gap="sm">
-                          <IconUser size={20} />
-                          Información Personal
-                        </Group>
-                      </Title>
-                      
-                      <Grid>
+        <Container size="xl" py="xl" style={{ position: 'relative', zIndex: 10 }}>
+          <LoadingOverlay visible={loading} overlayProps={{ backgroundOpacity: 0.3, blur: 2 }} />
+
+          <Transition mounted={isVisible} transition="slide-up" duration={600}>
+            {(styles) => (
+              <Stack gap="xl" style={styles}>
+                {/* Profile Header */}
+                <ProfileHeader
+                  profile={profile}
+                  editMode={editMode}
+                  uploading={uploading}
+                  onEditToggle={() => setEditMode(!editMode)}
+                  onAvatarUpload={handleAvatarUpload}
+                />
+
+                {/* Statistics Grid */}
+                {profile?.stats && (
+                  <Box>
+                    <Title
+                      order={2}
+                      mb="lg"
+                      style={{
+                        fontFamily: 'Space Grotesk, Inter, sans-serif',
+                        textAlign: 'center',
+                        color: '#1e293b',
+                      }}
+                    >
+                      Tu Progreso
+                    </Title>
+                    <StatsGrid stats={profile.stats} />
+                  </Box>
+                )}
+
+                <Divider variant="dashed" style={{ opacity: 0.6 }} />
+
+                {/* Form Sections */}
+                <form onSubmit={form.onSubmit(handleSave)}>
+                  <Stack gap="xl">
+                    {/* Personal Information */}
+                    <FormSection
+                      title="Información Personal"
+                      icon={<IconUser size={20} />}
+                      gradientFrom="#0ea5e9"
+                      gradientTo="#10b981"
+                    >
+                      <Grid gutter="lg">
                         <Grid.Col span={{ base: 12, sm: 6 }}>
-                          <TextInput
+                          <ElegantTextInput
                             label="Nombre"
                             placeholder="Tu nombre"
-                            disabled={!editMode}
+                            readOnly={!editMode}
                             {...form.getInputProps('nombre')}
                           />
                         </Grid.Col>
-                        
                         <Grid.Col span={{ base: 12, sm: 6 }}>
-                          <TextInput
+                          <ElegantTextInput
                             label="Apellido"
                             placeholder="Tu apellido"
-                            disabled={!editMode}
+                            readOnly={!editMode}
                             {...form.getInputProps('apellido')}
                           />
                         </Grid.Col>
-                        
                         <Grid.Col span={{ base: 12, sm: 6 }}>
-                          <TextInput
+                          <ElegantTextInput
                             label="Email"
                             value={profile?.email || ''}
-                            disabled
+                            readOnly
                             leftSection={<IconMail size={16} />}
                             description="El email no se puede cambiar"
                           />
                         </Grid.Col>
-                        
                         <Grid.Col span={{ base: 12, sm: 6 }}>
-                          <TextInput
+                          <ElegantTextInput
                             label="Teléfono"
                             placeholder="Tu número de teléfono"
-                            disabled={!editMode}
+                            readOnly={!editMode}
                             leftSection={<IconPhone size={16} />}
                             {...form.getInputProps('telefono')}
                           />
                         </Grid.Col>
-                        
                         <Grid.Col span={{ base: 12, sm: 6 }}>
-                          <Select
+                          <ElegantSelect
+                            label="Universidad"
+                            placeholder="Selecciona tu universidad"
+                            readOnly={!editMode}
+                            searchable={editMode}
+                            data={PROFILE_CONSTANTS.UNIVERSIDADES_MEXICO}
+                            {...form.getInputProps('universidad')}
+                          />
+                        </Grid.Col>
+                        <Grid.Col span={{ base: 12, sm: 6 }}>
+                          <ElegantSelect
                             label="Género"
                             placeholder="Selecciona tu género"
-                            disabled={!editMode}
+                            readOnly={!editMode}
                             data={[
                               { value: 'M', label: 'Masculino' },
                               { value: 'F', label: 'Femenino' },
@@ -397,231 +382,186 @@ const ProfilePage: React.FC = () => {
                           />
                         </Grid.Col>
                       </Grid>
-                    </Card>
+                    </FormSection>
 
-                    {/* Información Académica */}
-                    <Card shadow="sm" padding="xl" radius="lg">
-                      <Title order={3} size="h3" mb="lg">
-                        <Group gap="sm">
-                          <IconSchool size={20} />
-                          Información Académica
-                        </Group>
-                      </Title>
-                      
-                      <Grid>
+                    {/* Academic Information */}
+                    <FormSection
+                      title="Información Académica"
+                      icon={<IconSchool size={20} />}
+                      gradientFrom="#8b5cf6"
+                      gradientTo="#ec4899"
+                    >
+                      <Grid gutter="lg">
                         <Grid.Col span={{ base: 12, sm: 6 }}>
-                          <Select
-                            label="Universidad"
-                            placeholder="Selecciona tu universidad"
-                            disabled={!editMode}
-                            searchable
-                            data={PROFILE_CONSTANTS.UNIVERSIDADES_MEXICO}
-                            {...form.getInputProps('universidad')}
-                          />
-                        </Grid.Col>
-                        
-                        <Grid.Col span={{ base: 12, sm: 6 }}>
-                          <TextInput
+                          <ElegantTextInput
                             label="Año de Graduación"
                             placeholder="2024"
-                            disabled={!editMode}
+                            readOnly={!editMode}
                             type="number"
                             min={1950}
                             max={new Date().getFullYear() + 10}
                             {...form.getInputProps('anioGraduacion')}
                           />
                         </Grid.Col>
-                        
-                        <Grid.Col span={12}>
-                          <Select
+                        <Grid.Col span={{ base: 12, sm: 6 }}>
+                          <ElegantSelect
                             label="Especialidad de Interés"
                             placeholder="¿Qué especialidad te interesa?"
-                            disabled={!editMode}
-                            searchable
+                            readOnly={!editMode}
+                            searchable={editMode}
                             data={PROFILE_CONSTANTS.ESPECIALIDADES_ENARM}
                             {...form.getInputProps('especialidadInteres')}
                           />
                         </Grid.Col>
                       </Grid>
-                    </Card>
+                    </FormSection>
 
+                    {/* Security Section */}
                     {editMode && (
-                      <Group justify="flex-end">
-                        <Button
-                          type="button"
-                          variant="light"
-                          onClick={() => {
-                            setEditMode(false);
-                            form.reset();
-                          }}
-                        >
-                          Cancelar
-                        </Button>
-                        <Button
-                          type="submit"
-                          loading={saving}
-                          leftSection={<IconCheck size={16} />}
-                        >
-                          Guardar Cambios
-                        </Button>
-                      </Group>
-                    )}
-                  </Stack>
-                </Grid.Col>
-
-                <Grid.Col span={{ base: 12, md: 4 }}>
-                  <Stack gap="lg">
-                    {/* Configuraciones */}
-                    <Card shadow="sm" padding="xl" radius="lg">
-                      <Title order={3} size="h4" mb="lg">
-                        Configuraciones
-                      </Title>
-                      
-                      <Stack gap="md">
-                        <Switch
-                          label="Recibir notificaciones"
-                          description="Recibir notificaciones por email"
-                          disabled={!editMode}
-                          {...form.getInputProps('recibirNotificaciones', { type: 'checkbox' })}
-                        />
-                        
-                        <Switch
-                          label="Newsletter"
-                          description="Recibir boletín informativo"
-                          disabled={!editMode}
-                          {...form.getInputProps('recibirNewsletters', { type: 'checkbox' })}
-                        />
-                        
-                        <Switch
-                          label="Perfil público"
-                          description="Otros usuarios pueden ver tu perfil"
-                          disabled={!editMode}
-                          {...form.getInputProps('perfilPublico', { type: 'checkbox' })}
-                        />
-                      </Stack>
-                    </Card>
-
-                    {/* Privacidad */}
-                    <Card shadow="sm" padding="xl" radius="lg">
-                      <Title order={3} size="h4" mb="lg">
-                        Privacidad
-                      </Title>
-                      
-                      <Stack gap="md">
-                        <Switch
-                          label="Mostrar email"
-                          description="Visible en tu perfil público"
-                          disabled={!editMode}
-                          {...form.getInputProps('privacy.mostrarEmail', { type: 'checkbox' })}
-                        />
-                        
-                        <Switch
-                          label="Mostrar teléfono"
-                          description="Visible en tu perfil público"
-                          disabled={!editMode}
-                          {...form.getInputProps('privacy.mostrarTelefono', { type: 'checkbox' })}
-                        />
-                        
-                        <Switch
-                          label="Permitir mensajes"
-                          description="Otros usuarios pueden enviarte mensajes"
-                          disabled={!editMode}
-                          {...form.getInputProps('privacy.permitirMensajes', { type: 'checkbox' })}
-                        />
-                        
-                        <Switch
-                          label="Mostrar estadísticas"
-                          description="Tus estadísticas de estudio serán públicas"
-                          disabled={!editMode}
-                          {...form.getInputProps('privacy.mostrarEstadisticas', { type: 'checkbox' })}
-                        />
-                      </Stack>
-                    </Card>
-
-                    {/* Estadísticas */}
-                    {profile?.stats && (
-                      <Card shadow="sm" padding="xl" radius="lg">
-                        <Title order={3} size="h4" mb="lg">
-                          Estadísticas
-                        </Title>
-                        
-                        <Stack gap="sm">
-                          <Group justify="space-between">
-                            <Text size="sm">Simulacros completados</Text>
-                            <Badge variant="light">{profile.stats.simulacrosCompletados}</Badge>
-                          </Group>
-                          
-                          <Group justify="space-between">
-                            <Text size="sm">Promedio general</Text>
-                            <Badge color={profile.stats.promedioGeneral >= 80 ? 'green' : 'yellow'}>
-                              {profile.stats.promedioGeneral}%
-                            </Badge>
-                          </Group>
-                          
-                          <Group justify="space-between">
-                            <Text size="sm">Tiempo de estudio</Text>
-                            <Text size="sm" fw={500}>
-                              {profile.stats.tiempoEstudioTotal} horas
-                            </Text>
-                          </Group>
-                          
-                          {profile.stats.especialidadFavorita && (
-                            <Group justify="space-between">
-                              <Text size="sm">Especialidad favorita</Text>
-                              <Text size="sm" fw={500}>
-                                {profile.stats.especialidadFavorita}
-                              </Text>
-                            </Group>
-                          )}
-                        </Stack>
-                      </Card>
+                      <FormSection
+                        title="Seguridad"
+                        icon={<IconLock size={20} />}
+                        gradientFrom="#f59e0b"
+                        gradientTo="#ef4444"
+                      >
+                        <Grid gutter="lg">
+                          <Grid.Col span={{ base: 12, sm: 6 }}>
+                            <ElegantPasswordInput
+                              label="Nueva Contraseña"
+                              placeholder="Dejar vacío para no cambiar"
+                            />
+                          </Grid.Col>
+                          <Grid.Col span={{ base: 12, sm: 6 }}>
+                            <ElegantPasswordInput
+                              label="Confirmar Contraseña"
+                              placeholder="Confirma la nueva contraseña"
+                            />
+                          </Grid.Col>
+                        </Grid>
+                      </FormSection>
                     )}
 
-                    {/* Información de cuenta */}
-                    <Card shadow="sm" padding="xl" radius="lg">
-                      <Title order={3} size="h4" mb="lg">
-                        Información de Cuenta
-                      </Title>
-                      
-                      <Stack gap="sm">
-                        <Group justify="space-between">
-                          <Text size="sm">Miembro desde</Text>
-                          <Text size="sm" fw={500}>
-                            {profile?.fechaRegistro ? 
-                              new Date(profile.fechaRegistro).toLocaleDateString('es-MX') : 
-                              'N/A'
-                            }
-                          </Text>
-                        </Group>
-                        
-                        <Group justify="space-between">
-                          <Text size="sm">Estado</Text>
-                          <Badge 
-                            color={profile?.estado === 'activo' ? 'green' : 'gray'}
-                            variant="light"
+                    {/* Settings and Privacy */}
+                    <Grid gutter="xl">
+                      <Grid.Col span={{ base: 12, lg: 6 }}>
+                        <FormSection
+                          title="Configuración"
+                          icon={<IconSettings size={20} />}
+                          gradientFrom="#10b981"
+                          gradientTo="#059669"
+                        >
+                          <Stack gap="md">
+                            <ElegantSwitch
+                              label="Recibir notificaciones"
+                              description="Recibir notificaciones por email"
+                              disabled={!editMode}
+                              checked={form.values.recibirNotificaciones}
+                              onChange={(event) =>
+                                form.setFieldValue('recibirNotificaciones', event.currentTarget.checked)
+                              }
+                            />
+                            <ElegantSwitch
+                              label="Newsletter"
+                              description="Recibir boletín informativo"
+                              disabled={!editMode}
+                              checked={form.values.recibirNewsletters}
+                              onChange={(event) =>
+                                form.setFieldValue('recibirNewsletters', event.currentTarget.checked)
+                              }
+                            />
+                            <ElegantSwitch
+                              label="Perfil público"
+                              description="Otros usuarios pueden ver tu perfil"
+                              disabled={!editMode}
+                              checked={form.values.perfilPublico}
+                              onChange={(event) =>
+                                form.setFieldValue('perfilPublico', event.currentTarget.checked)
+                              }
+                            />
+                          </Stack>
+                        </FormSection>
+                      </Grid.Col>
+
+                      <Grid.Col span={{ base: 12, lg: 6 }}>
+                        <FormSection
+                          title="Privacidad"
+                          icon={<IconShield size={20} />}
+                          gradientFrom="#6366f1"
+                          gradientTo="#3b82f6"
+                        >
+                          <Stack gap="md">
+                            <ElegantSwitch
+                              label="Mostrar email"
+                              description="Visible en tu perfil público"
+                              disabled={!editMode}
+                              checked={form.values.privacy?.mostrarEmail}
+                              onChange={(event) =>
+                                form.setFieldValue('privacy.mostrarEmail', event.currentTarget.checked)
+                              }
+                            />
+                            <ElegantSwitch
+                              label="Mostrar teléfono"
+                              description="Visible en tu perfil público"
+                              disabled={!editMode}
+                              checked={form.values.privacy?.mostrarTelefono}
+                              onChange={(event) =>
+                                form.setFieldValue('privacy.mostrarTelefono', event.currentTarget.checked)
+                              }
+                            />
+                            <ElegantSwitch
+                              label="Permitir mensajes"
+                              description="Otros usuarios pueden enviarte mensajes"
+                              disabled={!editMode}
+                              checked={form.values.privacy?.permitirMensajes}
+                              onChange={(event) =>
+                                form.setFieldValue('privacy.permitirMensajes', event.currentTarget.checked)
+                              }
+                            />
+                            <ElegantSwitch
+                              label="Mostrar estadísticas"
+                              description="Tus estadísticas serán públicas"
+                              disabled={!editMode}
+                              checked={form.values.privacy?.mostrarEstadisticas}
+                              onChange={(event) =>
+                                form.setFieldValue('privacy.mostrarEstadisticas', event.currentTarget.checked)
+                              }
+                            />
+                          </Stack>
+                        </FormSection>
+                      </Grid.Col>
+                    </Grid>
+
+                    {/* Action Buttons */}
+                    {editMode && (
+                      <GradientCard p="lg" radius="xl">
+                        <Group justify="flex-end" gap="lg">
+                          <ElegantButton
+                            variant="secondary"
+                            onClick={() => {
+                              setEditMode(false);
+                              form.reset();
+                            }}
                           >
-                            {profile?.estado || 'desconocido'}
-                          </Badge>
+                            Cancelar
+                          </ElegantButton>
+                          <ElegantButton
+                            variant="primary"
+                            type="submit"
+                            loading={saving}
+                            leftSection={<IconCheck size={16} />}
+                          >
+                            Guardar Cambios
+                          </ElegantButton>
                         </Group>
-                        
-                        <Group justify="space-between">
-                          <Text size="sm">Última actividad</Text>
-                          <Text size="sm" fw={500}>
-                            {profile?.ultimaActividad ? 
-                              new Date(profile.ultimaActividad).toLocaleDateString('es-MX') : 
-                              'N/A'
-                            }
-                          </Text>
-                        </Group>
-                      </Stack>
-                    </Card>
+                      </GradientCard>
+                    )}
                   </Stack>
-                </Grid.Col>
-              </Grid>
-            </form>
-          </Stack>
+                </form>
+              </Stack>
+            )}
+          </Transition>
         </Container>
-      </div>
+      </Box>
     </PageTransition>
   );
 };

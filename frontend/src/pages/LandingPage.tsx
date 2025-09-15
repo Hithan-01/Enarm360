@@ -27,6 +27,16 @@ const LandingPage: React.FC = () => {
   const navigate = useNavigate();
   const { colorScheme } = useMantineColorScheme();
 
+  const scrollToPrecios = () => {
+    const element = document.getElementById('precios');
+    if (element) {
+      element.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }
+  };
+
   return (
     <PageTransition type="medical" duration={800}>
       <style>
@@ -175,7 +185,7 @@ const LandingPage: React.FC = () => {
         }} />
 
         <div style={{ position: 'relative', zIndex: 10 }}>
-          <Navbar />
+          <Navbar showThemeToggle={false} />
         </div>
 
         {/* Hero Section */}
@@ -280,10 +290,10 @@ const LandingPage: React.FC = () => {
                 marginTop: '2rem'
               }}>
                 <Group gap="lg" justify="center" style={{ flexWrap: 'wrap' }}>
-                  <Button 
+                  <Button
                     size="xl"
-                    onClick={() => navigate('/login')}
-                    style={{ 
+                    onClick={scrollToPrecios}
+                    style={{
                       fontSize: '1.3rem',
                       padding: '1.8rem 4.5rem',
                       backgroundColor: 'rgb(196, 213, 70)',
@@ -335,12 +345,12 @@ const LandingPage: React.FC = () => {
                     </span>
                   </Button>
                   
-                  <Button 
+                  <Button
                     variant="outline"
                     size="xl"
-                    style={{ 
+                    style={{
                       fontSize: '1.2rem',
-                      padding: '1.8rem 3.5rem',
+                      padding: '2rem 3.5rem',
                       backgroundColor: 'transparent',
                       color: 'white',
                       border: '2px solid rgba(255, 255, 255, 0.3)',
@@ -349,7 +359,10 @@ const LandingPage: React.FC = () => {
                       transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
                       cursor: 'pointer',
                       letterSpacing: '0.01em',
-                      minHeight: '64px'
+                      height: 'auto',
+                      lineHeight: '1.2',
+                      whiteSpace: 'nowrap',
+                      overflow: 'visible'
                     }}
                     onMouseEnter={(e) => {
                       e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
@@ -972,7 +985,7 @@ const LandingPage: React.FC = () => {
                       justifyContent: 'center',
                       marginBottom: '1.5rem'
                     }}>
-                      <Text size="1.3rem" fw={600} style={{ color: 'white' }}>⚡</Text>
+                      <Text size="1.2rem" fw={700} style={{ color: 'white' }}>P</Text>
                     </div>
                     <Title order={3} size="1.5rem" fw={700} style={{ 
                       color: 'rgb(54, 71, 91)', 
@@ -1024,7 +1037,7 @@ const LandingPage: React.FC = () => {
                       justifyContent: 'center',
                       marginBottom: '1.5rem'
                     }}>
-                      <Text size="1.3rem" fw={600} style={{ color: 'rgb(54, 71, 91)' }}>📊</Text>
+                      <Text size="1.2rem" fw={700} style={{ color: 'rgb(54, 71, 91)' }}>H</Text>
                     </div>
                     <Title order={3} size="1.5rem" fw={700} style={{ 
                       color: 'rgb(54, 71, 91)', 
@@ -1070,9 +1083,9 @@ const LandingPage: React.FC = () => {
         </div>
 
         {/* Pricing Section */}
-        <div style={{ 
-          width: '100vw', 
-          marginLeft: 'calc(-50vw + 50%)', 
+        <div id="precios" style={{
+          width: '100vw',
+          marginLeft: 'calc(-50vw + 50%)',
           background: 'white',
           padding: '8rem 0'
         }}>

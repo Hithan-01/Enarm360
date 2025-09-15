@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Card,
@@ -26,8 +26,8 @@ interface NavbarProps {
   };
 }
 
-const Navbar: React.FC<NavbarProps> = ({ 
-  showAuthButtons = true, 
+const Navbar: React.FC<NavbarProps> = ({
+  showAuthButtons = true,
   showThemeToggle = true,
   onLogout,
   userRole,
@@ -35,24 +35,54 @@ const Navbar: React.FC<NavbarProps> = ({
 }) => {
   const navigate = useNavigate();
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const isScrolled = window.scrollY > 20;
+      setScrolled(isScrolled);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const handleLogoClick = () => {
+    if (userRole === 'admin') {
+      navigate('/admin/dashboard');
+    } else if (userRole === 'student') {
+      navigate('/estudiante/dashboard');
+    } else {
+      navigate('/');
+    }
+  };
 
   return (
-    <Card 
+    <Card
       withBorder={false}
-      mb="xl" 
+      mb="xl"
       p="lg"
       radius={0}
       style={{
-        background: colorScheme === 'dark' 
-          ? 'rgba(30, 30, 40, 0.95)'
-          : 'rgba(255, 255, 255, 0.95)',
-        backdropFilter: 'blur(20px)',
-        borderBottom: colorScheme === 'dark' 
-          ? '1px solid rgba(55, 65, 81, 0.6)'
-          : '1px solid rgba(226, 232, 240, 0.6)',
+        background: scrolled
+          ? colorScheme === 'dark'
+            ? 'rgba(30, 41, 59, 0.7)'
+            : 'rgba(255, 255, 255, 0.25)'
+          : 'transparent',
+        backdropFilter: scrolled ? 'blur(40px) saturate(200%)' : 'none',
+        WebkitBackdropFilter: scrolled ? 'blur(40px) saturate(200%)' : 'none',
+        borderBottom: scrolled
+          ? `1px solid ${colorScheme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.5)'}`
+          : 'none',
         position: 'sticky',
         top: 0,
-        zIndex: 100
+        zIndex: 100,
+        transition: 'all 0.3s ease',
+        boxShadow: scrolled
+          ? colorScheme === 'dark'
+            ? 'inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 4px 20px rgba(0, 0, 0, 0.3)'
+            : '0 4px 16px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.6)'
+          : 'none',
       }}
     >
       <div style={{ 
@@ -63,17 +93,17 @@ const Navbar: React.FC<NavbarProps> = ({
         padding: '0 2rem'
       }}>
         <Group align="center" gap="xs">
-          <Image 
-            src={enarmLogo} 
-            alt="ENARM360 Logo" 
+          <Image
+            src={enarmLogo}
+            alt="ENARM360 Logo"
             height={50}
             fit="contain"
-            style={{ 
+            style={{
               borderRadius: '8px',
               maxWidth: '200px',
               cursor: 'pointer'
             }}
-            onClick={() => navigate('/')}
+            onClick={handleLogoClick}
           />
         </Group>
         
@@ -91,11 +121,12 @@ const Navbar: React.FC<NavbarProps> = ({
           
           {showAuthButtons && !userRole && (
             <>
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 style={{
-                  borderColor: 'rgb(54, 71, 91)',
-                  color: 'rgb(54, 71, 91)'
+                  borderColor: 'white',
+                  color: 'white',
+                  backgroundColor: 'transparent'
                 }}
                 onClick={() => navigate('/login')}
                 size="sm"
@@ -160,17 +191,10 @@ const Navbar: React.FC<NavbarProps> = ({
                 
                 <Menu.Label>Cuenta</Menu.Label>
                 <Menu.Item
-                  leftSection={<IconUser size={14} />}
-                  onClick={() => navigate('/profile')}
-                >
-                  Mi Perfil
-                </Menu.Item>
-                
-                <Menu.Item
                   leftSection={<IconSettings size={14} />}
                   onClick={() => navigate('/settings')}
                 >
-                  Configuraciones
+                  Configuración
                 </Menu.Item>
                 
                 <Menu.Divider />

@@ -19,6 +19,8 @@ export interface UsuarioInfo {
   email: string;
   roles: string[];
   activo: boolean;
+  nombre?: string;
+  apellidos?: string;
 }
 
 export interface RefreshTokenRequest {
@@ -52,6 +54,9 @@ export interface AdminDashboardData {
     usuariosActivos: number;
     preguntasTotales: number;
     examenesCreados: number;
+    preguntasPendientes: number;
+    suscripcionesActivas: number;
+    ingresosMensuales: number;
   };
   actions: string[];
   accessLevel: string;

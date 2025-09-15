@@ -19,7 +19,7 @@ import {
   ActionIcon
 } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
-import { IconStethoscope, IconUser, IconLock, IconAlertCircle, IconSun, IconMoon } from '@tabler/icons-react';
+import { IconStethoscope, IconUser, IconLock, IconAlertCircle, IconSun, IconMoon, IconBrandGoogle, IconBrandFacebook, IconBrandApple } from '@tabler/icons-react';
 import authService from '../services/authService';
 import { LoginRequest, UserRole } from '../types/auth';
 import enarmLogo from '../assets/enarm_logo.png';
@@ -31,10 +31,24 @@ const Login: React.FC = () => {
   });
   const [error, setError] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
+  const [isTransitioning, setIsTransitioning] = useState<boolean>(false);
   const navigate = useNavigate();
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
 
   // No hacer redirección automática al cargar - solo al hacer login
+
+  const handleThemeToggle = () => {
+    setIsTransitioning(true);
+
+    // Cambiar tema con transición CSS suave simple
+    setTimeout(() => {
+      toggleColorScheme();
+    }, 150);
+
+    setTimeout(() => {
+      setIsTransitioning(false);
+    }, 600);
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -56,8 +70,8 @@ const Login: React.FC = () => {
       console.log('Response completa:', JSON.stringify(response, null, 2));
       
       notifications.show({
-        title: 'Login Exitoso',
-        message: 'Redirigiendo al panel de control...',
+        title: 'Login Successful',
+        message: 'Redirecting to dashboard...',
         color: 'blue',
         autoClose: 2000,
       });
@@ -105,21 +119,21 @@ const Login: React.FC = () => {
     } catch (err: any) {
       console.error('Error en login:', err);
       
-      let errorMessage = 'Error del servidor. Inténtalo de nuevo.';
+      let errorMessage = 'Server error. Please try again.';
       
       if (err.response?.status === 401) {
-        errorMessage = 'Credenciales inválidas';
+        errorMessage = 'Invalid credentials';
       } else if (err.response?.status === 423) {
-        errorMessage = 'Usuario bloqueado';
+        errorMessage = 'User blocked';
       } else if (err.response?.status === 403) {
-        errorMessage = 'Usuario deshabilitado';
+        errorMessage = 'User disabled';
       } else if (err.response?.data?.message) {
         errorMessage = err.response.data.message;
       }
       
       setError(errorMessage);
       notifications.show({
-        title: 'Error de Autenticación',
+        title: 'Authentication Error',
         message: errorMessage,
         color: 'red',
         autoClose: 4000,
@@ -130,39 +144,84 @@ const Login: React.FC = () => {
   };
 
   return (
-    <Box
+    <>
+      <style>
+        {`
+          /* Smooth theme transitions */
+          * {
+            transition: background-color 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                        color 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                        border-color 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                        box-shadow 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                        backdrop-filter 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
+          }
+
+          /* Theme toggle button animations */
+          [data-theme-toggle] {
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+          }
+
+          [data-theme-toggle]:hover {
+            transform: scale(1.08) rotate(15deg);
+            box-shadow: 0 6px 20px rgba(14, 165, 233, 0.4);
+          }
+
+          [data-theme-toggle]:active {
+            transform: scale(0.95) rotate(30deg);
+          }
+        `}
+      </style>
+      <Box
       style={{
         minHeight: '100vh',
         width: '100vw',
-        background: colorScheme === 'dark' 
-          ? 'linear-gradient(135deg, #1a1b23 0%, #2d3142 100%)'
+        background: colorScheme === 'dark'
+          ? 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)'
           : 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
         position: 'relative',
         overflow: 'hidden'
       }}
     >
-      {/* Background Pattern */}
-      <div style={{
-        position: 'absolute',
-        inset: 0,
-        backgroundImage: colorScheme === 'dark'
-          ? `url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><pattern id='grid' width='20' height='20' patternUnits='userSpaceOnUse'><path d='M 20 0 L 0 0 0 20' fill='none' stroke='%23374151' stroke-width='0.5' opacity='0.2'/></pattern></defs><rect width='100' height='100' fill='url(%23grid)'/></svg>")`
-          : `url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><pattern id='grid' width='20' height='20' patternUnits='userSpaceOnUse'><path d='M 20 0 L 0 0 0 20' fill='none' stroke='%23e2e8f0' stroke-width='0.5' opacity='0.3'/></pattern></defs><rect width='100' height='100' fill='url(%23grid)'/></svg>")`,
-        opacity: 0.3,
-        pointerEvents: 'none'
-      }} />
+      {/* Textura de fondo */}
+      <Box
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundImage: colorScheme === 'dark'
+            ? `url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="%23374151" stroke-width="0.5" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>')`
+            : `url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="%23e2e8f0" stroke-width="0.5" opacity="0.2"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>')`,
+          opacity: 0.5,
+          pointerEvents: 'none',
+          zIndex: 0,
+        }}
+      />
 
       {/* Dark Mode Toggle */}
       <ActionIcon
-        onClick={toggleColorScheme}
+        onClick={handleThemeToggle}
         variant="light"
         size="lg"
         radius="xl"
+        data-theme-toggle
+        disabled={isTransitioning}
         style={{
           position: 'absolute',
           top: '2rem',
           right: '2rem',
-          zIndex: 10
+          zIndex: 10,
+          backgroundColor: colorScheme === 'dark'
+            ? 'rgba(30, 41, 59, 0.8)'
+            : 'rgba(255, 255, 255, 0.8)',
+          backdropFilter: 'blur(20px) saturate(180%)',
+          WebkitBackdropFilter: 'blur(20px) saturate(180%)',
+          border: `1px solid ${colorScheme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.5)'}`,
+          boxShadow: colorScheme === 'dark'
+            ? '0 4px 16px rgba(0, 0, 0, 0.3)'
+            : '0 4px 16px rgba(0, 0, 0, 0.1)',
+          transition: 'inherit',
         }}
       >
         {colorScheme === 'dark' ? <IconSun size={20} /> : <IconMoon size={20} />}
@@ -176,22 +235,21 @@ const Login: React.FC = () => {
         zIndex: 1
       }}>
         <Container size={420} style={{ width: '100%', maxWidth: '420px' }}>
-        <Paper 
-          radius="xl" 
-          p="xl" 
+        <Paper
+          radius="xl"
+          p="xl"
           withBorder
           style={{
             width: '100%',
-            background: colorScheme === 'dark' 
-              ? 'rgba(30, 30, 40, 0.95)'
-              : 'rgba(255, 255, 255, 0.95)',
-            backdropFilter: 'blur(20px)',
-            border: colorScheme === 'dark' 
-              ? '1px solid rgba(55, 65, 81, 0.6)'
-              : '1px solid rgba(226, 232, 240, 0.6)',
+            backgroundColor: colorScheme === 'dark'
+              ? 'rgba(30, 41, 59, 0.7)'
+              : 'rgba(255, 255, 255, 0.25)',
+            backdropFilter: 'blur(40px) saturate(200%)',
+            WebkitBackdropFilter: 'blur(40px) saturate(200%)',
+            border: `1px solid ${colorScheme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.5)'}`,
             boxShadow: colorScheme === 'dark'
-              ? '0 25px 50px rgba(0, 0, 0, 0.3), 0 8px 16px rgba(0, 0, 0, 0.2)'
-              : '0 25px 50px rgba(15, 23, 42, 0.1), 0 8px 16px rgba(15, 23, 42, 0.05)'
+              ? 'inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 4px 20px rgba(0, 0, 0, 0.3)'
+              : '0 4px 16px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.6)',
           }}
         >
           <Stack gap="lg">
@@ -218,37 +276,90 @@ const Login: React.FC = () => {
             <form onSubmit={handleSubmit}>
               <Stack gap="md">
                 <TextInput
-                  label="Usuario o Email"
-                  placeholder="Ingresa tu usuario o email"
+                  placeholder="Email"
                   name="login"
                   value={credentials.login}
                   onChange={handleChange}
                   required
                   disabled={loading}
                   leftSection={<IconUser size={16} />}
-                  radius="md"
-                  size="md"
+                  radius="xl"
+                  size="lg"
+                  styles={{
+                    input: {
+                      backgroundColor: colorScheme === 'dark'
+                        ? 'rgba(30, 41, 59, 0.6)'
+                        : 'rgba(255, 255, 255, 0.2)',
+                      backdropFilter: 'blur(40px) saturate(200%)',
+                      WebkitBackdropFilter: 'blur(40px) saturate(200%)',
+                      border: `1px solid ${colorScheme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.4)'}`,
+                      boxShadow: colorScheme === 'dark'
+                        ? 'inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 4px 16px rgba(0, 0, 0, 0.2)'
+                        : '0 4px 16px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.6)',
+                      color: colorScheme === 'dark' ? '#e2e8f0' : '#1e293b',
+                      fontFamily: 'Inter, sans-serif',
+                    }
+                  }}
                 />
 
                 <PasswordInput
-                  label="Contraseña"
-                  placeholder="Ingresa tu contraseña"
+                  placeholder="Password"
                   name="password"
                   value={credentials.password}
                   onChange={handleChange}
                   required
                   disabled={loading}
                   leftSection={<IconLock size={16} />}
-                  radius="md"
-                  size="md"
+                  radius="xl"
+                  size="lg"
+                  styles={{
+                    input: {
+                      backgroundColor: colorScheme === 'dark'
+                        ? 'rgba(30, 41, 59, 0.6)'
+                        : 'rgba(255, 255, 255, 0.2)',
+                      backdropFilter: 'blur(40px) saturate(200%)',
+                      WebkitBackdropFilter: 'blur(40px) saturate(200%)',
+                      border: `1px solid ${colorScheme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.4)'}`,
+                      boxShadow: colorScheme === 'dark'
+                        ? 'inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 4px 16px rgba(0, 0, 0, 0.2)'
+                        : '0 4px 16px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.6)',
+                      color: colorScheme === 'dark' ? '#e2e8f0' : '#1e293b',
+                      fontFamily: 'Inter, sans-serif',
+                    }
+                  }}
                 />
 
+                <Group justify="flex-end">
+                  <Text
+                    size="sm"
+                    style={{
+                      color: colorScheme === 'dark' ? '#94a3b8' : '#64748b',
+                      cursor: 'pointer',
+                      fontFamily: 'Inter, sans-serif',
+                    }}
+                    onClick={() => {
+                      // TODO: Implement password recovery logic
+                      console.log('Recover password');
+                    }}
+                  >
+                    Forgot password?
+                  </Text>
+                </Group>
+
                 {error && (
-                  <Alert 
-                    icon={<IconAlertCircle size={16} />} 
-                    color="red" 
-                    radius="md"
+                  <Alert
+                    icon={<IconAlertCircle size={16} />}
+                    color="red"
+                    radius="xl"
                     variant="light"
+                    style={{
+                      backgroundColor: colorScheme === 'dark'
+                        ? 'rgba(239, 68, 68, 0.1)'
+                        : 'rgba(239, 68, 68, 0.05)',
+                      backdropFilter: 'blur(20px) saturate(180%)',
+                      WebkitBackdropFilter: 'blur(20px) saturate(180%)',
+                      border: `1px solid rgba(239, 68, 68, 0.2)`,
+                    }}
                   >
                     {error}
                   </Alert>
@@ -259,22 +370,130 @@ const Login: React.FC = () => {
                   fullWidth
                   loading={loading}
                   disabled={!credentials.login || !credentials.password}
-                  size="md"
-                  radius="md"
-                  gradient={{ from: 'blue', to: 'cyan' }}
-                  variant="gradient"
-                  style={{ marginTop: '0.5rem' }}
+                  size="lg"
+                  radius="xl"
+                  variant="light"
+                  style={{
+                    marginTop: '0.5rem',
+                    backgroundColor: colorScheme === 'dark'
+                      ? 'rgba(30, 41, 59, 0.8)'
+                      : 'rgba(255, 255, 255, 0.3)',
+                    backdropFilter: 'blur(40px) saturate(200%)',
+                    WebkitBackdropFilter: 'blur(40px) saturate(200%)',
+                    border: `1px solid ${colorScheme === 'dark' ? 'rgba(255, 255, 255, 0.2)' : 'rgba(255, 255, 255, 0.6)'}`,
+                    boxShadow: colorScheme === 'dark'
+                      ? 'inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 4px 20px rgba(0, 0, 0, 0.3)'
+                      : '0 4px 16px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.6)',
+                    color: colorScheme === 'dark' ? '#e2e8f0' : '#1e293b',
+                    fontFamily: 'Space Grotesk, Inter, sans-serif',
+                    fontWeight: 600,
+                    letterSpacing: '0.025em',
+                    transition: 'all 0.3s ease',
+                  }}
                 >
-                  {loading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
+                  {loading ? 'Signing in...' : 'Sign In'}
                 </Button>
               </Stack>
             </form>
 
+            {/* Divider */}
+            <Group justify="center" gap="md" my="lg">
+              <Box style={{
+                flex: 1,
+                height: '1px',
+                backgroundColor: colorScheme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
+                backdropFilter: 'blur(10px)',
+                WebkitBackdropFilter: 'blur(10px)',
+              }} />
+              <Text size="sm" c="dimmed" style={{ fontFamily: 'Inter, sans-serif' }}>
+                or continue with
+              </Text>
+              <Box style={{
+                flex: 1,
+                height: '1px',
+                backgroundColor: colorScheme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
+                backdropFilter: 'blur(10px)',
+                WebkitBackdropFilter: 'blur(10px)',
+              }} />
+            </Group>
+
+            {/* Social Login Buttons */}
+            <Group justify="center" gap="md" mb="lg">
+              <ActionIcon
+                size="xl"
+                radius="xl"
+                variant="light"
+                style={{
+                  backgroundColor: colorScheme === 'dark'
+                    ? 'rgba(219, 68, 55, 0.1)'
+                    : 'rgba(219, 68, 55, 0.05)',
+                  color: '#db4437',
+                  border: `1px solid rgba(219, 68, 55, 0.2)`,
+                  backdropFilter: 'blur(20px) saturate(180%)',
+                  WebkitBackdropFilter: 'blur(20px) saturate(180%)',
+                }}
+                onClick={() => {
+                  // TODO: Implement Google OAuth
+                  console.log('Login with Google');
+                }}
+              >
+                <IconBrandGoogle size={20} />
+              </ActionIcon>
+
+              <ActionIcon
+                size="xl"
+                radius="xl"
+                variant="light"
+                style={{
+                  backgroundColor: colorScheme === 'dark'
+                    ? 'rgba(59, 89, 152, 0.1)'
+                    : 'rgba(59, 89, 152, 0.05)',
+                  color: '#3b5998',
+                  border: `1px solid rgba(59, 89, 152, 0.2)`,
+                  backdropFilter: 'blur(20px) saturate(180%)',
+                  WebkitBackdropFilter: 'blur(20px) saturate(180%)',
+                }}
+                onClick={() => {
+                  // TODO: Implement Facebook OAuth
+                  console.log('Login with Facebook');
+                }}
+              >
+                <IconBrandFacebook size={20} />
+              </ActionIcon>
+
+              <ActionIcon
+                size="xl"
+                radius="xl"
+                variant="light"
+                style={{
+                  backgroundColor: colorScheme === 'dark'
+                    ? 'rgba(0, 0, 0, 0.1)'
+                    : 'rgba(0, 0, 0, 0.05)',
+                  color: colorScheme === 'dark' ? '#ffffff' : '#000000',
+                  border: `1px solid ${colorScheme === 'dark' ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.2)'}`,
+                  backdropFilter: 'blur(20px) saturate(180%)',
+                  WebkitBackdropFilter: 'blur(20px) saturate(180%)',
+                }}
+                onClick={() => {
+                  // TODO: Implement Apple OAuth
+                  console.log('Login with Apple');
+                }}
+              >
+                <IconBrandApple size={20} />
+              </ActionIcon>
+            </Group>
+
             <Center>
               <Text size="sm" c="dimmed">
-                ¿No tienes una cuenta?{' '}
-                <Text component="span" size="sm" c="blue" style={{ cursor: 'pointer', fontWeight: 500 }}>
-                  Contacta al administrador
+                Don't have an account?{' '}
+                <Text
+                  component="span"
+                  size="sm"
+                  c="blue"
+                  style={{ cursor: 'pointer', fontWeight: 500 }}
+                  onClick={() => navigate('/register')}
+                >
+                  Sign up here
                 </Text>
               </Text>
             </Center>
@@ -283,6 +502,7 @@ const Login: React.FC = () => {
         </Container>
       </div>
     </Box>
+    </>
   );
 };
 
