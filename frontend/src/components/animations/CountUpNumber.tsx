@@ -81,10 +81,10 @@ const CountUpNumber: React.FC<CountUpNumberProps> = ({
       <Text
         fw={fw}
         size={size}
-        c={c}
         style={{
           fontVariantNumeric: 'tabular-nums',
           transition: 'all 0.3s ease',
+          color: style?.color || (c === 'dark' ? '#1e293b' : c),
           ...style
         }}
       >

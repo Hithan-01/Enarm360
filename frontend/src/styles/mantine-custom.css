@@ -1,91 +1,21 @@
-/* Advanced hover effects for Mantine components */
+/* Advanced hover effects for Mantine components - DISABLED */
 .hover-lift {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
-  overflow: hidden;
+  /* No hover effects */
 }
 
-.hover-lift::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(14, 165, 233, 0.1), transparent);
-  transition: left 0.5s;
-  z-index: 1;
-}
-
-.hover-lift:hover::before {
-  left: 100%;
-}
-
-.hover-lift:hover {
-  transform: translateY(-6px) scale(1.02);
-  box-shadow: 
-    0 25px 50px rgba(14, 165, 233, 0.15),
-    0 12px 24px rgba(14, 165, 233, 0.1) !important;
-}
-
-/* Medical-themed card animations */
+/* Medical-themed card animations - DISABLED */
 .medical-card {
-  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  position: relative;
-  overflow: hidden;
+  /* No animations */
 }
 
-.medical-card::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: linear-gradient(90deg, #0ea5e9, #10b981, #8b5cf6);
-  transform: scaleX(0);
-  transition: transform 0.3s ease-out;
-  transform-origin: left;
-}
-
-.medical-card:hover::after {
-  transform: scaleX(1);
-}
-
-.medical-card:hover {
-  transform: translateY(-8px) rotateX(2deg);
-  box-shadow: 
-    0 30px 60px rgba(14, 165, 233, 0.2),
-    0 15px 30px rgba(16, 185, 129, 0.1),
-    0 8px 16px rgba(139, 92, 246, 0.05) !important;
-}
-
-/* Pulse animation for stats */
+/* Pulse animation for stats - DISABLED */
 .medical-stat {
-  animation: medicalPulse 2s ease-in-out infinite;
+  /* No animations */
 }
 
-@keyframes medicalPulse {
-  0%, 100% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.05);
-  }
-}
-
-/* Breathing animation */
+/* Breathing animation - DISABLED */
 .breathing {
-  animation: breathe 4s ease-in-out infinite;
-}
-
-@keyframes breathe {
-  0%, 100% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.03);
-  }
+  /* No animations */
 }
 
 /* Custom animations */
@@ -126,17 +56,10 @@
   border: 1px solid rgba(226, 232, 240, 0.6) !important;
 }
 
-/* Professional button styles */
+/* Professional button styles - HOVER DISABLED */
 .btn-medical-primary {
-  background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%) !important;
+  background: #0ea5e9 !important;
   border: none !important;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
-}
-
-.btn-medical-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 24px rgba(14, 165, 233, 0.3) !important;
-  background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%) !important;
 }
 
 /* Professional text gradients */

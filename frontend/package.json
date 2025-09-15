@@ -6,6 +6,7 @@
     "@emotion/react": "^11.14.0",
     "@mantine/charts": "^8.3.1",
     "@mantine/core": "^8.3.1",
+    "@mantine/form": "^8.3.1",
     "@mantine/hooks": "^8.3.1",
     "@mantine/notifications": "^8.3.1",
     "@tabler/icons-react": "^3.34.1",
@@ -49,5 +50,10 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.21",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^3.4.17"
   }
 }

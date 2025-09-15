@@ -201,7 +201,7 @@
 							<outputDirectory>src/main/resources/static</outputDirectory>
 							<resources>
 								<resource>
-									<directory>../frontend/build</directory>
+									<directory>${session.executionRootDirectory}/frontend/build</directory>
 									<filtering>false</filtering>
 								</resource>
 							</resources>
