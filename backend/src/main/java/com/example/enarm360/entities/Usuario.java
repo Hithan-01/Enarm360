@@ -13,7 +13,7 @@ import java.util.Set;
 @Entity
 @Table(name = "usuario")
 @Data
-@EqualsAndHashCode(exclude = {"roles", "permisos", "sesiones", "eventosAuditoria", "casosCreados", "preguntasCreadas", "preguntasRevisadas", "preguntasAprobadas", "revisionesRealizadas", "examenesCreados", "intentosExamen", "flashcardsCreadas"})
+@EqualsAndHashCode(exclude = {"roles", "permisos", "sesiones", "eventosAuditoria"})
 @ToString(exclude = {"roles", "permisos", "sesiones"})
 @NoArgsConstructor
 @AllArgsConstructor
@@ -82,35 +82,4 @@ public class Usuario {
     @Builder.Default
     private List<EventoAuditoria> eventosAuditoria = new ArrayList<>();
     
-    @OneToMany(mappedBy = "creadoPor")
-    @Builder.Default
-    private List<CasoClinico> casosCreados = new ArrayList<>();
-    
-    @OneToMany(mappedBy = "creadaPor")
-    @Builder.Default
-    private List<Pregunta> preguntasCreadas = new ArrayList<>();
-    
-    @OneToMany(mappedBy = "revisadaPor")
-    @Builder.Default
-    private List<Pregunta> preguntasRevisadas = new ArrayList<>();
-    
-    @OneToMany(mappedBy = "aprobadaPor")
-    @Builder.Default
-    private List<Pregunta> preguntasAprobadas = new ArrayList<>();
-    
-    @OneToMany(mappedBy = "revisor")
-    @Builder.Default
-    private List<RevisionPregunta> revisionesRealizadas = new ArrayList<>();
-    
-    @OneToMany(mappedBy = "creadoPor")
-    @Builder.Default
-    private List<Examen> examenesCreados = new ArrayList<>();
-    
-    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
-    @Builder.Default
-    private List<IntentoExamen> intentosExamen = new ArrayList<>();
-    
-    @OneToMany(mappedBy = "creadaPor")
-    @Builder.Default
-    private List<Flashcard> flashcardsCreadas = new ArrayList<>();
 }
