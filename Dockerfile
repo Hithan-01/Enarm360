@@ -4,22 +4,17 @@ FROM openjdk:17-jdk-slim
 # Establecer el directorio de trabajo
 WORKDIR /app
 
-# Copiar el archivo pom.xml y el wrapper de Maven
-COPY backend/pom.xml .
-COPY backend/mvnw .
-COPY backend/.mvn .mvn
+# Copiar TODA la estructura del proyecto (backend y frontend)
+COPY . .
+
+# Cambiar al directorio backend
+WORKDIR /app/backend
 
 # Dar permisos de ejecución al wrapper de Maven
 RUN chmod +x ./mvnw
 
-# Descargar las dependencias (esto se cachea si pom.xml no cambia)
-RUN ./mvnw dependency:go-offline -B
-
-# Copiar el código fuente del backend
-COPY backend/src src
-
-# Construir la aplicación
-RUN ./mvnw clean package -DskipTests
+# Construir la aplicación (salteando el frontend plugin)
+RUN ./mvnw clean package -DskipTests -Dmaven.frontend.skip=true
 
 # Exponer el puerto que usa Render
 EXPOSE $PORT
