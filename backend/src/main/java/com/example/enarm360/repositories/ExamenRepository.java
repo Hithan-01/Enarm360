@@ -1,11 +1,7 @@
 package com.example.enarm360.repositories;
-import com.example.enarm360.entities.Especialidad;
 import com.example.enarm360.entities.Examen;
-import com.example.enarm360.entities.Reactivo;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import java.util.List;
 

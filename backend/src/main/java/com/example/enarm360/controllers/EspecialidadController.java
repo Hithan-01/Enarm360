@@ -1,7 +1,6 @@
 package com.example.enarm360.controllers;
 
 import com.example.enarm360.dtos.EspecialidadDTO;
-import com.example.enarm360.entities.Especialidad;
 import com.example.enarm360.repositories.EspecialidadRepository;    
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
