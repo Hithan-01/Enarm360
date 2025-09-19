@@ -23,6 +23,11 @@ import UserStatisticsPage from './pages/admin/UserStatisticsPage';
 import SubscriptionsPage from './pages/admin/SubscriptionsPage';
 import QuestionDatabasePage from './pages/admin/QuestionDatabasePage';
 import UserPermissionsPage from './pages/admin/UserPermissionsPage';
+import ResultadosPage from './pages/ResultadosPage';
+
+//Páginas de examen
+import ExamenPage from './pages/ExamenPage';
+
 import './App.css';
 import '@mantine/core/styles.css';
 import '@mantine/notifications/styles.css';
@@ -180,6 +185,19 @@ function App() {
                   </ProtectedRoute>
                 }
               />
+
+              {/* Página de examen - solo accesible por estudiantes */}
+              <Route
+                path="/examen/:id"
+                element={
+                  <ProtectedRoute requiredRole="ESTUDIANTE">
+                    <ExamenPage />
+                  </ProtectedRoute>
+                }
+              />
+              {/* Página de resultados del examen - solo accesible por estudiantes */}
+              <Route path="/examenes/:intentoId/resultado" element={<ResultadosPage />} />
+
 
               {/* Módulo de Flashcards - solo accesible por estudiantes */}
               <Route

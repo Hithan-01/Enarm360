@@ -75,4 +75,10 @@ public class Reactivo {
     @Column(name = "fecha_creacion")
     @CreationTimestamp
     private LocalDateTime fechaCreacion;
+
+     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "examen_id")
+    private Examen examen;
+
+
 }
