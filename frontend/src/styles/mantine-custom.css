@@ -56,6 +56,76 @@
   border: 1px solid rgba(226, 232, 240, 0.6) !important;
 }
 
+/* Beige theme for light mode */
+:root:not([data-mantine-color-scheme="dark"]),
+[data-mantine-color-scheme="light"] {
+  --mantine-color-body: #f7f3ee !important;
+  --mantine-color-default: #f7f3ee !important;
+  --mantine-color-default-border: #ddd8d1 !important;
+  --mantine-color-default-hover: #f2ede6 !important;
+  --mantine-color-text: #2d2a26 !important;
+  --mantine-color-dimmed: #5a5550 !important;
+  --mantine-color-placeholder: #7a7069 !important;
+}
+
+/* Body background */
+body:not([data-mantine-color-scheme="dark"]),
+body[data-mantine-color-scheme="light"],
+html:not([data-mantine-color-scheme="dark"]),
+html[data-mantine-color-scheme="light"] {
+  background-color: #f7f3ee !important;
+}
+
+/* Cards and containers - more specific selectors */
+:root:not([data-mantine-color-scheme="dark"]) .mantine-Card-root,
+[data-mantine-color-scheme="light"] .mantine-Card-root,
+:root:not([data-mantine-color-scheme="dark"]) [class*="Card"],
+[data-mantine-color-scheme="light"] [class*="Card"] {
+  background-color: #ebe8e3 !important;
+  border: 1px solid #ddd8d1 !important;
+}
+
+:root:not([data-mantine-color-scheme="dark"]) .mantine-AppShell-main,
+[data-mantine-color-scheme="light"] .mantine-AppShell-main {
+  background-color: #f7f3ee !important;
+}
+
+:root:not([data-mantine-color-scheme="dark"]) .mantine-Paper-root,
+[data-mantine-color-scheme="light"] .mantine-Paper-root {
+  background-color: #ebe8e3 !important;
+  border: 1px solid #ddd8d1 !important;
+}
+
+/* Box components */
+:root:not([data-mantine-color-scheme="dark"]) .mantine-Box-root,
+[data-mantine-color-scheme="light"] .mantine-Box-root {
+  background-color: inherit;
+}
+
+/* Force beige backgrounds for any white/light backgrounds */
+:root:not([data-mantine-color-scheme="dark"]) [style*="background-color: rgb(255, 255, 255)"],
+[data-mantine-color-scheme="light"] [style*="background-color: rgb(255, 255, 255)"],
+:root:not([data-mantine-color-scheme="dark"]) [style*="background-color: white"],
+[data-mantine-color-scheme="light"] [style*="background-color: white"] {
+  background-color: #ebe8e3 !important;
+}
+
+/* Target specific dashboard cards - beige grisáceo */
+:root:not([data-mantine-color-scheme="dark"]) [style*="rgba(96, 165, 250"],
+[data-mantine-color-scheme="light"] [style*="rgba(96, 165, 250"] {
+  background-color: rgba(235, 232, 227, 0.9) !important;
+}
+
+:root:not([data-mantine-color-scheme="dark"]) [style*="rgba(248, 113, 113"],
+[data-mantine-color-scheme="light"] [style*="rgba(248, 113, 113"] {
+  background-color: rgba(235, 232, 227, 0.9) !important;
+}
+
+:root:not([data-mantine-color-scheme="dark"]) [style*="rgba(251, 191, 36"],
+[data-mantine-color-scheme="light"] [style*="rgba(251, 191, 36"] {
+  background-color: rgba(235, 232, 227, 0.9) !important;
+}
+
 /* Professional button styles - HOVER DISABLED */
 .btn-medical-primary {
   background: #0ea5e9 !important;

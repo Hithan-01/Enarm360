@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useLocation, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import {
   Container,
   Stack,
@@ -19,11 +19,7 @@ import {
   IconSettings,
   IconChevronRight,
 } from '@tabler/icons-react';
-import Sidebar from '../components/Sidebar';
-import TopHeader from '../components/TopHeader';
-import PageTransition from '../components/animations/PageTransition';
 import ProfileContent from '../components/profile/ProfileContent';
-import { authService } from '../services/authService';
 
 interface SettingSectionProps {
   icon: React.ComponentType<{ size?: number }>;
@@ -49,43 +45,32 @@ const SettingSection: React.FC<SettingSectionProps> = ({
       p="md"
       style={{
         backgroundColor: isActive
-          ? (colorScheme === 'dark' ? 'rgba(59, 130, 246, 0.3)' : 'rgba(59, 130, 246, 0.2)')
+          ? (colorScheme === 'dark' ? 'rgba(59, 130, 246, 0.3)' : 'rgba(160, 142, 115, 0.3)')
           : 'transparent',
-        backdropFilter: isActive ? 'blur(20px) saturate(180%)' : 'none',
-        WebkitBackdropFilter: isActive ? 'blur(20px) saturate(180%)' : 'none',
         border: isActive
-          ? `1px solid ${colorScheme === 'dark' ? 'rgba(59, 130, 246, 0.4)' : 'rgba(59, 130, 246, 0.3)'}`
+          ? `1px solid ${colorScheme === 'dark' ? 'rgba(59, 130, 246, 0.4)' : 'rgba(160, 142, 115, 0.5)'}`
           : '1px solid transparent',
         borderRadius: '12px',
         cursor: 'pointer',
         transition: 'all 0.3s ease',
-        boxShadow: isActive
-          ? (colorScheme === 'dark'
-            ? 'inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 4px 12px rgba(59, 130, 246, 0.2)'
-            : '0 4px 12px rgba(59, 130, 246, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.6)')
-          : 'none',
       }}
       onClick={() => onClick(section)}
       onMouseEnter={(e) => {
         if (!isActive) {
           e.currentTarget.style.backgroundColor = colorScheme === 'dark'
             ? 'rgba(55, 65, 81, 0.3)'
-            : 'rgba(255, 255, 255, 0.4)';
-          e.currentTarget.style.backdropFilter = 'blur(20px) saturate(180%)';
-          (e.currentTarget.style as any).WebkitBackdropFilter = 'blur(20px) saturate(180%)';
+            : 'rgba(242, 237, 230, 0.5)';
         }
       }}
       onMouseLeave={(e) => {
         if (!isActive) {
           e.currentTarget.style.backgroundColor = 'transparent';
-          e.currentTarget.style.backdropFilter = 'none';
-          (e.currentTarget.style as any).WebkitBackdropFilter = 'none';
         }
       }}
     >
       <Group justify="flex-start" align="center" gap="sm" wrap="nowrap">
         <Box style={{
-          color: isActive ? '#ffffff' : (colorScheme === 'dark' ? '#e2e8f0' : '#64748b'),
+          color: isActive ? '#ffffff' : (colorScheme === 'dark' ? '#e2e8f0' : '#5a5550'),
           flexShrink: 0
         }}>
           <Icon size={20} />
@@ -95,7 +80,7 @@ const SettingSection: React.FC<SettingSectionProps> = ({
             fw={500}
             size="sm"
             style={{
-              color: isActive ? '#ffffff' : (colorScheme === 'dark' ? '#e2e8f0' : '#1e293b'),
+              color: isActive ? '#ffffff' : (colorScheme === 'dark' ? '#e2e8f0' : '#2d2a26'),
               fontFamily: 'Outfit, Inter, sans-serif',
               lineHeight: 1.3,
               textAlign: 'left',
@@ -106,7 +91,7 @@ const SettingSection: React.FC<SettingSectionProps> = ({
           <Text
             size="xs"
             style={{
-              color: isActive ? '#e0e7ff' : (colorScheme === 'dark' ? '#94a3b8' : '#64748b'),
+              color: isActive ? '#e0e7ff' : (colorScheme === 'dark' ? '#94a3b8' : '#5a5550'),
               fontFamily: 'Inter, sans-serif',
               lineHeight: 1.2,
               textAlign: 'left',
@@ -116,7 +101,7 @@ const SettingSection: React.FC<SettingSectionProps> = ({
           </Text>
         </Box>
         <Box style={{
-          color: isActive ? '#ffffff' : (colorScheme === 'dark' ? '#94a3b8' : '#94a3b8'),
+          color: isActive ? '#ffffff' : (colorScheme === 'dark' ? '#94a3b8' : '#5a5550'),
           flexShrink: 0
         }}>
           <IconChevronRight size={16} />
@@ -191,14 +176,6 @@ const SettingsPage: React.FC = () => {
     }
   };
 
-  const handleLogout = () => {
-    authService.logout();
-    navigate('/login');
-  };
-
-  const userInfo = authService.getCurrentUserFromStorage();
-  const userRole = authService.isAdmin() ? 'admin' : 'student';
-
   const renderContent = () => {
     switch (activeSection) {
       case 'profile':
@@ -210,23 +187,18 @@ const SettingsPage: React.FC = () => {
             style={{
               backgroundColor: colorScheme === 'dark'
                 ? 'rgba(30, 41, 59, 0.7)'
-                : 'rgba(255, 255, 255, 0.25)',
-              backdropFilter: 'blur(40px) saturate(200%)',
-              WebkitBackdropFilter: 'blur(40px) saturate(200%)',
-              border: `1px solid ${colorScheme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.5)'}`,
+                : 'rgba(247, 243, 238, 0.9)',
+              border: `1px solid ${colorScheme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(221, 216, 209, 0.8)'}`,
               borderRadius: '16px',
-              boxShadow: colorScheme === 'dark'
-                ? 'inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 4px 20px rgba(0, 0, 0, 0.3)'
-                : '0 4px 16px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.6)',
             }}
           >
             <Title order={2} mb="lg" style={{
               fontFamily: 'Space Grotesk, Inter, sans-serif',
-              color: colorScheme === 'dark' ? '#e2e8f0' : '#1e293b'
+              color: colorScheme === 'dark' ? '#e2e8f0' : '#2d2a26'
             }}>
               Estadísticas
             </Title>
-            <Text style={{ color: colorScheme === 'dark' ? '#94a3b8' : '#64748b' }}>
+            <Text style={{ color: colorScheme === 'dark' ? '#94a3b8' : '#5a5550' }}>
               Próximamente: Gráficos de rendimiento y progreso
             </Text>
           </Box>
@@ -238,23 +210,18 @@ const SettingsPage: React.FC = () => {
             style={{
               backgroundColor: colorScheme === 'dark'
                 ? 'rgba(30, 41, 59, 0.7)'
-                : 'rgba(255, 255, 255, 0.25)',
-              backdropFilter: 'blur(40px) saturate(200%)',
-              WebkitBackdropFilter: 'blur(40px) saturate(200%)',
-              border: `1px solid ${colorScheme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.5)'}`,
+                : 'rgba(247, 243, 238, 0.9)',
+              border: `1px solid ${colorScheme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(221, 216, 209, 0.8)'}`,
               borderRadius: '16px',
-              boxShadow: colorScheme === 'dark'
-                ? 'inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 4px 20px rgba(0, 0, 0, 0.3)'
-                : '0 4px 16px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.6)',
             }}
           >
             <Title order={2} mb="lg" style={{
               fontFamily: 'Space Grotesk, Inter, sans-serif',
-              color: colorScheme === 'dark' ? '#e2e8f0' : '#1e293b'
+              color: colorScheme === 'dark' ? '#e2e8f0' : '#2d2a26'
             }}>
               Suscripción
             </Title>
-            <Text style={{ color: colorScheme === 'dark' ? '#94a3b8' : '#64748b' }}>
+            <Text style={{ color: colorScheme === 'dark' ? '#94a3b8' : '#5a5550' }}>
               Próximamente: Gestión de plan y facturación
             </Text>
           </Box>
@@ -266,23 +233,18 @@ const SettingsPage: React.FC = () => {
             style={{
               backgroundColor: colorScheme === 'dark'
                 ? 'rgba(30, 41, 59, 0.7)'
-                : 'rgba(255, 255, 255, 0.25)',
-              backdropFilter: 'blur(40px) saturate(200%)',
-              WebkitBackdropFilter: 'blur(40px) saturate(200%)',
-              border: `1px solid ${colorScheme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.5)'}`,
+                : 'rgba(247, 243, 238, 0.9)',
+              border: `1px solid ${colorScheme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(221, 216, 209, 0.8)'}`,
               borderRadius: '16px',
-              boxShadow: colorScheme === 'dark'
-                ? 'inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 4px 20px rgba(0, 0, 0, 0.3)'
-                : '0 4px 16px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.6)',
             }}
           >
             <Title order={2} mb="lg" style={{
               fontFamily: 'Space Grotesk, Inter, sans-serif',
-              color: colorScheme === 'dark' ? '#e2e8f0' : '#1e293b'
+              color: colorScheme === 'dark' ? '#e2e8f0' : '#2d2a26'
             }}>
               Notificaciones
             </Title>
-            <Text style={{ color: colorScheme === 'dark' ? '#94a3b8' : '#64748b' }}>
+            <Text style={{ color: colorScheme === 'dark' ? '#94a3b8' : '#5a5550' }}>
               Próximamente: Configuración de alertas
             </Text>
           </Box>
@@ -294,23 +256,18 @@ const SettingsPage: React.FC = () => {
             style={{
               backgroundColor: colorScheme === 'dark'
                 ? 'rgba(30, 41, 59, 0.7)'
-                : 'rgba(255, 255, 255, 0.25)',
-              backdropFilter: 'blur(40px) saturate(200%)',
-              WebkitBackdropFilter: 'blur(40px) saturate(200%)',
-              border: `1px solid ${colorScheme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.5)'}`,
+                : 'rgba(247, 243, 238, 0.9)',
+              border: `1px solid ${colorScheme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(221, 216, 209, 0.8)'}`,
               borderRadius: '16px',
-              boxShadow: colorScheme === 'dark'
-                ? 'inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 4px 20px rgba(0, 0, 0, 0.3)'
-                : '0 4px 16px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.6)',
             }}
           >
             <Title order={2} mb="lg" style={{
               fontFamily: 'Space Grotesk, Inter, sans-serif',
-              color: colorScheme === 'dark' ? '#e2e8f0' : '#1e293b'
+              color: colorScheme === 'dark' ? '#e2e8f0' : '#2d2a26'
             }}>
               Privacidad
             </Title>
-            <Text style={{ color: colorScheme === 'dark' ? '#94a3b8' : '#64748b' }}>
+            <Text style={{ color: colorScheme === 'dark' ? '#94a3b8' : '#5a5550' }}>
               Próximamente: Configuración de privacidad
             </Text>
           </Box>
@@ -322,23 +279,18 @@ const SettingsPage: React.FC = () => {
             style={{
               backgroundColor: colorScheme === 'dark'
                 ? 'rgba(30, 41, 59, 0.7)'
-                : 'rgba(255, 255, 255, 0.25)',
-              backdropFilter: 'blur(40px) saturate(200%)',
-              WebkitBackdropFilter: 'blur(40px) saturate(200%)',
-              border: `1px solid ${colorScheme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.5)'}`,
+                : 'rgba(247, 243, 238, 0.9)',
+              border: `1px solid ${colorScheme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(221, 216, 209, 0.8)'}`,
               borderRadius: '16px',
-              boxShadow: colorScheme === 'dark'
-                ? 'inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 4px 20px rgba(0, 0, 0, 0.3)'
-                : '0 4px 16px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.6)',
             }}
           >
             <Title order={2} mb="lg" style={{
               fontFamily: 'Space Grotesk, Inter, sans-serif',
-              color: colorScheme === 'dark' ? '#e2e8f0' : '#1e293b'
+              color: colorScheme === 'dark' ? '#e2e8f0' : '#2d2a26'
             }}>
               Cuenta
             </Title>
-            <Text style={{ color: colorScheme === 'dark' ? '#94a3b8' : '#64748b' }}>
+            <Text style={{ color: colorScheme === 'dark' ? '#94a3b8' : '#5a5550' }}>
               Próximamente: Configuraciones de cuenta
             </Text>
           </Box>
@@ -348,144 +300,90 @@ const SettingsPage: React.FC = () => {
     }
   };
 
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(true);
-
-  // Forzar colapso del sidebar al cargar la página
-  useEffect(() => {
-    setSidebarCollapsed(true);
-  }, []);
-
   return (
-    <Box
-      style={{
-        minHeight: '100vh',
-        background: colorScheme === 'dark'
-          ? 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)'
-          : 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
-        position: 'relative',
-      }}
-    >
-      {/* Textura de fondo */}
+    <Container size="xl" py="md" style={{ paddingTop: '2rem' }}>
       <Box
         style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundImage: colorScheme === 'dark'
-            ? `url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="%23374151" stroke-width="0.5" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>')`
-            : `url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="%23e2e8f0" stroke-width="0.5" opacity="0.2"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>')`,
-          opacity: 0.5,
-          pointerEvents: 'none',
-          zIndex: 0,
-        }}
-      />
-
-      {/* Sidebar */}
-      <Sidebar
-        user={{
-          username: userInfo?.username || '',
-          email: userInfo?.email || '',
-          roles: userRole === 'admin' ? ['ADMIN'] : ['ESTUDIANTE'],
-        }}
-        onLogout={handleLogout}
-        onCollapseChange={setSidebarCollapsed}
-        initialCollapsed={true}
-      />
-
-      {/* Container principal con TopHeader y contenido */}
-      <Box
-        style={{
-          marginLeft: sidebarCollapsed ? '80px' : '280px',
-          transition: 'margin-left 0.3s ease',
-          minHeight: '100vh',
-          position: 'relative',
-          zIndex: 1,
+          display: 'flex',
+          gap: '2rem',
+          minHeight: 'calc(100vh - 120px)',
         }}
       >
-        {/* TopHeader */}
-        <TopHeader
-          user={{
-            username: userInfo?.username || '',
-            email: userInfo?.email || '',
-            roles: userRole === 'admin' ? ['ADMIN'] : ['ESTUDIANTE'],
+        {/* Settings Sidebar */}
+        <Box
+          style={{
+            width: '300px',
+            flexShrink: 0,
           }}
-          onLogout={handleLogout}
-          sidebarWidth={sidebarCollapsed ? 80 : 280}
-        />
-
-        {/* Contenido principal */}
-        <Container size="xl" py="md">
+        >
           <Box
             style={{
-              display: 'flex',
-              gap: '2rem',
-              minHeight: 'calc(100vh - 120px)',
+              backgroundColor: colorScheme === 'dark'
+                ? 'rgba(30, 41, 59, 0.7)'
+                : 'rgba(247, 243, 238, 0.9)',
+              border: `1px solid ${colorScheme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(221, 216, 209, 0.8)'}`,
+              borderRadius: '16px',
+              position: 'sticky',
+              top: '2rem',
+              height: 'fit-content',
             }}
           >
-            {/* Settings Sidebar */}
-            <Box
-              style={{
-                width: '300px',
-                flexShrink: 0,
-              }}
-            >
-              <Box
+            <Box p="lg">
+              <Text
+                size="lg"
+                fw={700}
+                mb="lg"
                 style={{
-                  backgroundColor: colorScheme === 'dark'
-                    ? 'rgba(30, 41, 59, 0.7)'
-                    : 'rgba(255, 255, 255, 0.25)',
-                  backdropFilter: 'blur(40px) saturate(200%)',
-                  WebkitBackdropFilter: 'blur(40px) saturate(200%)',
-                  border: `1px solid ${colorScheme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.5)'}`,
-                  borderRadius: '16px',
-                  boxShadow: colorScheme === 'dark'
-                    ? 'inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 4px 20px rgba(0, 0, 0, 0.3)'
-                    : '0 4px 16px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.6)',
-                  position: 'sticky',
-                  top: '2rem',
-                  height: 'fit-content',
+                  fontFamily: 'Space Grotesk, Inter, sans-serif',
+                  color: colorScheme === 'dark' ? '#e2e8f0' : '#2d2a26',
                 }}
               >
-                <Box p="lg">
-                  <Text
-                    size="lg"
-                    fw={700}
-                    mb="lg"
-                    style={{
-                      fontFamily: 'Space Grotesk, Inter, sans-serif',
-                      color: colorScheme === 'dark' ? '#e2e8f0' : '#1e293b',
-                    }}
-                  >
-                    Configuración
-                  </Text>
+                Configuración
+              </Text>
 
-                  <Stack gap="sm">
-                    {settingSections.map((section) => (
-                      <SettingSection
-                        key={section.section}
-                        icon={section.icon}
-                        label={section.label}
-                        description={section.description}
-                        section={section.section}
-                        isActive={activeSection === section.section}
-                        onClick={handleSectionClick}
-                      />
-                    ))}
-                  </Stack>
-                </Box>
-              </Box>
-            </Box>
-
-            {/* Contenido Principal */}
-            <Box style={{ flex: 1 }}>
-              {renderContent()}
+              <Stack gap="sm">
+                {settingSections.map((section) => (
+                  <SettingSection
+                    key={section.section}
+                    icon={section.icon}
+                    label={section.label}
+                    description={section.description}
+                    section={section.section}
+                    isActive={activeSection === section.section}
+                    onClick={handleSectionClick}
+                  />
+                ))}
+              </Stack>
             </Box>
           </Box>
-        </Container>
+        </Box>
+
+        {/* Contenido Principal */}
+        <Box style={{ flex: 1 }}>
+          {renderContent()}
+        </Box>
       </Box>
-    </Box>
+
+      {/* Mini footer */}
+      <Box
+        style={{
+          marginTop: '3rem',
+          paddingTop: '1rem',
+          borderTop: `1px solid ${colorScheme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(221, 216, 209, 0.5)'}`,
+          textAlign: 'center',
+        }}
+      >
+        <Text
+          size="xs"
+          style={{
+            color: colorScheme === 'dark' ? '#94a3b8' : '#5a5550',
+            fontFamily: 'Inter, sans-serif',
+          }}
+        >
+          © 2024 ENARM360. Todos los derechos reservados.
+        </Text>
+      </Box>
+    </Container>
   );
 };
 

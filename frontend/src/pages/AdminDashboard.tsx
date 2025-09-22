@@ -16,8 +16,6 @@ import {
 import CountUpNumber from '../components/animations/CountUpNumber';
 import MedicalLoader from '../components/animations/MedicalLoader';
 import PageTransition from '../components/animations/PageTransition';
-import Sidebar from '../components/Sidebar';
-import TopHeader from '../components/TopHeader';
 import {
   IconUsers,
   IconClipboardList,
@@ -35,7 +33,6 @@ const AdminDashboard: React.FC = () => {
   const [user, setUser] = useState<UsuarioInfo | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>('');
-  const [sidebarCollapsed, setSidebarCollapsed] = useState<boolean>(false);
   const navigate = useNavigate();
   const { colorScheme } = useMantineColorScheme();
 
@@ -95,33 +92,17 @@ const AdminDashboard: React.FC = () => {
       <Box
         style={{
           minHeight: '100vh',
-          background: colorScheme === 'dark'
-            ? 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)'
-            : 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
-          display: 'flex'
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '20px'
         }}
       >
-        <Sidebar
-          user={{
-            username: user?.username || 'Admin',
-            email: user?.email || '',
-          }}
-          onLogout={handleLogout}
+        <MedicalLoader
+          type="heartbeat"
+          size="lg"
+          text="Loading admin panel..."
         />
-        <TopHeader
-          user={{
-            username: user?.username || 'Admin',
-            email: user?.email || '',
-          }}
-          onLogout={handleLogout}
-        />
-        <Box style={{ marginLeft: '280px', flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', paddingTop: '70px' }}>
-          <MedicalLoader
-            type="heartbeat"
-            size="lg"
-            text="Loading admin panel..."
-          />
-        </Box>
       </Box>
     );
   }
@@ -131,41 +112,21 @@ const AdminDashboard: React.FC = () => {
       <Box
         style={{
           minHeight: '100vh',
-          background: colorScheme === 'dark'
-            ? 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)'
-            : 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
-          display: 'flex'
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '20px'
         }}
       >
-        <Sidebar
-          user={{
-            username: user?.username || 'Admin',
-            email: user?.email || '',
-            roles: user?.roles || []
-          }}
-          onLogout={handleLogout}
-        />
-        <TopHeader
-          user={{
-            username: user?.username || 'Admin',
-            email: user?.email || '',
-            roles: user?.roles || [],
-            nombre: user?.nombre,
-            apellidos: user?.apellidos
-          }}
-          onLogout={handleLogout}
-        />
-        <Box style={{ marginLeft: '280px', flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', paddingTop: '70px' }}>
-          <Alert
-            icon={<IconAlertCircle size={20} />}
-            color="red"
-            variant="light"
-            radius="md"
-            title="Error"
-          >
-            {error}
-          </Alert>
-        </Box>
+        <Alert
+          icon={<IconAlertCircle size={20} />}
+          color="red"
+          variant="light"
+          radius="md"
+          title="Error"
+        >
+          {error}
+        </Alert>
       </Box>
     );
   }
@@ -173,59 +134,15 @@ const AdminDashboard: React.FC = () => {
 
   return (
     <PageTransition type="medical" duration={800}>
+      {/* Main Content */}
       <Box
         style={{
-          minHeight: '100vh',
-          background: colorScheme === 'dark'
-            ? 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)'
-            : 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
-          display: 'flex',
+          flex: 1,
+          padding: '32px',
+          overflow: 'hidden',
+          overflowY: 'auto',
         }}
       >
-        {/* Sidebar */}
-        <Sidebar
-          user={{
-            username: user?.username || '',
-            email: user?.email || '',
-            roles: user?.roles || []
-          }}
-          onLogout={handleLogout}
-          onCollapseChange={setSidebarCollapsed}
-        />
-
-        {/* Right Side Container */}
-        <Box
-          style={{
-            marginLeft: sidebarCollapsed ? '80px' : '280px',
-            flex: 1,
-            transition: 'margin-left 0.3s ease',
-            display: 'flex',
-            flexDirection: 'column',
-            height: '100vh',
-          }}
-        >
-          {/* Top Header */}
-          <TopHeader
-            user={{
-              username: user?.username || '',
-              email: user?.email || '',
-              roles: user?.roles || [],
-              nombre: user?.nombre,
-              apellidos: user?.apellidos,
-            }}
-            onLogout={handleLogout}
-            sidebarWidth={0} // Ya no necesita sidebarWidth porque está dentro del contenedor
-          />
-
-          {/* Main Content */}
-          <Box
-            style={{
-              flex: 1,
-              padding: '32px',
-              overflow: 'hidden',
-              overflowY: 'auto',
-            }}
-          >
 
               {/* Main Stats Cards */}
               <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing="lg" mb="xl">
@@ -530,8 +447,6 @@ const AdminDashboard: React.FC = () => {
                   </Button>
                 </Group>
               </Card>
-            </Box>
-          </Box>
         </Box>
       </PageTransition>
   );

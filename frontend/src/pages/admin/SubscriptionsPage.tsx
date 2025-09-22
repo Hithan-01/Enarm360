@@ -20,8 +20,6 @@ import {
   Switch,
 } from '@mantine/core';
 import PageTransition from '../../components/animations/PageTransition';
-import Sidebar from '../../components/Sidebar';
-import TopHeader from '../../components/TopHeader';
 import CountUpNumber from '../../components/animations/CountUpNumber';
 import {
   IconCreditCard,
@@ -36,18 +34,11 @@ import {
   IconCalendar,
   IconPercentage,
 } from '@tabler/icons-react';
-import { authService } from '../../services/authService';
 
 const SubscriptionsPage: React.FC = () => {
-  const [sidebarCollapsed, setSidebarCollapsed] = useState<boolean>(false);
   const [planModalOpen, setPlanModalOpen] = useState<boolean>(false);
   const [couponModalOpen, setCouponModalOpen] = useState<boolean>(false);
   const { colorScheme } = useMantineColorScheme();
-  const user = authService.getCurrentUserFromStorage();
-
-  const handleLogout = () => {
-    authService.logout();
-  };
 
   // Datos de ejemplo para planes de suscripción
   const subscriptionPlans = [
@@ -109,55 +100,16 @@ const SubscriptionsPage: React.FC = () => {
 
   return (
     <PageTransition type="medical" duration={800}>
-      <Box
+      <>
+        <Box
         style={{
           minHeight: '100vh',
           background: colorScheme === 'dark'
             ? 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)'
             : 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
-          display: 'flex',
+          padding: '32px',
         }}
       >
-        <Sidebar
-          user={{
-            username: user?.username || '',
-            email: user?.email || '',
-            roles: user?.roles || []
-          }}
-          onLogout={handleLogout}
-          onCollapseChange={setSidebarCollapsed}
-        />
-
-        <Box
-          style={{
-            marginLeft: sidebarCollapsed ? '80px' : '280px',
-            flex: 1,
-            transition: 'margin-left 0.3s ease',
-            display: 'flex',
-            flexDirection: 'column',
-            height: '100vh',
-          }}
-        >
-          <TopHeader
-            user={{
-              username: user?.username || '',
-              email: user?.email || '',
-              roles: user?.roles || [],
-              nombre: user?.nombre,
-              apellidos: user?.apellidos,
-            }}
-            onLogout={handleLogout}
-            sidebarWidth={0}
-          />
-
-          <Box
-            style={{
-              flex: 1,
-              padding: '32px',
-              overflow: 'hidden',
-              overflowY: 'auto',
-            }}
-          >
             <Stack gap="xl">
               {/* Header */}
               <Group justify="space-between" align="center">
@@ -494,7 +446,6 @@ const SubscriptionsPage: React.FC = () => {
                 </Table.ScrollContainer>
               </Card>
             </Stack>
-          </Box>
         </Box>
 
         {/* Plan Modal */}
@@ -546,7 +497,7 @@ const SubscriptionsPage: React.FC = () => {
             </Group>
           </Stack>
         </Modal>
-      </Box>
+      </>
     </PageTransition>
   );
 };

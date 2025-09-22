@@ -100,30 +100,30 @@ const RegisterPage: React.FC = () => {
     },
     validate: {
       username: (value: string) => {
-        if (!value || value.length < 3) return 'Username must be at least 3 characters';
-        if (!/^[a-zA-Z0-9_]+$/.test(value)) return 'Only letters, numbers and underscores';
+        if (!value || value.length < 3) return 'El nombre de usuario debe tener al menos 3 caracteres';
+        if (!/^[a-zA-Z0-9_]+$/.test(value)) return 'Solo letras, números y guiones bajos';
         return null;
       },
       email: (value: string) => {
-        if (!value) return 'Email is required';
-        if (!/\S+@\S+\.\S+/.test(value)) return 'Invalid email';
+        if (!value) return 'El correo electrónico es obligatorio';
+        if (!/\S+@\S+\.\S+/.test(value)) return 'Correo electrónico inválido';
         return null;
       },
       password: (value: string) => {
-        if (!value || value.length < 6) return 'Password must be at least 6 characters';
+        if (!value || value.length < 6) return 'La contraseña debe tener al menos 6 caracteres';
         return null;
       },
       confirmPassword: (value: string, values) => {
-        if (value !== values.password) return 'Passwords do not match';
+        if (value !== values.password) return 'Las contraseñas no coinciden';
         return null;
       },
-      nombre: (value: string) => (!value || value.length < 2 ? 'First name is required' : null),
-      apellido: (value: string) => (!value || value.length < 2 ? 'Last name is required' : null),
+      nombre: (value: string) => (!value || value.length < 2 ? 'El nombre es obligatorio' : null),
+      apellido: (value: string) => (!value || value.length < 2 ? 'El apellido es obligatorio' : null),
       anioGraduacion: (value: number | undefined) => {
         if (value) {
           const currentYear = new Date().getFullYear();
           if (value < 1950 || value > currentYear + 10) {
-            return 'Invalid graduation year';
+            return 'Año de graduación inválido';
           }
         }
         return null;
@@ -138,7 +138,7 @@ const RegisterPage: React.FC = () => {
       setCheckingEmail(true);
       const result = await registroService.checkEmailAvailability(email);
       if (!result.available) {
-        form.setFieldError('email', 'This email is already registered');
+        form.setFieldError('email', 'Este correo ya está registrado');
       }
     } catch (error) {
       console.error('Error checking email:', error);
@@ -154,7 +154,7 @@ const RegisterPage: React.FC = () => {
       setCheckingUsername(true);
       const result = await registroService.checkUsernameAvailability(username);
       if (!result.available) {
-        form.setFieldError('username', 'This username is not available');
+        form.setFieldError('username', 'Este nombre de usuario no está disponible');
       }
     } catch (error) {
       console.error('Error checking username:', error);
@@ -185,8 +185,8 @@ const RegisterPage: React.FC = () => {
       const response = await registroService.crearCuenta(registroData as any);
       
       notifications.show({
-        title: 'Account created successfully',
-        message: 'You can now sign in with your account',
+        title: 'Cuenta creada exitosamente',
+        message: 'Ahora puedes iniciar sesión con tu cuenta',
         color: 'green',
         icon: <IconCheck size={16} />
       });
@@ -196,7 +196,7 @@ const RegisterPage: React.FC = () => {
       
     } catch (error: any) {
       notifications.show({
-        title: 'Error creating account',
+        title: 'Error al crear la cuenta',
         message: error.response?.data?.message || 'An unexpected error occurred',
         color: 'red',
         icon: <IconAlertCircle size={16} />
@@ -224,7 +224,7 @@ const RegisterPage: React.FC = () => {
           <Stack align="center" gap="md">
             <LoadingOverlay visible={true} />
             <Text size="lg" c="dimmed">
-              Redirecting to dashboard...
+              Redirigiendo al panel...
             </Text>
           </Stack>
         </Box>
@@ -240,7 +240,7 @@ const RegisterPage: React.FC = () => {
           width: '100vw',
           background: colorScheme === 'dark'
             ? 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)'
-            : 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
+            : 'linear-gradient(135deg, #f7f3ee 0%, #f2ede6 100%)',
           position: 'relative',
           overflow: 'hidden'
         }}
@@ -318,7 +318,7 @@ const RegisterPage: React.FC = () => {
               : '0 4px 16px rgba(0, 0, 0, 0.1)',
           }}
         >
-          Back
+          Volver
         </Button>
 
         <div style={{
@@ -329,19 +329,19 @@ const RegisterPage: React.FC = () => {
           zIndex: 1,
           padding: '2rem 1rem'
         }}>
-          <Container size={700} style={{ width: '100%', maxWidth: '700px' }}>
+          <Container size={580} style={{ width: '100%', maxWidth: '580px' }}>
             <Paper
               radius="xl"
-              p="xl"
+              p="lg"
               withBorder
               style={{
                 width: '100%',
                 backgroundColor: colorScheme === 'dark'
                   ? 'rgba(30, 41, 59, 0.7)'
-                  : 'rgba(255, 255, 255, 0.25)',
+                  : 'rgba(247, 243, 238, 0.6)',
                 backdropFilter: 'blur(40px) saturate(200%)',
                 WebkitBackdropFilter: 'blur(40px) saturate(200%)',
-                border: `1px solid ${colorScheme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.5)'}`,
+                border: `1px solid ${colorScheme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(221, 216, 209, 0.8)'}`,
                 boxShadow: colorScheme === 'dark'
                   ? 'inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 4px 20px rgba(0, 0, 0, 0.3)'
                   : '0 4px 16px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.6)',
@@ -355,11 +355,11 @@ const RegisterPage: React.FC = () => {
                     <Image
                       src={enarmLogo}
                       alt="ENARM360 Logo"
-                      height={60}
+                      height={50}
                       fit="contain"
                       style={{
                         borderRadius: '12px',
-                        maxWidth: '200px',
+                        maxWidth: '180px',
                         cursor: 'pointer',
                         transition: 'transform 0.3s ease, filter 0.3s ease',
                         filter: easterEggTriggered ? 'brightness(1.1) saturate(1.2)' : 'none'
@@ -372,8 +372,8 @@ const RegisterPage: React.FC = () => {
                       }}
                       onClick={() => navigate('/')}
                     />
-                    <Title order={2} size="h2" ta="center">
-                      Create Account
+                    <Title order={2} size="h3" ta="center">
+                      Crear Cuenta
                     </Title>
                     <Text c="dimmed" ta="center" size="sm">
                       Simulador Médico Profesional
@@ -406,12 +406,12 @@ const RegisterPage: React.FC = () => {
                     {/* Columna Izquierda - Información Personal */}
                     <Grid.Col span={6}>
                       <Stack gap="md">
-                        <Text fw={600} size="md" c="blue">
-                          Personal Information
+                        <Text fw={600} size="md" style={{ color: colorScheme === 'dark' ? '#e2e8f0' : '#1e293b' }}>
+                          Información Personal
                         </Text>
 
                         <TextInput
-                          placeholder="First name"
+                          placeholder="Nombre"
                           leftSection={<IconUser size={16} />}
                           required
                           {...form.getInputProps('nombre')}
@@ -436,7 +436,7 @@ const RegisterPage: React.FC = () => {
                         />
 
                         <TextInput
-                          placeholder="Last name"
+                          placeholder="Apellido"
                           leftSection={<IconUser size={16} />}
                           required
                           {...form.getInputProps('apellido')}
@@ -461,7 +461,7 @@ const RegisterPage: React.FC = () => {
                         />
 
                         <TextInput
-                          placeholder="Username"
+                          placeholder="Nombre de usuario"
                           leftSection={<IconUser size={16} />}
                           required
                           rightSection={checkingUsername ? <div>...</div> : undefined}
@@ -484,7 +484,7 @@ const RegisterPage: React.FC = () => {
                         />
 
                         <TextInput
-                          placeholder="email@example.com"
+                          placeholder="correo@ejemplo.com"
                           leftSection={<IconMail size={16} />}
                           required
                           rightSection={checkingEmail ? <div>...</div> : undefined}
@@ -511,7 +511,7 @@ const RegisterPage: React.FC = () => {
                         />
 
                         <PasswordInput
-                          placeholder="Password"
+                          placeholder="Contraseña"
                           leftSection={<IconLock size={16} />}
                           required
                           {...form.getInputProps('password')}
@@ -536,7 +536,7 @@ const RegisterPage: React.FC = () => {
                         />
 
                         <PasswordInput
-                          placeholder="Confirm Password"
+                          placeholder="Confirmar Contraseña"
                           leftSection={<IconLock size={16} />}
                           required
                           {...form.getInputProps('confirmPassword')}
@@ -561,12 +561,12 @@ const RegisterPage: React.FC = () => {
                     {/* Columna Derecha - Información Académica */}
                     <Grid.Col span={6}>
                       <Stack gap="md">
-                        <Text fw={600} size="md" c="blue">
-                          Academic Information
+                        <Text fw={600} size="md" style={{ color: colorScheme === 'dark' ? '#e2e8f0' : '#1e293b' }}>
+                          Información Académica
                         </Text>
 
                         <TextInput
-                          placeholder="University (optional)"
+                          placeholder="Universidad (opcional)"
                           leftSection={<IconSchool size={16} />}
                           {...form.getInputProps('universidad')}
                           styles={{
@@ -586,7 +586,7 @@ const RegisterPage: React.FC = () => {
                         />
 
                         <TextInput
-                          placeholder="Graduation Year"
+                          placeholder="Año de Graduación"
                           leftSection={<IconCalendar size={16} />}
                           type="number"
                           {...form.getInputProps('anioGraduacion')}
@@ -607,7 +607,7 @@ const RegisterPage: React.FC = () => {
                         />
 
                         <TextInput
-                          placeholder="Specialty of Interest"
+                          placeholder="Especialidad de Interés"
                           leftSection={<IconSchool size={16} />}
                           {...form.getInputProps('especialidadInteres')}
                           styles={{
@@ -644,7 +644,7 @@ const RegisterPage: React.FC = () => {
                             border: `1px solid rgba(59, 130, 246, 0.2)`,
                           }}
                         >
-                          By creating your account, you accept our terms of service and privacy policy.
+                          Al crear tu cuenta, aceptas nuestros términos de servicio y política de privacidad.
                         </Alert>
 
                         <Button
@@ -671,7 +671,7 @@ const RegisterPage: React.FC = () => {
                             transition: 'all 0.3s ease',
                           }}
                         >
-                          {loading ? 'Creating Account...' : 'Create Account'}
+                          {loading ? 'Creando Cuenta...' : 'Crear Cuenta'}
                         </Button>
                       </Stack>
                     </Grid.Col>
@@ -680,7 +680,7 @@ const RegisterPage: React.FC = () => {
 
                 <Center mt="md">
                   <Text size="sm" c="dimmed">
-                    Already have an account?{' '}
+                    ¿Ya tienes una cuenta?{' '}
                     <Text
                       component="span"
                       size="sm"
@@ -688,7 +688,7 @@ const RegisterPage: React.FC = () => {
                       style={{ cursor: 'pointer', fontWeight: 500 }}
                       onClick={() => navigate('/login')}
                     >
-                      Sign in here
+                      Inicia sesión aquí
                     </Text>
                   </Text>
                 </Center>
