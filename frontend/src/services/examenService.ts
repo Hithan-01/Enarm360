@@ -2,7 +2,7 @@
 import api from "./api";
 import { Examen } from "../Models/examen";
 
-const API_URL = "/examenes";
+const API_URL = "/api/examenes"; // 👈 Agregado /api
 
 export const examenService = {
   generarExamen,
@@ -56,8 +56,7 @@ async function finalizarIntento(intentoId: number) {
 
 // Enviar todas las respuestas en lote
 async function enviarRespuestas(intentoId: number, respuestas: Record<number, string>) {
- 
-  const res = await api.post(`/examenes/intentos/${intentoId}/respuestas`, respuestas);
+  const res = await api.post(`${API_URL}/intentos/${intentoId}/respuestas`, respuestas); // 👈 Cambiado
   return res.data; 
 }
 
