@@ -12,8 +12,8 @@ import {
   Stack,
   Switch
 } from '@mantine/core';
-import { IconSun, IconMoon, IconUserCheck, IconLogout, IconUser, IconSettings } from '@tabler/icons-react';
-import enarmLogo from '../assets/enarm_logo.png';
+import { IconSun, IconMoon, IconUserCheck, IconLogout, IconSettings } from '@tabler/icons-react';
+import enarmLogo from '../assets/enarm_logo_noletter.png';
 
 interface NavbarProps {
   showAuthButtons?: boolean;
@@ -60,7 +60,6 @@ const Navbar: React.FC<NavbarProps> = ({
   return (
     <Card
       withBorder={false}
-      mb="xl"
       p="lg"
       radius={0}
       style={{
@@ -76,13 +75,14 @@ const Navbar: React.FC<NavbarProps> = ({
           : 'none',
         position: 'sticky',
         top: 0,
-        zIndex: 100,
+        zIndex: 1000,
         transition: 'all 0.3s ease',
         boxShadow: scrolled
           ? colorScheme === 'dark'
             ? 'inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 4px 20px rgba(0, 0, 0, 0.3)'
             : '0 4px 16px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.6)'
           : 'none',
+        marginBottom: 0
       }}
     >
       <div style={{ 
@@ -124,9 +124,10 @@ const Navbar: React.FC<NavbarProps> = ({
               <Button
                 variant="outline"
                 style={{
-                  borderColor: 'white',
-                  color: 'white',
-                  backgroundColor: 'transparent'
+                  borderColor: 'rgb(54, 71, 91)',
+                  color: 'rgb(54, 71, 91)',
+                  backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                  fontWeight: 600
                 }}
                 onClick={() => navigate('/login')}
                 size="sm"

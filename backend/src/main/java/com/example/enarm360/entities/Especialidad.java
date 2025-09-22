@@ -8,7 +8,6 @@ import lombok.Builder;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.util.List;
 
-
 @Entity
 @Table(name = "especialidades")
 @Data
@@ -16,27 +15,27 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class Especialidad {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
+
     @Column(nullable = false, unique = true, length = 100)
     @NotBlank(message = "El nombre de la especialidad es obligatorio")
     private String nombre;
-    
+
     // Relación con claves
     @OneToMany(mappedBy = "especialidad", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonIgnoreProperties("especialidad")
+    @JsonIgnoreProperties({"especialidad", "reactivos", "preguntasCasos"})
     private List<Clave> claves;
-    
+
     // Relación con reactivos
     @OneToMany(mappedBy = "especialidad", fetch = FetchType.LAZY)
-    @JsonIgnoreProperties("especialidad")
+    @JsonIgnoreProperties({"especialidad", "clave", "dificultad", "usuario"})
     private List<Reactivo> reactivos;
-    
+
     // Relación con preguntas de casos
     @OneToMany(mappedBy = "especialidad", fetch = FetchType.LAZY)
-    @JsonIgnoreProperties("especialidad")
+    @JsonIgnoreProperties({"especialidad", "clave", "dificultad", "usuario"})
     private List<PreguntaCaso> preguntasCasos;
 }

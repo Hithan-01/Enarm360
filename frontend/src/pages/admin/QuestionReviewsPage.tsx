@@ -18,8 +18,6 @@ import {
   ScrollArea,
 } from '@mantine/core';
 import PageTransition from '../../components/animations/PageTransition';
-import Sidebar from '../../components/Sidebar';
-import TopHeader from '../../components/TopHeader';
 import {
   IconClipboardList,
   IconCheck,
@@ -29,20 +27,13 @@ import {
   IconClock,
   IconAlertCircle,
 } from '@tabler/icons-react';
-import { authService } from '../../services/authService';
 
 const QuestionReviewsPage: React.FC = () => {
-  const [sidebarCollapsed, setSidebarCollapsed] = useState<boolean>(false);
   const [reviewModalOpen, setReviewModalOpen] = useState<boolean>(false);
   const [selectedQuestion, setSelectedQuestion] = useState<any>(null);
   const [reviewAction, setReviewAction] = useState<string>('');
   const [reviewComments, setReviewComments] = useState<string>('');
   const { colorScheme } = useMantineColorScheme();
-  const user = authService.getCurrentUserFromStorage();
-
-  const handleLogout = () => {
-    authService.logout();
-  };
 
   // Datos de ejemplo para preguntas pendientes de revisión
   const pendingQuestions = [
@@ -101,59 +92,16 @@ const QuestionReviewsPage: React.FC = () => {
 
   return (
     <PageTransition type="medical" duration={800}>
-      <Box
+      <>
+        <Box
         style={{
           minHeight: '100vh',
           background: colorScheme === 'dark'
             ? 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)'
             : 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
-          display: 'flex',
+          padding: '32px',
         }}
       >
-        {/* Sidebar */}
-        <Sidebar
-          user={{
-            username: user?.username || '',
-            email: user?.email || '',
-            roles: user?.roles || []
-          }}
-          onLogout={handleLogout}
-          onCollapseChange={setSidebarCollapsed}
-        />
-
-        {/* Right Side Container */}
-        <Box
-          style={{
-            marginLeft: sidebarCollapsed ? '80px' : '280px',
-            flex: 1,
-            transition: 'margin-left 0.3s ease',
-            display: 'flex',
-            flexDirection: 'column',
-            height: '100vh',
-          }}
-        >
-          {/* Top Header */}
-          <TopHeader
-            user={{
-              username: user?.username || '',
-              email: user?.email || '',
-              roles: user?.roles || [],
-              nombre: user?.nombre,
-              apellidos: user?.apellidos,
-            }}
-            onLogout={handleLogout}
-            sidebarWidth={0}
-          />
-
-          {/* Main Content */}
-          <Box
-            style={{
-              flex: 1,
-              padding: '32px',
-              overflow: 'hidden',
-              overflowY: 'auto',
-            }}
-          >
             <Stack gap="xl">
               {/* Header */}
               <div>
@@ -362,7 +310,6 @@ const QuestionReviewsPage: React.FC = () => {
                 </Stack>
               </Card>
             </Stack>
-          </Box>
         </Box>
 
         {/* Review Modal */}
@@ -445,7 +392,7 @@ const QuestionReviewsPage: React.FC = () => {
             </Stack>
           )}
         </Modal>
-      </Box>
+      </>
     </PageTransition>
   );
 };

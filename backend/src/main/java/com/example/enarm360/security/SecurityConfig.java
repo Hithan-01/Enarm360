@@ -61,6 +61,10 @@ public SecurityFilterChain filterChain(HttpSecurity http,
             
             // REGISTRO - URLs NUEVAS (públicas)
             .requestMatchers("/api/registro/**").permitAll()  // ← TODO /api/registro/* es público
+
+              .requestMatchers("/api/auth/**").permitAll()
+                .requestMatchers("/api/especialidades/**").permitAll() // 👈 acceso libre
+             
             
             // URLs de testing
             .requestMatchers("/api/test/**").permitAll()
@@ -69,6 +73,19 @@ public SecurityFilterChain filterChain(HttpSecurity http,
             .requestMatchers("/api/auth/me", "/api/auth/logout", "/api/auth/logout-all").authenticated()
             .requestMatchers("/api/auth/sessions", "/api/auth/me/**").authenticated()
             .requestMatchers("/api/dashboard/**").authenticated()
+
+            .requestMatchers("/api/examenes/**").authenticated()
+            .requestMatchers("/estudiante/simulador/**").permitAll()
+
+            .requestMatchers(
+    "/", 
+    "/index.html", 
+    "/favicon.ico", 
+    "/manifest.json", 
+    "/static/**", 
+    "/estudiante/**"   // todas las rutas de estudiante las maneja React
+).permitAll()
+
             
             // Todo lo demás requiere autenticación
             .anyRequest().authenticated()

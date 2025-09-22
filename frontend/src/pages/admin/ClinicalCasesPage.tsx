@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   Container,
   Text,
@@ -15,8 +15,6 @@ import {
   Progress,
 } from '@mantine/core';
 import PageTransition from '../../components/animations/PageTransition';
-import Sidebar from '../../components/Sidebar';
-import TopHeader from '../../components/TopHeader';
 import {
   IconStethoscope,
   IconPlus,
@@ -26,16 +24,9 @@ import {
   IconChartBar,
   IconUsers,
 } from '@tabler/icons-react';
-import { authService } from '../../services/authService';
 
 const ClinicalCasesPage: React.FC = () => {
-  const [sidebarCollapsed, setSidebarCollapsed] = useState<boolean>(false);
   const { colorScheme } = useMantineColorScheme();
-  const user = authService.getCurrentUserFromStorage();
-
-  const handleLogout = () => {
-    authService.logout();
-  };
 
   // Datos de ejemplo para casos clínicos
   const clinicalCases = [
@@ -76,53 +67,9 @@ const ClinicalCasesPage: React.FC = () => {
           background: colorScheme === 'dark'
             ? 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)'
             : 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
-          display: 'flex',
+          padding: '32px',
         }}
       >
-        {/* Sidebar */}
-        <Sidebar
-          user={{
-            username: user?.username || '',
-            email: user?.email || '',
-            roles: user?.roles || []
-          }}
-          onLogout={handleLogout}
-          onCollapseChange={setSidebarCollapsed}
-        />
-
-        {/* Right Side Container */}
-        <Box
-          style={{
-            marginLeft: sidebarCollapsed ? '80px' : '280px',
-            flex: 1,
-            transition: 'margin-left 0.3s ease',
-            display: 'flex',
-            flexDirection: 'column',
-            height: '100vh',
-          }}
-        >
-          {/* Top Header */}
-          <TopHeader
-            user={{
-              username: user?.username || '',
-              email: user?.email || '',
-              roles: user?.roles || [],
-              nombre: user?.nombre,
-              apellidos: user?.apellidos,
-            }}
-            onLogout={handleLogout}
-            sidebarWidth={0}
-          />
-
-          {/* Main Content */}
-          <Box
-            style={{
-              flex: 1,
-              padding: '32px',
-              overflow: 'hidden',
-              overflowY: 'auto',
-            }}
-          >
             <Stack gap="xl">
               {/* Header */}
               <Group justify="space-between" align="center">
@@ -332,8 +279,6 @@ const ClinicalCasesPage: React.FC = () => {
                 </Stack>
               </Card>
             </Stack>
-          </Box>
-        </Box>
       </Box>
     </PageTransition>
   );

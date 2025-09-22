@@ -5,6 +5,8 @@ import { Notifications } from '@mantine/notifications';
 import LandingPage from './pages/LandingPage';
 import Login from './components/Login';
 import ProtectedRoute from './components/ProtectedRoute';
+import Layout from './components/Layout';
+import ExamLayout from './components/ExamLayout';
 import AdminDashboard from './pages/AdminDashboard';
 import EstudianteDashboard from './pages/EstudianteDashboard';
 import ProfilePage from './pages/ProfilePage';
@@ -12,7 +14,10 @@ import SettingsPage from './pages/SettingsPage';
 import RegisterPage from './pages/RegisterPage';
 // Páginas del módulo estudiantil
 import SimuladorPage from './pages/SimuladorPage';
-import FlashcardsPage from './pages/FlashcardsPage';
+import ExamenRapidoPage from './pages/ExamenRapidoPage';
+import ExamenFiltrosPage from './pages/ExamenFiltrosPage';
+import SimulacionCompletaPage from './pages/SimulacionCompletaPage';
+import RepasoInteligentePage from './pages/RepasoInteligentePage';
 import EstadisticasPage from './pages/EstadisticasPage';
 import RankingsPage from './pages/RankingsPage';
 import CrearPreguntasPage from './pages/CrearPreguntasPage';
@@ -23,6 +28,11 @@ import UserStatisticsPage from './pages/admin/UserStatisticsPage';
 import SubscriptionsPage from './pages/admin/SubscriptionsPage';
 import QuestionDatabasePage from './pages/admin/QuestionDatabasePage';
 import UserPermissionsPage from './pages/admin/UserPermissionsPage';
+import ResultadosPage from './pages/ResultadosPage';
+
+//Páginas de examen
+import ExamenPage from './pages/ExamenPage';
+
 import './App.css';
 import '@mantine/core/styles.css';
 import '@mantine/notifications/styles.css';
@@ -36,7 +46,7 @@ const theme = createTheme({
   colors: {
     'medical-blue': [
       '#f0f9ff',
-      '#e0f2fe', 
+      '#e0f2fe',
       '#bae6fd',
       '#7dd3fc',
       '#38bdf8',
@@ -49,7 +59,7 @@ const theme = createTheme({
     'medical-green': [
       '#f0fdf4',
       '#dcfce7',
-      '#bbf7d0', 
+      '#bbf7d0',
       '#86efac',
       '#4ade80',
       '#22c55e',
@@ -65,6 +75,13 @@ const theme = createTheme({
     md: '12px',
     lg: '16px',
     xl: '24px'
+  },
+  other: {
+    lightBg: '#f7f3ee',
+    lightCard: '#ebe8e3',
+    lightBorder: '#ddd8d1',
+    lightText: '#2d2a26',
+    lightTextSecondary: '#5a5550'
   }
 });
 
@@ -82,166 +99,47 @@ function App() {
         <Router>
           <div className="App">
             <Routes>
-              {/* Ruta raíz - Landing Page pública */}
+              {/* Rutas públicas */}
               <Route path="/" element={<LandingPage />} />
-              
-              {/* Ruta de login */}
               <Route path="/login" element={<Login />} />
-              
-              {/* Ruta de registro */}
               <Route path="/register" element={<RegisterPage />} />
-              
-              {/* Dashboard de administrador - solo accesible por admins */}
-              <Route
-                path="/admin/dashboard"
-                element={
-                  <ProtectedRoute requiredRole="ADMIN">
-                    <AdminDashboard />
-                  </ProtectedRoute>
-                }
-              />
 
-              {/* Casos Clínicos - solo accesible por admins */}
-              <Route
-                path="/admin/clinical-cases"
-                element={
-                  <ProtectedRoute requiredRole="ADMIN">
-                    <ClinicalCasesPage />
-                  </ProtectedRoute>
-                }
-              />
+              {/* Rutas protegidas con Layout */}
+              <Route element={<ProtectedRoute><Layout /></ProtectedRoute>}>
+                {/* Rutas de administrador */}
+                <Route path="/admin/dashboard" element={<ProtectedRoute requiredRole="ADMIN"><AdminDashboard /></ProtectedRoute>} />
+                <Route path="/admin/clinical-cases" element={<ProtectedRoute requiredRole="ADMIN"><ClinicalCasesPage /></ProtectedRoute>} />
+                <Route path="/admin/question-reviews" element={<ProtectedRoute requiredRole="ADMIN"><QuestionReviewsPage /></ProtectedRoute>} />
+                <Route path="/admin/statistics" element={<ProtectedRoute requiredRole="ADMIN"><UserStatisticsPage /></ProtectedRoute>} />
+                <Route path="/admin/subscriptions" element={<ProtectedRoute requiredRole="ADMIN"><SubscriptionsPage /></ProtectedRoute>} />
+                <Route path="/admin/question-database" element={<ProtectedRoute requiredRole="ADMIN"><QuestionDatabasePage /></ProtectedRoute>} />
+                <Route path="/admin/permissions" element={<ProtectedRoute requiredRole="ADMIN"><UserPermissionsPage /></ProtectedRoute>} />
 
-              {/* Revisión de Preguntas - solo accesible por admins */}
-              <Route
-                path="/admin/question-reviews"
-                element={
-                  <ProtectedRoute requiredRole="ADMIN">
-                    <QuestionReviewsPage />
-                  </ProtectedRoute>
-                }
-              />
+                {/* Rutas de estudiante */}
+                <Route path="/estudiante/dashboard" element={<ProtectedRoute requiredRole="ESTUDIANTE"><EstudianteDashboard /></ProtectedRoute>} />
+                <Route path="/estudiante/simulador" element={<ProtectedRoute requiredRole="ESTUDIANTE"><SimuladorPage /></ProtectedRoute>} />
+                <Route path="/estudiante/simulador/rapido" element={<ProtectedRoute requiredRole="ESTUDIANTE"><ExamenRapidoPage /></ProtectedRoute>} />
+                <Route path="/estudiante/simulador/filtros" element={<ProtectedRoute requiredRole="ESTUDIANTE"><ExamenFiltrosPage /></ProtectedRoute>} />
+                <Route path="/estudiante/simulador/completo" element={<ProtectedRoute requiredRole="ESTUDIANTE"><SimulacionCompletaPage /></ProtectedRoute>} />
+                <Route path="/estudiante/simulador/inteligente" element={<ProtectedRoute requiredRole="ESTUDIANTE"><RepasoInteligentePage /></ProtectedRoute>} />
+                <Route path="/estudiante/estadisticas" element={<ProtectedRoute requiredRole="ESTUDIANTE"><EstadisticasPage /></ProtectedRoute>} />
+                <Route path="/estudiante/rankings" element={<ProtectedRoute requiredRole="ESTUDIANTE"><RankingsPage /></ProtectedRoute>} />
+                <Route path="/estudiante/preguntas" element={<ProtectedRoute requiredRole="ESTUDIANTE"><CrearPreguntasPage /></ProtectedRoute>} />
 
-              {/* Estadísticas de Usuario - solo accesible por admins */}
-              <Route
-                path="/admin/statistics"
-                element={
-                  <ProtectedRoute requiredRole="ADMIN">
-                    <UserStatisticsPage />
-                  </ProtectedRoute>
-                }
-              />
+                {/* Configuración */}
+                <Route path="/settings" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
+                <Route path="/settings/:section" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
 
-              {/* Suscripciones y Finanzas - solo accesible por admins */}
-              <Route
-                path="/admin/subscriptions"
-                element={
-                  <ProtectedRoute requiredRole="ADMIN">
-                    <SubscriptionsPage />
-                  </ProtectedRoute>
-                }
-              />
+                {/* Redirección */}
+                <Route path="/profile" element={<Navigate to="/settings" replace />} />
+              </Route>
 
-              {/* Base de Datos de Preguntas - solo accesible por admins */}
-              <Route
-                path="/admin/question-database"
-                element={
-                  <ProtectedRoute requiredRole="ADMIN">
-                    <QuestionDatabasePage />
-                  </ProtectedRoute>
-                }
-              />
+              {/* Rutas de examen con layout sin distracciones */}
+              <Route element={<ProtectedRoute><ExamLayout /></ProtectedRoute>}>
+                <Route path="/examen/:id" element={<ProtectedRoute requiredRole="ESTUDIANTE"><ExamenPage /></ProtectedRoute>} />
+                <Route path="/examenes/:intentoId/resultado" element={<ProtectedRoute requiredRole="ESTUDIANTE"><ResultadosPage /></ProtectedRoute>} />
+              </Route>
 
-              {/* Permisos de Usuario - solo accesible por admins */}
-              <Route
-                path="/admin/permissions"
-                element={
-                  <ProtectedRoute requiredRole="ADMIN">
-                    <UserPermissionsPage />
-                  </ProtectedRoute>
-                }
-              />
-              
-              {/* Dashboard de estudiante - solo accesible por estudiantes */}
-              <Route
-                path="/estudiante/dashboard"
-                element={
-                  <ProtectedRoute requiredRole="ESTUDIANTE">
-                    <EstudianteDashboard />
-                  </ProtectedRoute>
-                }
-              />
-
-              {/* Módulo de Simulador - solo accesible por estudiantes */}
-              <Route
-                path="/estudiante/simulador"
-                element={
-                  <ProtectedRoute requiredRole="ESTUDIANTE">
-                    <SimuladorPage />
-                  </ProtectedRoute>
-                }
-              />
-
-              {/* Módulo de Flashcards - solo accesible por estudiantes */}
-              <Route
-                path="/estudiante/flashcards"
-                element={
-                  <ProtectedRoute requiredRole="ESTUDIANTE">
-                    <FlashcardsPage />
-                  </ProtectedRoute>
-                }
-              />
-
-              {/* Módulo de Estadísticas - solo accesible por estudiantes */}
-              <Route
-                path="/estudiante/estadisticas"
-                element={
-                  <ProtectedRoute requiredRole="ESTUDIANTE">
-                    <EstadisticasPage />
-                  </ProtectedRoute>
-                }
-              />
-
-              {/* Módulo de Rankings - solo accesible por estudiantes */}
-              <Route
-                path="/estudiante/rankings"
-                element={
-                  <ProtectedRoute requiredRole="ESTUDIANTE">
-                    <RankingsPage />
-                  </ProtectedRoute>
-                }
-              />
-
-              {/* Módulo de Crear Preguntas - solo accesible por estudiantes con permisos */}
-              <Route
-                path="/estudiante/preguntas"
-                element={
-                  <ProtectedRoute requiredRole="ESTUDIANTE">
-                    <CrearPreguntasPage />
-                  </ProtectedRoute>
-                }
-              />
-
-              {/* Página de configuración - accesible por usuarios autenticados */}
-              <Route
-                path="/settings"
-                element={
-                  <ProtectedRoute>
-                    <SettingsPage />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/settings/:section"
-                element={
-                  <ProtectedRoute>
-                    <SettingsPage />
-                  </ProtectedRoute>
-                }
-              />
-
-              {/* Redirigir /profile a /settings para compatibilidad */}
-              <Route path="/profile" element={<Navigate to="/settings" replace />} />
-              
               {/* Ruta por defecto - redirige a home */}
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
