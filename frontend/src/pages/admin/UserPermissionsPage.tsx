@@ -30,8 +30,6 @@ import {
   IconUserX,
   IconAlertCircle
 } from '@tabler/icons-react';
-import Sidebar from '../../components/Sidebar';
-import TopHeader from '../../components/TopHeader';
 import CountUpNumber from '../../components/animations/CountUpNumber';
 
 interface User {
@@ -153,21 +151,13 @@ const UserPermissionsPage: React.FC = () => {
   });
 
   return (
-    <div style={{
-      display: 'flex',
-      minHeight: '100vh',
-      backgroundColor: colorScheme === 'dark' ? '#1a1b23' : '#f8fafc'
-    }}>
-      <Sidebar user={user} onLogout={handleLogout} />
-
+    <>
       <div style={{
         flex: 1,
         display: 'flex',
         flexDirection: 'column',
-        marginLeft: '280px'
+        backgroundColor: colorScheme === 'dark' ? '#1a1b23' : '#f8fafc'
       }}>
-        <TopHeader user={user} onLogout={handleLogout} />
-
         <Container size="xl" style={{ flex: 1, paddingTop: '2rem', paddingBottom: '2rem' }}>
           <Text
             size="xl"
@@ -497,7 +487,7 @@ const UserPermissionsPage: React.FC = () => {
           </Stack>
         )}
       </Modal>
-    </div>
+    </>
   );
 };
 

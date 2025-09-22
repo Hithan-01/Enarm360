@@ -91,14 +91,12 @@ public class DashboardController {
                     "Tomar exámenes", 
                     "Ver progreso", 
                     "Revisar resultados",
-                    "Practicar flashcards",
                     "Ver estadísticas"
                 },
                 "accessLevel", "ESTUDIANTE",
                 "quickLinks", Map.of(
                     "examenes", "/examenes",
-                    "progreso", "/progreso",
-                    "flashcards", "/flashcards"
+                    "progreso", "/progreso"
                 ),
                 "proximosExamenes", new String[]{
                     "Cardiología - Nivel Intermedio",

@@ -72,8 +72,20 @@ const Login: React.FC = () => {
       notifications.show({
         title: 'Login Successful',
         message: 'Redirecting to dashboard...',
-        color: 'blue',
+        color: 'teal',
         autoClose: 2000,
+        styles: {
+          root: {
+            backgroundColor: colorScheme === 'dark' ? 'rgba(30, 41, 59, 0.9)' : 'rgba(247, 243, 238, 0.9)',
+            border: `1px solid ${colorScheme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(221, 216, 209, 0.8)'}`,
+          },
+          title: {
+            color: colorScheme === 'dark' ? '#e2e8f0' : '#2d2a26',
+          },
+          description: {
+            color: colorScheme === 'dark' ? '#94a3b8' : '#5a5550',
+          }
+        }
       });
       
       // Redirigir basado en el rol del usuario de la respuesta
@@ -177,7 +189,7 @@ const Login: React.FC = () => {
         width: '100vw',
         background: colorScheme === 'dark'
           ? 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)'
-          : 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
+          : 'linear-gradient(135deg, #f7f3ee 0%, #f2ede6 100%)',
         position: 'relative',
         overflow: 'hidden'
       }}
@@ -192,7 +204,7 @@ const Login: React.FC = () => {
           bottom: 0,
           backgroundImage: colorScheme === 'dark'
             ? `url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="%23374151" stroke-width="0.5" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>')`
-            : `url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="%23e2e8f0" stroke-width="0.5" opacity="0.2"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>')`,
+            : `url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="%23ddd8d1" stroke-width="0.5" opacity="0.3"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>')`,
           opacity: 0.5,
           pointerEvents: 'none',
           zIndex: 0,
@@ -214,10 +226,10 @@ const Login: React.FC = () => {
           zIndex: 10,
           backgroundColor: colorScheme === 'dark'
             ? 'rgba(30, 41, 59, 0.8)'
-            : 'rgba(255, 255, 255, 0.8)',
+            : 'rgba(247, 243, 238, 0.8)',
           backdropFilter: 'blur(20px) saturate(180%)',
           WebkitBackdropFilter: 'blur(20px) saturate(180%)',
-          border: `1px solid ${colorScheme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.5)'}`,
+          border: `1px solid ${colorScheme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(221, 216, 209, 0.8)'}`,
           boxShadow: colorScheme === 'dark'
             ? '0 4px 16px rgba(0, 0, 0, 0.3)'
             : '0 4px 16px rgba(0, 0, 0, 0.1)',
@@ -234,19 +246,19 @@ const Login: React.FC = () => {
         justifyContent: 'center',
         zIndex: 1
       }}>
-        <Container size={420} style={{ width: '100%', maxWidth: '420px' }}>
+        <Container size={380} style={{ width: '100%', maxWidth: '380px' }}>
         <Paper
           radius="xl"
-          p="xl"
+          p="lg"
           withBorder
           style={{
             width: '100%',
             backgroundColor: colorScheme === 'dark'
               ? 'rgba(30, 41, 59, 0.7)'
-              : 'rgba(255, 255, 255, 0.25)',
+              : 'rgba(247, 243, 238, 0.6)',
             backdropFilter: 'blur(40px) saturate(200%)',
             WebkitBackdropFilter: 'blur(40px) saturate(200%)',
-            border: `1px solid ${colorScheme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.5)'}`,
+            border: `1px solid ${colorScheme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(221, 216, 209, 0.8)'}`,
             boxShadow: colorScheme === 'dark'
               ? 'inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 4px 20px rgba(0, 0, 0, 0.3)'
               : '0 4px 16px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.6)',
@@ -255,14 +267,14 @@ const Login: React.FC = () => {
           <Stack gap="lg">
             <Center>
               <Stack align="center" gap="sm">
-                <Image 
-                  src={enarmLogo} 
-                  alt="ENARM360 Logo" 
-                  height={80}
+                <Image
+                  src={enarmLogo}
+                  alt="ENARM360 Logo"
+                  height={65}
                   fit="contain"
-                  style={{ 
+                  style={{
                     borderRadius: '12px',
-                    maxWidth: '250px',
+                    maxWidth: '200px',
                     cursor: 'pointer'
                   }}
                   onClick={() => navigate('/')}
@@ -276,7 +288,7 @@ const Login: React.FC = () => {
             <form onSubmit={handleSubmit}>
               <Stack gap="md">
                 <TextInput
-                  placeholder="Email"
+                  placeholder="Correo electrónico"
                   name="login"
                   value={credentials.login}
                   onChange={handleChange}
@@ -284,26 +296,26 @@ const Login: React.FC = () => {
                   disabled={loading}
                   leftSection={<IconUser size={16} />}
                   radius="xl"
-                  size="lg"
+                  size="md"
                   styles={{
                     input: {
                       backgroundColor: colorScheme === 'dark'
                         ? 'rgba(30, 41, 59, 0.6)'
-                        : 'rgba(255, 255, 255, 0.2)',
+                        : 'rgba(247, 243, 238, 0.6)',
                       backdropFilter: 'blur(40px) saturate(200%)',
                       WebkitBackdropFilter: 'blur(40px) saturate(200%)',
-                      border: `1px solid ${colorScheme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.4)'}`,
+                      border: `1px solid ${colorScheme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(221, 216, 209, 0.6)'}`,
                       boxShadow: colorScheme === 'dark'
                         ? 'inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 4px 16px rgba(0, 0, 0, 0.2)'
                         : '0 4px 16px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.6)',
-                      color: colorScheme === 'dark' ? '#e2e8f0' : '#1e293b',
+                      color: colorScheme === 'dark' ? '#e2e8f0' : '#2d2a26',
                       fontFamily: 'Inter, sans-serif',
                     }
                   }}
                 />
 
                 <PasswordInput
-                  placeholder="Password"
+                  placeholder="Contraseña"
                   name="password"
                   value={credentials.password}
                   onChange={handleChange}
@@ -311,19 +323,19 @@ const Login: React.FC = () => {
                   disabled={loading}
                   leftSection={<IconLock size={16} />}
                   radius="xl"
-                  size="lg"
+                  size="md"
                   styles={{
                     input: {
                       backgroundColor: colorScheme === 'dark'
                         ? 'rgba(30, 41, 59, 0.6)'
-                        : 'rgba(255, 255, 255, 0.2)',
+                        : 'rgba(247, 243, 238, 0.6)',
                       backdropFilter: 'blur(40px) saturate(200%)',
                       WebkitBackdropFilter: 'blur(40px) saturate(200%)',
-                      border: `1px solid ${colorScheme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.4)'}`,
+                      border: `1px solid ${colorScheme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(221, 216, 209, 0.6)'}`,
                       boxShadow: colorScheme === 'dark'
                         ? 'inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 4px 16px rgba(0, 0, 0, 0.2)'
                         : '0 4px 16px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.6)',
-                      color: colorScheme === 'dark' ? '#e2e8f0' : '#1e293b',
+                      color: colorScheme === 'dark' ? '#e2e8f0' : '#2d2a26',
                       fontFamily: 'Inter, sans-serif',
                     }
                   }}
@@ -333,7 +345,7 @@ const Login: React.FC = () => {
                   <Text
                     size="sm"
                     style={{
-                      color: colorScheme === 'dark' ? '#94a3b8' : '#64748b',
+                      color: colorScheme === 'dark' ? '#94a3b8' : '#5a5550',
                       cursor: 'pointer',
                       fontFamily: 'Inter, sans-serif',
                     }}
@@ -342,7 +354,7 @@ const Login: React.FC = () => {
                       console.log('Recover password');
                     }}
                   >
-                    Forgot password?
+                    ¿Olvidaste tu contraseña?
                   </Text>
                 </Group>
 
@@ -370,28 +382,28 @@ const Login: React.FC = () => {
                   fullWidth
                   loading={loading}
                   disabled={!credentials.login || !credentials.password}
-                  size="lg"
+                  size="md"
                   radius="xl"
                   variant="light"
                   style={{
                     marginTop: '0.5rem',
                     backgroundColor: colorScheme === 'dark'
                       ? 'rgba(30, 41, 59, 0.8)'
-                      : 'rgba(255, 255, 255, 0.3)',
+                      : 'rgba(247, 243, 238, 0.8)',
                     backdropFilter: 'blur(40px) saturate(200%)',
                     WebkitBackdropFilter: 'blur(40px) saturate(200%)',
-                    border: `1px solid ${colorScheme === 'dark' ? 'rgba(255, 255, 255, 0.2)' : 'rgba(255, 255, 255, 0.6)'}`,
+                    border: `1px solid ${colorScheme === 'dark' ? 'rgba(255, 255, 255, 0.2)' : 'rgba(221, 216, 209, 0.8)'}`,
                     boxShadow: colorScheme === 'dark'
                       ? 'inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 4px 20px rgba(0, 0, 0, 0.3)'
                       : '0 4px 16px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.6)',
-                    color: colorScheme === 'dark' ? '#e2e8f0' : '#1e293b',
+                    color: colorScheme === 'dark' ? '#e2e8f0' : '#2d2a26',
                     fontFamily: 'Space Grotesk, Inter, sans-serif',
                     fontWeight: 600,
                     letterSpacing: '0.025em',
                     transition: 'all 0.3s ease',
                   }}
                 >
-                  {loading ? 'Signing in...' : 'Sign In'}
+                  {loading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
                 </Button>
               </Stack>
             </form>
@@ -406,7 +418,7 @@ const Login: React.FC = () => {
                 WebkitBackdropFilter: 'blur(10px)',
               }} />
               <Text size="sm" c="dimmed" style={{ fontFamily: 'Inter, sans-serif' }}>
-                or continue with
+                o continúa con
               </Text>
               <Box style={{
                 flex: 1,
@@ -485,7 +497,7 @@ const Login: React.FC = () => {
 
             <Center>
               <Text size="sm" c="dimmed">
-                Don't have an account?{' '}
+                ¿No tienes una cuenta?{' '}
                 <Text
                   component="span"
                   size="sm"
@@ -493,7 +505,7 @@ const Login: React.FC = () => {
                   style={{ cursor: 'pointer', fontWeight: 500 }}
                   onClick={() => navigate('/register')}
                 >
-                  Sign up here
+                  Regístrate aquí
                 </Text>
               </Text>
             </Center>
