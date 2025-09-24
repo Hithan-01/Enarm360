@@ -81,7 +81,7 @@ const Sidebar: React.FC<SidebarProps> = ({ user, onLogout, onCollapseChange, ini
   const adminMenuItems = [
     {
       id: 'dashboard',
-      label: 'Panel Principal',
+      label: 'Dashboard',
       icon: IconDashboard,
       path: '/admin/dashboard',
     },
@@ -149,7 +149,7 @@ const Sidebar: React.FC<SidebarProps> = ({ user, onLogout, onCollapseChange, ini
   const studentMenuItems = [
     {
       id: 'dashboard',
-      label: 'Panel Principal',
+      label: 'Dashboard',
       icon: IconDashboard,
       path: '/estudiante/dashboard',
     },

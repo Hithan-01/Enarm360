@@ -3,6 +3,8 @@ package com.example.enarm360.repositories;
 import com.example.enarm360.entities.Usuario;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import java.util.List;
@@ -37,4 +39,7 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
 
     @Query("SELECT u FROM Usuario u LEFT JOIN FETCH u.roles WHERE u.username = :usernameOrEmail OR u.email = :usernameOrEmail")
     Optional<Usuario> findByUsernameOrEmail(@Param("usernameOrEmail") String usernameOrEmail, @Param("usernameOrEmail") String usernameOrEmail2);
+
+    @Query("SELECT u FROM Usuario u WHERE u.activo = true AND (LOWER(u.email) LIKE LOWER(CONCAT('%', :q, '%')) OR LOWER(u.username) LIKE LOWER(CONCAT('%', :q, '%')) OR LOWER(u.nombre) LIKE LOWER(CONCAT('%', :q, '%')) OR LOWER(u.apellidos) LIKE LOWER(CONCAT('%', :q, '%'))) ORDER BY u.nombre ASC")
+    Page<Usuario> searchUsers(@Param("q") String q, Pageable pageable);
 }

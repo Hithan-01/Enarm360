@@ -16,6 +16,12 @@ export { profileService, default as ProfileService } from './profileService';
 // Servicio de dashboards
 export { dashboardService, default as DashboardService } from './dashboardService';
 
+// Servicio de notificaciones
+export { notificationService, default as NotificationService } from './notificationService';
+
+// Servicio de usuarios (admin)
+export { userService, default as UserService } from './userService';
+
 // ==========================================================
 // CONFIGURACIÓN GLOBAL DE AXIOS
 // ==========================================================
@@ -293,6 +299,15 @@ export const API_ENDPOINTS = {
     ME: '/api/perfil/me',
     USUARIO: '/api/perfil/usuarios',
     AVATAR: '/api/perfil/me/avatar'
+  },
+  
+  // Notificaciones
+  NOTIFICACIONES: {
+    MIAS: '/api/notificaciones/mias',
+    COUNT: '/api/notificaciones/mias/count',
+    MARCAR_LEIDA: (id: number) => `/api/notificaciones/${id}/leer`,
+    CREAR: '/api/notificaciones',
+    BROADCAST: '/api/notificaciones/broadcast'
   }
 } as const;
 

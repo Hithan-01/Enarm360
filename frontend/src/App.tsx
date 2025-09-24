@@ -21,6 +21,8 @@ import RepasoInteligentePage from './pages/RepasoInteligentePage';
 import EstadisticasPage from './pages/EstadisticasPage';
 import RankingsPage from './pages/RankingsPage';
 import CrearPreguntasPage from './pages/CrearPreguntasPage';
+import ForoPage from './pages/ForoPage';
+import NotificacionesPage from './pages/NotificacionesPage';
 // Páginas del módulo de administración
 import ClinicalCasesPage from './pages/admin/ClinicalCasesPage';
 import QuestionReviewsPage from './pages/admin/QuestionReviewsPage';
@@ -28,6 +30,7 @@ import UserStatisticsPage from './pages/admin/UserStatisticsPage';
 import SubscriptionsPage from './pages/admin/SubscriptionsPage';
 import QuestionDatabasePage from './pages/admin/QuestionDatabasePage';
 import UserPermissionsPage from './pages/admin/UserPermissionsPage';
+import AdminNotificationsPage from './pages/admin/AdminNotificationsPage';
 import ResultadosPage from './pages/ResultadosPage';
 
 //Páginas de examen
@@ -114,6 +117,7 @@ function App() {
                 <Route path="/admin/subscriptions" element={<ProtectedRoute requiredRole="ADMIN"><SubscriptionsPage /></ProtectedRoute>} />
                 <Route path="/admin/question-database" element={<ProtectedRoute requiredRole="ADMIN"><QuestionDatabasePage /></ProtectedRoute>} />
                 <Route path="/admin/permissions" element={<ProtectedRoute requiredRole="ADMIN"><UserPermissionsPage /></ProtectedRoute>} />
+                <Route path="/admin/notificaciones" element={<ProtectedRoute requiredRole="ADMIN"><AdminNotificationsPage /></ProtectedRoute>} />
 
                 {/* Rutas de estudiante */}
                 <Route path="/estudiante/dashboard" element={<ProtectedRoute requiredRole="ESTUDIANTE"><EstudianteDashboard /></ProtectedRoute>} />
@@ -125,6 +129,8 @@ function App() {
                 <Route path="/estudiante/estadisticas" element={<ProtectedRoute requiredRole="ESTUDIANTE"><EstadisticasPage /></ProtectedRoute>} />
                 <Route path="/estudiante/rankings" element={<ProtectedRoute requiredRole="ESTUDIANTE"><RankingsPage /></ProtectedRoute>} />
                 <Route path="/estudiante/preguntas" element={<ProtectedRoute requiredRole="ESTUDIANTE"><CrearPreguntasPage /></ProtectedRoute>} />
+                <Route path="/estudiante/forum" element={<ProtectedRoute requiredRole="ESTUDIANTE"><ForoPage /></ProtectedRoute>} />
+                <Route path="/estudiante/notificaciones" element={<ProtectedRoute requiredRole="ESTUDIANTE"><NotificacionesPage /></ProtectedRoute>} />
 
                 {/* Configuración */}
                 <Route path="/settings" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
