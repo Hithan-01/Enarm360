@@ -1,1 +1,0 @@
-- No me gusta que pongas colores en los botones difuminados, o bueno en botones, en logo, en nada, no hagas eso, colores planos y luego ya con animacion lo hacemos mas interactivo.

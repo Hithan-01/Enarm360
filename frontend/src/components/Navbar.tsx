@@ -13,6 +13,7 @@ import {
   Switch
 } from '@mantine/core';
 import { IconSun, IconMoon, IconUserCheck, IconLogout, IconSettings } from '@tabler/icons-react';
+import NotificationDropdown from './NotificationDropdown';
 import enarmLogo from '../assets/enarm_logo_noletter.png';
 
 interface NavbarProps {
@@ -33,6 +34,7 @@ const Navbar: React.FC<NavbarProps> = ({
   userRole,
   userInfo
 }) => {
+  console.log('Navbar props:', { userRole, onLogout: !!onLogout, userInfo: !!userInfo });
   const navigate = useNavigate();
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
   const [scrolled, setScrolled] = useState(false);
@@ -150,23 +152,27 @@ const Navbar: React.FC<NavbarProps> = ({
           )}
 
           {userRole && onLogout && userInfo && (
-            <Menu shadow="md" width={250} position="bottom-end">
-              <Menu.Target>
-                <Group style={{ cursor: 'pointer' }}>
-                  <Stack gap={0} align="flex-end">
-                    <Text fw={600} size="sm">{userInfo.username}</Text>
-                    <Text size="xs" c="dimmed">{userInfo.email}</Text>
-                  </Stack>
-                  
-                  <Avatar 
-                    color={userRole === 'student' ? 'teal' : 'blue'}
-                    radius="xl"
-                    size="md"
-                  >
-                    <IconUserCheck size={18} />
-                  </Avatar>
-                </Group>
-              </Menu.Target>
+            <>
+              {console.log('Rendering NotificationDropdown...')}
+              <NotificationDropdown />
+
+              <Menu shadow="md" width={250} position="bottom-end">
+                <Menu.Target>
+                  <Group style={{ cursor: 'pointer' }}>
+                    <Stack gap={0} align="flex-end">
+                      <Text fw={600} size="sm">{userInfo.username}</Text>
+                      <Text size="xs" c="dimmed">{userInfo.email}</Text>
+                    </Stack>
+
+                    <Avatar
+                      color={userRole === 'student' ? 'teal' : 'blue'}
+                      radius="xl"
+                      size="md"
+                    >
+                      <IconUserCheck size={18} />
+                    </Avatar>
+                  </Group>
+                </Menu.Target>
 
               <Menu.Dropdown>
                 <Menu.Label>Configuración</Menu.Label>
@@ -208,7 +214,8 @@ const Navbar: React.FC<NavbarProps> = ({
                   Cerrar Sesión
                 </Menu.Item>
               </Menu.Dropdown>
-            </Menu>
+              </Menu>
+            </>
           )}
         </Group>
       </div>

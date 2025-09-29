@@ -541,13 +541,24 @@ const Sidebar: React.FC<SidebarProps> = ({ user, onLogout, onCollapseChange, ini
 
                   <Menu.Item
                     leftSection={<IconSettings size={16} />}
-                    onClick={() => window.location.href = '/settings'}
+                    onClick={() => window.location.href = '/settings/billing'}
                     style={{
                       color: colorScheme === 'dark' ? '#e2e8f0' : '#1e293b',
                       fontFamily: 'Inter, sans-serif',
                     }}
                   >
                     Configuración
+                  </Menu.Item>
+
+                  <Menu.Item
+                    leftSection={<IconCreditCard size={16} />}
+                    onClick={() => window.location.href = '/mejorarplan'}
+                    style={{
+                      color: colorScheme === 'dark' ? '#e2e8f0' : '#1e293b',
+                      fontFamily: 'Inter, sans-serif',
+                    }}
+                  >
+                    Mejorar Plan
                   </Menu.Item>
 
                   <Menu.Item
@@ -696,13 +707,24 @@ const Sidebar: React.FC<SidebarProps> = ({ user, onLogout, onCollapseChange, ini
 
                 <Menu.Item
                   leftSection={<IconSettings size={16} />}
-                  onClick={() => window.location.href = '/settings'}
+                  onClick={() => window.location.href = '/settings/billing'}
                   style={{
                     color: colorScheme === 'dark' ? '#e2e8f0' : '#1e293b',
                     fontFamily: 'Inter, sans-serif',
                   }}
                 >
                   Configuración
+                </Menu.Item>
+
+                <Menu.Item
+                  leftSection={<IconCreditCard size={16} />}
+                  onClick={() => window.location.href = '/mejorarplan'}
+                  style={{
+                    color: colorScheme === 'dark' ? '#e2e8f0' : '#1e293b',
+                    fontFamily: 'Inter, sans-serif',
+                  }}
+                >
+                  Mejorar Plan
                 </Menu.Item>
 
                 <Menu.Item

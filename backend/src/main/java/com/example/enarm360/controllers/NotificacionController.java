@@ -41,6 +41,7 @@ public class NotificacionController {
         return ResponseEntity.ok().build();
     }
 
+
     // Endpoint para crear notificaciones (ADMIN) - útil para pruebas iniciales
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")

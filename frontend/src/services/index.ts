@@ -16,6 +16,12 @@ export { profileService, default as ProfileService } from './profileService';
 // Servicio de dashboards
 export { dashboardService, default as DashboardService } from './dashboardService';
 
+// Servicios de suscripciones y pagos
+export { subscriptionPlanService, default as SubscriptionPlanService } from './subscriptionPlanService';
+export { userSubscriptionService, default as UserSubscriptionService } from './userSubscriptionService';
+export { paymentHistoryService, default as PaymentHistoryService } from './paymentHistoryService';
+export { subscriptionDashboardService, default as SubscriptionDashboardService } from './subscriptionDashboardService';
+
 // Servicio de notificaciones
 export { notificationService, default as NotificationService } from './notificationService';
 

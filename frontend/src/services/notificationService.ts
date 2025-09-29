@@ -6,8 +6,16 @@ export interface NotificationDTO {
   mensaje: string;
   tipo: 'SISTEMA' | 'FORO' | 'EXAMEN' | 'PAGO' | 'ALERTA';
   leida: boolean;
+  guardada?: boolean;
   metadata?: Record<string, any>;
   creadoEn: string;
+  creador?: {
+    id: number;
+    username: string;
+    nombre?: string;
+    apellidos?: string;
+    email: string;
+  };
 }
 
 const BASE = '/api/notificaciones';
@@ -27,6 +35,11 @@ class NotificationService {
 
   async markAsRead(id: number): Promise<void> {
     await axios.patch(`${BASE}/${id}/leer`);
+  }
+
+  // No-op mientras el backend no tiene soporte; deja la UI funcionando sin error
+  async setSaved(_id: number, _valor: boolean): Promise<void> {
+    return Promise.resolve();
   }
 
   // Crear notificación individual (ADMIN)

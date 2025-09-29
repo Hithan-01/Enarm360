@@ -25,6 +25,10 @@ public class Notificacion {
     @JoinColumn(name = "destinatario_id", nullable = false)
     private Usuario destinatario;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "creador_id", nullable = true)
+    private Usuario creador;
+
     @Column(nullable = false, length = 140)
     private String titulo;
 

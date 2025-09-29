@@ -2,6 +2,7 @@ package com.example.enarm360.controllers;
 
 import com.example.enarm360.dtos.auth.*;
 import com.example.enarm360.services.AuthService;
+import com.example.enarm360.services.UsuarioService;
 
 import io.jsonwebtoken.JwtException;
 import org.slf4j.Logger;
@@ -28,6 +29,9 @@ public class AuthController {
 
     @Autowired
     private AuthService authService;
+
+    @Autowired
+    private UsuarioService usuarioService;
 
     // ==========================================================
     // AUTENTICACIÓN
@@ -220,6 +224,66 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(Map.of(
                         "message", "Error al verificar rol",
+                        "success", false
+                    ));
+        }
+    }
+
+    // ==========================================================
+    // ENDPOINT TEMPORAL PARA ACTIVAR USUARIOS
+    // ==========================================================
+
+    @PostMapping("/activate-user/{email}")
+    public ResponseEntity<?> activateUserByEmail(@PathVariable String email) {
+        try {
+            logger.info("Solicitud de activación para email: {}", email);
+
+            var user = usuarioService.findByEmail(email);
+            if (user.isEmpty()) {
+                return ResponseEntity.notFound().build();
+            }
+
+            usuarioService.activateUsuario(user.get().getId());
+
+            return ResponseEntity.ok(Map.of(
+                "message", "Usuario activado exitosamente",
+                "email", email,
+                "success", true
+            ));
+        } catch (Exception e) {
+            logger.error("Error al activar usuario {}: {}", email, e.getMessage());
+            return ResponseEntity.badRequest()
+                    .body(Map.of(
+                        "message", "Error al activar usuario: " + e.getMessage(),
+                        "success", false
+                    ));
+        }
+    }
+
+    @GetMapping("/list-users")
+    public ResponseEntity<?> listUsers() {
+        try {
+            var users = usuarioService.findAll();
+            var userList = users.stream().map(user -> Map.of(
+                "id", user.getId(),
+                "username", user.getUsername(),
+                "email", user.getEmail(),
+                "activo", user.getActivo(),
+                "roles", user.getRoles().stream()
+                    .map(rol -> rol.getNombre())
+                    .toList()
+            )).toList();
+
+            return ResponseEntity.ok(Map.of(
+                "users", userList,
+                "total", users.size(),
+                "success", true
+            ));
+        } catch (Exception e) {
+            logger.error("Error al listar usuarios: {}", e.getMessage());
+            return ResponseEntity.badRequest()
+                    .body(Map.of(
+                        "message", "Error al listar usuarios: " + e.getMessage(),
                         "success", false
                     ));
         }

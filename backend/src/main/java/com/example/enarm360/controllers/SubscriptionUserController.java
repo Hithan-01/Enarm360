@@ -1,6 +1,7 @@
 package com.example.enarm360.controllers;
 
 import com.example.enarm360.services.UsuarioService;
+import com.example.enarm360.security.SubscriptionSecurityUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -15,7 +16,8 @@ import java.util.Map;
 @CrossOrigin(origins = "*")
 public class SubscriptionUserController {
     
-    private final UsuarioService usuarioService;
+private final UsuarioService usuarioService;
+    private final SubscriptionSecurityUtils securityUtils;
     
     @GetMapping("/info")
     @PreAuthorize("hasRole('ESTUDIANTE') or hasRole('ADMIN')")
@@ -70,6 +72,6 @@ public class SubscriptionUserController {
     }
     
     private Long getUserIdFromAuth(Authentication auth) {
-        return Long.valueOf(auth.getName()); // Ajustar según tu implementación JWT
+        return securityUtils.getUserIdFromAuth(auth);
     }
 }
