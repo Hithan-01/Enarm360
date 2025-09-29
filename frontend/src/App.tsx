@@ -29,8 +29,8 @@ import QuestionReviewsPage from './pages/admin/QuestionReviewsPage';
 import UserStatisticsPage from './pages/admin/UserStatisticsPage';
 import SubscriptionsPage from './pages/admin/SubscriptionsPage';
 import QuestionDatabasePage from './pages/admin/QuestionDatabasePage';
-import UserPermissionsPage from './pages/admin/UserPermissionsPage';
 import AdminNotificationsPage from './pages/admin/AdminNotificationsPage';
+import PermissionsAdminPage from './pages/admin/PermissionsAdminPage';
 import ResultadosPage from './pages/ResultadosPage';
 
 //Páginas de examen
@@ -116,7 +116,7 @@ function App() {
                 <Route path="/admin/statistics" element={<ProtectedRoute requiredRole="ADMIN"><UserStatisticsPage /></ProtectedRoute>} />
                 <Route path="/admin/subscriptions" element={<ProtectedRoute requiredRole="ADMIN"><SubscriptionsPage /></ProtectedRoute>} />
                 <Route path="/admin/question-database" element={<ProtectedRoute requiredRole="ADMIN"><QuestionDatabasePage /></ProtectedRoute>} />
-                <Route path="/admin/permissions" element={<ProtectedRoute requiredRole="ADMIN"><UserPermissionsPage /></ProtectedRoute>} />
+                <Route path="/admin/permissions" element={<ProtectedRoute requiredRole="ADMIN"><PermissionsAdminPage /></ProtectedRoute>} />
                 <Route path="/admin/notificaciones" element={<ProtectedRoute requiredRole="ADMIN"><AdminNotificationsPage /></ProtectedRoute>} />
 
                 {/* Rutas de estudiante */}

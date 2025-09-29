@@ -4,6 +4,7 @@ import com.example.enarm360.dtos.UsuarioMinDto;
 import com.example.enarm360.entities.Usuario;
 import com.example.enarm360.repositories.UsuarioRepository;
 import com.example.enarm360.services.AuthService;
+import org.springframework.data.domain.PageRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
@@ -36,5 +37,23 @@ public class UsersController {
                 .map(UsuarioMinDto::fromEntity)
                 .collect(Collectors.toList());
         return ResponseEntity.ok(result);
+    }
+
+    // Búsqueda avanzada (ADMIN) por q/rol/activo/permiso (directo o efectivo)
+    @GetMapping("/admin/search")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<UsuarioMinDto>> adminSearch(
+            @RequestParam(value = "query", required = false) String query,
+            @RequestParam(value = "rol", required = false) String rol,
+            @RequestParam(value = "activo", required = false) Boolean activo,
+            @RequestParam(value = "permiso", required = false) String permiso,
+            @RequestParam(value = "effective", defaultValue = "true") Boolean effective,
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size
+    ) {
+        var pageable = PageRequest.of(Math.max(0, page), Math.max(1, size));
+        var p = usuarioRepository.searchUsersAdvanced(query, rol, activo, permiso, effective, pageable);
+        var list = p.getContent().stream().map(UsuarioMinDto::fromEntity).collect(java.util.stream.Collectors.toList());
+        return ResponseEntity.ok(list);
     }
 }
