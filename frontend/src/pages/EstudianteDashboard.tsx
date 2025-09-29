@@ -49,6 +49,12 @@ const EstudianteDashboard: React.FC = () => {
     minutes: 0,
     seconds: 0
   });
+  const [prevTimeLeft, setPrevTimeLeft] = useState({
+    days: 0,
+    hours: 0,
+    minutes: 0,
+    seconds: 0
+  });
   const [activeTab, setActiveTab] = useState(0);
   const navigate = useNavigate();
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
@@ -74,8 +80,11 @@ const EstudianteDashboard: React.FC = () => {
         const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
         const seconds = Math.floor((difference % (1000 * 60)) / 1000);
 
-        setTimeLeft({ days, hours, minutes, seconds });
+        const newTime = { days, hours, minutes, seconds };
+        setPrevTimeLeft(timeLeft);
+        setTimeLeft(newTime);
       } else {
+        setPrevTimeLeft(timeLeft);
         setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 });
       }
     }, 1000);
@@ -943,69 +952,97 @@ const EstudianteDashboard: React.FC = () => {
             50% { transform: translateY(-4px); }
           }
 
-          @keyframes flipTop {
-            0% { transform: rotateX(0deg); }
-            50% { transform: rotateX(-90deg); }
-            100% { transform: rotateX(0deg); }
-          }
-
-          @keyframes ledGlow {
-            0% { opacity: 0.3; }
-            100% { opacity: 0.8; }
-          }
-
           @keyframes blink {
             0%, 50% { opacity: 1; }
             51%, 100% { opacity: 0.3; }
           }
 
-          @keyframes flipBoard {
-            0% { transform: perspective(200px) rotateX(0deg); }
-            25% { transform: perspective(200px) rotateX(-5deg); }
-            50% { transform: perspective(200px) rotateX(0deg); }
-            75% { transform: perspective(200px) rotateX(5deg); }
-            100% { transform: perspective(200px) rotateX(0deg); }
+          @keyframes ledGlow {
+            0% { opacity: 0.3; }
+            50% { opacity: 0.6; }
+            100% { opacity: 0.3; }
           }
 
-          /* Subtle 3D movement for different digits */
-          @keyframes flipBoard-0-0 {
-            0% { transform: perspective(200px) rotateX(0deg) rotateY(0deg); }
-            25% { transform: perspective(200px) rotateX(-2deg) rotateY(-1deg); }
-            50% { transform: perspective(200px) rotateX(0deg) rotateY(0deg); }
-            75% { transform: perspective(200px) rotateX(2deg) rotateY(1deg); }
-            100% { transform: perspective(200px) rotateX(0deg) rotateY(0deg); }
+          /* Animación de flip mecánico auténtico - parte superior que cae */
+          @keyframes flipDown {
+            0% { 
+              transform: perspective(200px) rotateX(0deg);
+              z-index: 5;
+            }
+            50% { 
+              transform: perspective(200px) rotateX(-90deg);
+              z-index: 5;
+            }
+            51% { 
+              transform: perspective(200px) rotateX(-90deg);
+              z-index: 1;
+            }
+            100% { 
+              transform: perspective(200px) rotateX(-180deg);
+              z-index: 1;
+            }
           }
 
-          @keyframes flipBoard-1-0 {
-            0% { transform: perspective(200px) rotateX(0deg) rotateY(0deg); }
-            33% { transform: perspective(200px) rotateX(-3deg) rotateY(-1deg); }
-            66% { transform: perspective(200px) rotateX(3deg) rotateY(1deg); }
-            100% { transform: perspective(200px) rotateX(0deg) rotateY(0deg); }
+          /* Animación de flip simple y realista */
+          @keyframes flipCard {
+            0% { 
+              transform: rotateX(0deg);
+            }
+            50% { 
+              transform: rotateX(-90deg);
+            }
+            100% { 
+              transform: rotateX(-180deg);
+            }
           }
 
-          @keyframes flipBoard-2-0 {
-            0% { transform: perspective(200px) rotateX(0deg) rotateY(0deg); }
-            20% { transform: perspective(200px) rotateX(-1deg) rotateY(-2deg); }
-            40% { transform: perspective(200px) rotateX(1deg) rotateY(0deg); }
-            60% { transform: perspective(200px) rotateX(-1deg) rotateY(2deg); }
-            80% { transform: perspective(200px) rotateX(1deg) rotateY(0deg); }
-            100% { transform: perspective(200px) rotateX(0deg) rotateY(0deg); }
+          /* Variaciones con diferentes duraciones */
+          @keyframes flipSeconds {
+            0% { 
+              transform: rotateX(0deg);
+            }
+            50% { 
+              transform: rotateX(-90deg);
+            }
+            100% { 
+              transform: rotateX(-180deg);
+            }
           }
 
-          @keyframes flipBoard-3-0 {
-            0% { transform: perspective(200px) rotateX(0deg); }
-            10% { transform: perspective(200px) rotateX(-90deg); }
-            50% { transform: perspective(200px) rotateX(-90deg); }
-            60% { transform: perspective(200px) rotateX(0deg); }
-            100% { transform: perspective(200px) rotateX(0deg); }
+          @keyframes flipMinutes {
+            0% { 
+              transform: rotateX(0deg);
+            }
+            50% { 
+              transform: rotateX(-90deg);
+            }
+            100% { 
+              transform: rotateX(-180deg);
+            }
           }
 
-          @keyframes flipBoard-3-1 {
-            0% { transform: perspective(200px) rotateX(0deg); }
-            15% { transform: perspective(200px) rotateX(-90deg); }
-            55% { transform: perspective(200px) rotateX(-90deg); }
-            65% { transform: perspective(200px) rotateX(0deg); }
-            100% { transform: perspective(200px) rotateX(0deg); }
+          @keyframes flipHours {
+            0% { 
+              transform: rotateX(0deg);
+            }
+            50% { 
+              transform: rotateX(-90deg);
+            }
+            100% { 
+              transform: rotateX(-180deg);
+            }
+          }
+
+          @keyframes flipDays {
+            0% { 
+              transform: rotateX(0deg);
+            }
+            50% { 
+              transform: rotateX(-90deg);
+            }
+            100% { 
+              transform: rotateX(-180deg);
+            }
           }
 
           @keyframes pageFlip {
@@ -1730,8 +1767,8 @@ const EstudianteDashboard: React.FC = () => {
               overflow: 'hidden',
             }}
           >
-            {/* Title Section */}
-            <Box style={{ textAlign: 'center', marginBottom: '24px' }}>
+            <Stack align="center" gap="md">
+              {/* Title Section */}
               <Text
                 size="lg"
                 fw={700}
@@ -1741,186 +1778,294 @@ const EstudianteDashboard: React.FC = () => {
                   textShadow: '0 0 20px rgba(255, 107, 53, 0.5)',
                   letterSpacing: '1px',
                   lineHeight: 1.2,
+                  textAlign: 'center',
                 }}
               >
                 EXAMEN NACIONAL PARA ASPIRANTES A RESIDENCIAS MÉDICAS
               </Text>
-            </Box>
 
-            {/* Countdown Display */}
-            <Box
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '16px',
-                perspective: '1000px',
-                width: '100%',
-              }}
-            >
+              {/* Countdown Display */}
+              <Box
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '24px',
+                  perspective: '1000px',
+                  width: '100%',
+                }}
+              >
 
-              {/* Flip Boards */}
+              {/* Flip Cards Mecánicas */}
               {[
-                { label: 'DÍAS', value: timeLeft.days, maxDigits: 3 },
-                { label: 'HORAS', value: timeLeft.hours, maxDigits: 2 },
-                { label: 'MINUTOS', value: timeLeft.minutes, maxDigits: 2 },
-                { label: 'SEGUNDOS', value: timeLeft.seconds, maxDigits: 2 },
+                { label: 'DÍAS', value: timeLeft.days, maxDigits: 3, animation: 'flipDays' },
+                { label: 'HORAS', value: timeLeft.hours, maxDigits: 2, animation: 'flipHours' },
+                { label: 'MINUTOS', value: timeLeft.minutes, maxDigits: 2, animation: 'flipMinutes' },
+                { label: 'SEGUNDOS', value: timeLeft.seconds, maxDigits: 2, animation: 'flipSeconds' },
               ].map((unit, unitIndex) => (
-                <Box key={unit.label} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  {/* Digits */}
-                  <Box style={{ display: 'flex', gap: '4px' }}>
-                    {unit.value.toString().padStart(unit.maxDigits, '0').split('').map((digit, digitIndex) => (
-                      <Box
-                        key={`${unit.label}-${digitIndex}`}
-                        style={{
-                          position: 'relative',
-                          width: '40px',
-                          height: '60px',
-                          perspective: '200px',
-                        }}
-                      >
-                        {/* Flip Board Container */}
+                <Box key={unit.label} style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                  {/* Digits - Flip Cards Auténticas */}
+                  <Box style={{ display: 'flex', gap: '6px' }}>
+                    {unit.value.toString().padStart(unit.maxDigits, '0').split('').map((digit, digitIndex) => {
+                      const currentDigit = parseInt(digit);
+                      const nextDigit = (currentDigit + 1) % 10;
+                      const shouldFlip = unit.label === 'SEGUNDOS'; // Solo los segundos harán flip por ahora
+                      
+                      return (
                         <Box
+                          key={`${unit.label}-${digitIndex}`}
                           style={{
                             position: 'relative',
-                            width: '100%',
-                            height: '100%',
-                            transformStyle: 'preserve-3d',
-                            transition: 'transform 0.6s ease-in-out',
-                            animation: `flipBoard-${unitIndex}-${digitIndex} 1s ease-in-out infinite`,
+                            width: '60px',
+                            height: '80px',
+                            perspective: '400px',
                           }}
                         >
-                          {/* Top Half */}
-                          <Box
-                            style={{
-                              position: 'absolute',
-                              width: '100%',
-                              height: '50%',
-                              top: 0,
-                              background: 'linear-gradient(180deg, #ffffff 0%, #e0e0e0 100%)',
-                              border: '1px solid #333333',
-                              borderRadius: '4px 4px 0 0',
-                              display: 'flex',
-                              alignItems: 'flex-end',
-                              justifyContent: 'center',
-                              paddingBottom: '2px',
-                              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.3)',
-                              zIndex: 2,
-                            }}
-                          >
-                            <Text
-                              size="xl"
-                              fw={700}
-                              style={{
-                                color: '#1a1a1a',
-                                fontFamily: 'monospace',
-                                lineHeight: 1,
-                                fontSize: '24px',
-                              }}
-                            >
-                              {digit}
-                            </Text>
-                          </Box>
-
-                          {/* Bottom Half */}
+                          {/* Parte Inferior Fija - muestra mitad inferior del número actual */}
                           <Box
                             style={{
                               position: 'absolute',
                               width: '100%',
                               height: '50%',
                               bottom: 0,
-                              background: 'linear-gradient(0deg, #d0d0d0 0%, #f0f0f0 100%)',
-                              border: '1px solid #333333',
-                              borderRadius: '0 0 4px 4px',
+                              background: 'linear-gradient(0deg, #2a2a2a 0%, #3a3a3a 100%)',
+                              border: '2px solid #1a1a1a',
+                              borderTop: '1px solid #4a4a4a',
+                              borderRadius: '0 0 6px 6px',
                               display: 'flex',
-                              alignItems: 'flex-start',
+                              alignItems: 'center',
                               justifyContent: 'center',
-                              paddingTop: '2px',
-                              boxShadow: '0 -2px 8px rgba(0, 0, 0, 0.2)',
+                              overflow: 'hidden',
+                              zIndex: 1,
                             }}
                           >
                             <Text
                               size="xl"
                               fw={700}
                               style={{
-                                color: '#1a1a1a',
-                                fontFamily: 'monospace',
-                                lineHeight: 1,
-                                fontSize: '24px',
+                                color: '#ffffff',
+                                fontFamily: 'Courier New, monospace',
+                                fontSize: '48px',
+                                fontWeight: '900',
+                                textShadow: '0 2px 4px rgba(0,0,0,0.8)',
+                                position: 'absolute',
+                                top: '-24px', // Mostrar solo mitad inferior
+                                left: '0',
+                                right: '0',
+                                lineHeight: '48px',
+                                textAlign: 'center',
+                                margin: '0 auto',
                               }}
                             >
                               {digit}
                             </Text>
                           </Box>
 
-                          {/* Center Line */}
-                          <Box
-                            style={{
-                              position: 'absolute',
-                              top: '50%',
-                              left: 0,
-                              right: 0,
-                              height: '2px',
-                              background: '#333333',
-                              transform: 'translateY(-50%)',
-                              zIndex: 3,
-                              boxShadow: '0 0 4px rgba(0, 0, 0, 0.5)',
-                            }}
-                          />
-
-                          {/* Flip Animation Overlay */}
+                          {/* Parte Superior que se Voltea */}
                           <Box
                             style={{
                               position: 'absolute',
                               width: '100%',
                               height: '50%',
                               top: 0,
-                              background: 'linear-gradient(180deg, #ffffff 0%, #e0e0e0 100%)',
-                              border: '1px solid #333333',
-                              borderRadius: '4px 4px 0 0',
-                              display: 'flex',
-                              alignItems: 'flex-end',
-                              justifyContent: 'center',
-                              paddingBottom: '2px',
                               transformOrigin: 'bottom',
-                              animation: unitIndex === 3 ? `flipTop 1s ease-in-out infinite` : 'none',
-                              zIndex: 4,
+                              transformStyle: 'preserve-3d',
+                              animation: shouldFlip ? 'flipCard 1s ease-in-out infinite' : 'none',
+                              zIndex: 2,
+                            }}
+                          >
+                            {/* Cara Frontal - mitad superior del número actual */}
+                            <Box
+                              style={{
+                                position: 'absolute',
+                                width: '100%',
+                                height: '100%',
+                                backfaceVisibility: 'hidden',
+                                background: 'linear-gradient(180deg, #4a4a4a 0%, #3a3a3a 100%)',
+                                border: '2px solid #1a1a1a',
+                                borderBottom: '1px solid #4a4a4a',
+                                borderRadius: '6px 6px 0 0',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                overflow: 'hidden',
+                              }}
+                            >
+                              <Text
+                                size="xl"
+                                fw={700}
+                                style={{
+                                  color: '#ffffff',
+                                  fontFamily: 'Courier New, monospace',
+                                  fontSize: '48px',
+                                  fontWeight: '900',
+                                  textShadow: '0 2px 4px rgba(0,0,0,0.8)',
+                                  position: 'absolute',
+                                  top: '16px', // Mostrar solo mitad superior
+                                  left: '0',
+                                  right: '0',
+                                  lineHeight: '48px',
+                                  textAlign: 'center',
+                                  margin: '0 auto',
+                                }}
+                              >
+                                {digit}
+                              </Text>
+                            </Box>
+
+                            {/* Cara Trasera - mitad superior del siguiente número */}
+                            <Box
+                              style={{
+                                position: 'absolute',
+                                width: '100%',
+                                height: '100%',
+                                backfaceVisibility: 'hidden',
+                                transform: 'rotateX(180deg)',
+                                background: 'linear-gradient(180deg, #4a4a4a 0%, #3a3a3a 100%)',
+                                border: '2px solid #1a1a1a',
+                                borderBottom: '1px solid #4a4a4a',
+                                borderRadius: '6px 6px 0 0',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                overflow: 'hidden',
+                              }}
+                            >
+                              <Text
+                                size="xl"
+                                fw={700}
+                                style={{
+                                  color: '#ffffff',
+                                  fontFamily: 'Courier New, monospace',
+                                  fontSize: '52px',
+                                  fontWeight: '900',
+                                  textShadow: '0 2px 4px rgba(0,0,0,0.8)',
+                                  position: 'absolute',
+                                  top: '26px',
+                                  left: '0',
+                                  right: '0',
+                                  transform: 'scaleY(-1)',
+                                  lineHeight: '52px',
+                                  textAlign: 'center',
+                                  margin: '0 auto',
+                                }}
+                              >
+                                {nextDigit}
+                              </Text>
+                            </Box>
+                          </Box>
+
+                          {/* Parte Inferior que se Revela - mitad inferior del siguiente número */}
+                          <Box
+                            style={{
+                              position: 'absolute',
+                              width: '100%',
+                              height: '50%',
+                              bottom: 0,
+                              background: 'linear-gradient(0deg, #2a2a2a 0%, #3a3a3a 100%)',
+                              border: '2px solid #1a1a1a',
+                              borderTop: '1px solid #4a4a4a',
+                              borderRadius: '0 0 6px 6px',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              overflow: 'hidden',
+                              zIndex: 0, // Por debajo de la parte que se voltea
                             }}
                           >
                             <Text
                               size="xl"
                               fw={700}
                               style={{
-                                color: '#1a1a1a',
-                                fontFamily: 'monospace',
-                                lineHeight: 1,
-                                fontSize: '24px',
+                                color: '#ffffff',
+                                fontFamily: 'Courier New, monospace',
+                                fontSize: '52px',
+                                fontWeight: '900',
+                                textShadow: '0 2px 4px rgba(0,0,0,0.8)',
+                                position: 'absolute',
+                                top: '-26px',
+                                left: '0',
+                                right: '0',
+                                lineHeight: '52px',
+                                textAlign: 'center',
+                                margin: '0 auto',
                               }}
                             >
-                              {digit}
+                              {nextDigit}
                             </Text>
                           </Box>
-                        </Box>
 
-                        {/* LED-style glow effect */}
-                        <Box
-                          style={{
-                            position: 'absolute',
-                            top: '-2px',
-                            left: '-2px',
-                            right: '-2px',
-                            bottom: '-2px',
-                            borderRadius: '6px',
-                            background: `linear-gradient(45deg,
-                                rgba(255, 107, 53, 0.2) 0%,
-                                rgba(255, 107, 53, 0.1) 50%,
-                                rgba(255, 107, 53, 0.2) 100%)`,
-                            animation: 'ledGlow 2s ease-in-out infinite alternate',
-                            zIndex: -1,
-                          }}
-                        />
-                      </Box>
-                    ))}
+                          {/* Línea Central */}
+                          <Box
+                            style={{
+                              position: 'absolute',
+                              top: '50%',
+                              left: '2px',
+                              right: '2px',
+                              height: '2px',
+                              background: 'linear-gradient(90deg, #1a1a1a, #000000, #1a1a1a)',
+                              transform: 'translateY(-50%)',
+                              zIndex: 10,
+                              boxShadow: '0 0 4px rgba(0, 0, 0, 0.8)',
+                            }}
+                          />
+
+                          {/* Efecto de Brillo */}
+                          <Box
+                            style={{
+                              position: 'absolute',
+                              top: '-2px',
+                              left: '-2px',
+                              right: '-2px',
+                              bottom: '-2px',
+                              borderRadius: '8px',
+                              background: `linear-gradient(45deg,
+                                  rgba(255, 107, 53, 0.1) 0%,
+                                  rgba(255, 107, 53, 0.05) 50%,
+                                  rgba(255, 107, 53, 0.1) 100%)`,
+                              animation: 'ledGlow 4s ease-in-out infinite',
+                              zIndex: -1,
+                            }}
+                          />
+
+                          {/* Efecto de Brillo */}
+                          <Box
+                            style={{
+                              position: 'absolute',
+                              top: '-2px',
+                              left: '-2px',
+                              right: '-2px',
+                              bottom: '-2px',
+                              borderRadius: '8px',
+                              background: `linear-gradient(45deg,
+                                  rgba(255, 107, 53, 0.1) 0%,
+                                  rgba(255, 107, 53, 0.05) 50%,
+                                  rgba(255, 107, 53, 0.1) 100%)`,
+                              animation: 'ledGlow 4s ease-in-out infinite',
+                              zIndex: -1,
+                            }}
+                          />
+
+                          {/* Efecto de Brillo Sutil */}
+                          <Box
+                            style={{
+                              position: 'absolute',
+                              top: '-2px',
+                              left: '-2px',
+                              right: '-2px',
+                              bottom: '-2px',
+                              borderRadius: '8px',
+                              background: `linear-gradient(45deg,
+                                  rgba(255, 107, 53, 0.1) 0%,
+                                  rgba(255, 107, 53, 0.05) 50%,
+                                  rgba(255, 107, 53, 0.1) 100%)`,
+                              animation: 'ledGlow 6s ease-in-out infinite',
+                              zIndex: -1,
+                            }}
+                          />
+                        </Box>
+                      );
+                    })}
                   </Box>
 
                   {/* Separator (except for last unit) */}
@@ -1932,7 +2077,7 @@ const EstudianteDashboard: React.FC = () => {
                         style={{
                           color: '#ff6b35',
                           fontFamily: 'monospace',
-                          animation: 'blink 1s infinite',
+                          animation: 'blink 2s infinite',
                         }}
                       >
                         :
@@ -1940,25 +2085,10 @@ const EstudianteDashboard: React.FC = () => {
                     </Box>
                   )}
 
-                  {/* Unit Label */}
-                  <Box style={{ marginLeft: '8px', minWidth: '60px' }}>
-                    <Text
-                      size="xs"
-                      fw={600}
-                      ta="center"
-                      style={{
-                        color: '#888888',
-                        fontFamily: 'Space Grotesk, Inter, sans-serif',
-                        letterSpacing: '1px',
-                        textTransform: 'uppercase',
-                      }}
-                    >
-                      {unit.label}
-                    </Text>
-                  </Box>
                 </Box>
               ))}
-            </Box>
+              </Box>
+            </Stack>
           </Card>
         </Box>
 

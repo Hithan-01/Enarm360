@@ -19,6 +19,7 @@ import {
   IconBell,
   IconHelp,
 } from '@tabler/icons-react';
+import NotificationDropdown from './NotificationDropdown';
 
 interface TopHeaderProps {
   user: {
@@ -187,29 +188,7 @@ const TopHeader: React.FC<TopHeaderProps> = ({ user, onLogout, sidebarWidth = 28
       {/* Right side - Notifications and Profile */}
       <Group gap="sm" align="center">
         {/* Notifications */}
-        <ActionIcon
-          variant="subtle"
-          size={36}
-          style={{
-            backgroundColor: colorScheme === 'dark'
-              ? 'rgba(30, 41, 59, 0.7)'
-              : 'rgba(255, 255, 255, 0.25)',
-            backdropFilter: 'blur(40px) saturate(200%)',
-            WebkitBackdropFilter: 'blur(40px) saturate(200%)',
-            border: `1px solid ${
-              colorScheme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.5)'
-            }`,
-            borderRadius: '50%',
-            color: colorScheme === 'dark' ? '#94a3b8' : '#64748b',
-            boxShadow: colorScheme === 'dark'
-              ? 'inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 4px 20px rgba(0, 0, 0, 0.3)'
-              : '0 4px 16px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.6)',
-            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-            cursor: 'pointer',
-          }}
-        >
-          <IconBell size={18} />
-        </ActionIcon>
+        <NotificationDropdown />
 
         {/* Help Button */}
         <ActionIcon

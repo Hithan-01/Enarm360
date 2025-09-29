@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class CreateSubscriptionDTO {
     
-    @NotNull(message = "User ID is required")
+    // userId es opcional; si es null, el controlador lo completará desde el token
     private Long userId;
     
     @NotNull(message = "Plan ID is required")

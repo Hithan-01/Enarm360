@@ -88,7 +88,7 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return activo;
+        return true; // Siempre retornamos true para que no haya bloqueo de cuenta por este método
     }
 
     @Override

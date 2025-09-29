@@ -3,6 +3,7 @@ package com.example.enarm360.controllers;
 import com.example.enarm360.dtos.CreateSubscriptionDTO;
 import com.example.enarm360.dtos.UserSubscriptionDTO;
 import com.example.enarm360.services.UserSubscriptionService;
+import com.example.enarm360.security.SubscriptionSecurityUtils;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -20,7 +21,8 @@ import java.util.Map;
 @CrossOrigin(origins = "*")
 public class UserSubscriptionController {
     
-    private final UserSubscriptionService userSubscriptionService;
+private final UserSubscriptionService userSubscriptionService;
+    private final SubscriptionSecurityUtils securityUtils;
     
     @GetMapping("/current")
     @PreAuthorize("hasRole('ESTUDIANTE') or hasRole('ADMIN')")
@@ -106,9 +108,7 @@ public class UserSubscriptionController {
     
     // Métodos de utilidad (implementar según tu sistema de JWT)
     private Long getUserIdFromAuth(Authentication auth) {
-        // Implementar según tu configuración JWT
-        // Por ejemplo, si guardas el ID en el principal:
-        return Long.valueOf(auth.getName()); // Placeholder - ajustar según tu implementación
+        return securityUtils.getUserIdFromAuth(auth);
     }
     
     private boolean hasRole(Authentication auth, String role) {

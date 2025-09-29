@@ -49,10 +49,15 @@ public class NotificacionService {
         }
     }
 
+
     public NotificacionDto crear(Long destinatarioId, String titulo, String mensaje, Notificacion.Tipo tipo, Map<String,Object> metadata) {
         Usuario dest = usuarioRepository.findById(destinatarioId).orElseThrow(() -> new RuntimeException("Usuario destino no encontrado"));
+        Long creadorId = authService.getCurrentUser().getId();
+        Usuario creador = usuarioRepository.findById(creadorId).orElseThrow(() -> new RuntimeException("Usuario creador no encontrado"));
+
         Notificacion n = Notificacion.builder()
                 .destinatario(dest)
+                .creador(creador)
                 .titulo(titulo)
                 .mensaje(mensaje)
                 .tipo(tipo)
@@ -66,8 +71,13 @@ public class NotificacionService {
     public int crearParaTodos(String titulo, String mensaje, Notificacion.Tipo tipo, Map<String,Object> metadata) {
         var usuarios = usuarioRepository.findAllActiveUsers();
         if (usuarios == null || usuarios.isEmpty()) return 0;
+
+        Long creadorId = authService.getCurrentUser().getId();
+        Usuario creador = usuarioRepository.findById(creadorId).orElseThrow(() -> new RuntimeException("Usuario creador no encontrado"));
+
         var lista = usuarios.stream().map(u -> Notificacion.builder()
                 .destinatario(u)
+                .creador(creador)
                 .titulo(titulo)
                 .mensaje(mensaje)
                 .tipo(tipo)

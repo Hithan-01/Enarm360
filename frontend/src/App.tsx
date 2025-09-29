@@ -8,6 +8,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import Layout from './components/Layout';
 import ExamLayout from './components/ExamLayout';
 import AdminDashboard from './pages/AdminDashboard';
+import MejorarPlanPage from './pages/MejorarPlanPage';
 import EstudianteDashboard from './pages/EstudianteDashboard';
 import ProfilePage from './pages/ProfilePage';
 import SettingsPage from './pages/SettingsPage';
@@ -136,6 +137,7 @@ function App() {
                 <Route path="/settings" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
                 <Route path="/settings/:section" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
 
+
                 {/* Redirección */}
                 <Route path="/profile" element={<Navigate to="/settings" replace />} />
               </Route>
@@ -145,6 +147,9 @@ function App() {
                 <Route path="/examen/:id" element={<ProtectedRoute requiredRole="ESTUDIANTE"><ExamenPage /></ProtectedRoute>} />
                 <Route path="/examenes/:intentoId/resultado" element={<ProtectedRoute requiredRole="ESTUDIANTE"><ResultadosPage /></ProtectedRoute>} />
               </Route>
+
+              {/* Mejorar plan (sin sidebar / header) */}
+              <Route path="/mejorarplan" element={<ProtectedRoute requiredRole="ESTUDIANTE"><MejorarPlanPage /></ProtectedRoute>} />
 
               {/* Ruta por defecto - redirige a home */}
               <Route path="*" element={<Navigate to="/" replace />} />

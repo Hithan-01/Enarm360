@@ -2,6 +2,7 @@ package com.example.enarm360.controllers;
 
 import com.example.enarm360.dtos.PaymentHistoryDTO;
 import com.example.enarm360.services.PaymentHistoryService;
+import com.example.enarm360.security.SubscriptionSecurityUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -20,7 +21,8 @@ import java.util.Map;
 @CrossOrigin(origins = "*")
 public class PaymentHistoryController {
     
-    private final PaymentHistoryService paymentHistoryService;
+private final PaymentHistoryService paymentHistoryService;
+    private final SubscriptionSecurityUtils securityUtils;
     
     @GetMapping("/my-payments")
     @PreAuthorize("hasRole('ESTUDIANTE') or hasRole('ADMIN')")
@@ -85,6 +87,6 @@ public class PaymentHistoryController {
     }
     
     private Long getUserIdFromAuth(Authentication auth) {
-        return Long.valueOf(auth.getName()); // Ajustar según tu implementación JWT
+        return securityUtils.getUserIdFromAuth(auth);
     }
 }
