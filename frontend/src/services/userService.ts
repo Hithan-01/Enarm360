@@ -15,6 +15,11 @@ class UserService {
     });
     return data;
   }
+
+  async adminSearchUsers(params: { query?: string; rol?: string; activo?: boolean; permiso?: string; effective?: boolean; page?: number; size?: number; }): Promise<UserMinDTO[]> {
+    const { data } = await axios.get<UserMinDTO>(`/api/usuarios/admin/search`, { params });
+    return data as any;
+  }
 }
 
 export const userService = new UserService();

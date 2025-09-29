@@ -46,6 +46,19 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
     @Query("SELECT u FROM Usuario u WHERE u.activo = true AND (LOWER(u.email) LIKE LOWER(CONCAT('%', :q, '%')) OR LOWER(u.username) LIKE LOWER(CONCAT('%', :q, '%')) OR LOWER(u.nombre) LIKE LOWER(CONCAT('%', :q, '%')) OR LOWER(u.apellidos) LIKE LOWER(CONCAT('%', :q, '%'))) ORDER BY u.nombre ASC")
     Page<Usuario> searchUsers(@Param("q") String q, Pageable pageable);
 
+    @Query("SELECT DISTINCT u FROM Usuario u LEFT JOIN u.roles r LEFT JOIN u.permisos up LEFT JOIN r.permisos rp " +
+           "WHERE (:activo IS NULL OR u.activo = :activo) " +
+           "AND (:rol IS NULL OR r.nombre = :rol) " +
+           "AND (:permiso IS NULL OR (CASE WHEN :effective = true THEN (rp.codigo = :permiso OR up.codigo = :permiso) ELSE (up.codigo = :permiso) END) ) " +
+           "AND (:q IS NULL OR :q = '' OR LOWER(u.email) LIKE LOWER(CONCAT('%', :q, '%')) OR LOWER(u.username) LIKE LOWER(CONCAT('%', :q, '%')) OR LOWER(u.nombre) LIKE LOWER(CONCAT('%', :q, '%')) OR LOWER(u.apellidos) LIKE LOWER(CONCAT('%', :q, '%'))) " +
+           "ORDER BY u.nombre ASC")
+    Page<Usuario> searchUsersAdvanced(@Param("q") String q,
+                                      @Param("rol") String rol,
+                                      @Param("activo") Boolean activo,
+                                      @Param("permiso") String permiso,
+                                      @Param("effective") Boolean effective,
+                                      Pageable pageable);
+
     // 🔔 Métodos relacionados con suscripciones
     @Query("SELECT u FROM Usuario u WHERE u.currentSubscription.endDate IS NOT NULL " +
            "AND u.currentSubscription.endDate BETWEEN :start AND :end " +

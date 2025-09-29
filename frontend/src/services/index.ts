@@ -28,6 +28,9 @@ export { notificationService, default as NotificationService } from './notificat
 // Servicio de usuarios (admin)
 export { userService, default as UserService } from './userService';
 
+// Servicio de permisos (admin)
+export { adminPermissionsService, default as AdminPermissionsService } from './adminPermissionsService';
+
 // ==========================================================
 // CONFIGURACIÓN GLOBAL DE AXIOS
 // ==========================================================
