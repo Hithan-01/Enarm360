@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Text,
@@ -9,82 +9,27 @@ import {
   useMantineColorScheme,
   Alert,
 } from '@mantine/core';
-import PageTransition from '../components/animations/PageTransition';
-import Sidebar from '../components/Sidebar';
-import TopHeader from '../components/TopHeader';
-import { authService } from '../services/authService';
 
 const ExamenFiltrosPage: React.FC = () => {
   const navigate = useNavigate();
   const { colorScheme } = useMantineColorScheme();
-  const [user] = useState(authService.getCurrentUserFromStorage());
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-
-  const handleLogout = async () => {
-    try {
-      await authService.logout();
-      navigate('/login');
-    } catch (error) {
-      console.error('Error en logout:', error);
-      navigate('/login');
-    }
-  };
 
   return (
-    <PageTransition type="medical" duration={800}>
+    <Box
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        minHeight: '100vh',
+      }}
+    >
       <Box
         style={{
-          minHeight: '100vh',
-          background: colorScheme === 'dark'
-            ? 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)'
-            : 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
-          display: 'flex',
+          padding: '16px 24px',
+          overflow: 'hidden',
+          overflowY: 'auto',
+          flex: 1,
         }}
       >
-        {/* Sidebar */}
-        <Sidebar
-          user={{
-            username: user?.username || '',
-            email: user?.email || '',
-            roles: user?.roles || []
-          }}
-          onLogout={handleLogout}
-          onCollapseChange={setSidebarCollapsed}
-        />
-
-        {/* Right Side Container */}
-        <Box
-          style={{
-            marginLeft: sidebarCollapsed ? '80px' : '280px',
-            flex: 1,
-            transition: 'margin-left 0.3s ease',
-            display: 'flex',
-            flexDirection: 'column',
-            height: '100vh',
-          }}
-        >
-          {/* Top Header */}
-          <TopHeader
-            user={{
-              username: user?.username || '',
-              email: user?.email || '',
-              roles: user?.roles || [],
-              nombre: user?.nombre,
-              apellidos: user?.apellidos,
-            }}
-            onLogout={handleLogout}
-            sidebarWidth={0}
-          />
-
-          {/* Main Content */}
-          <Box
-            style={{
-              flex: 1,
-              padding: '16px 48px',
-              overflow: 'hidden',
-              overflowY: 'auto',
-            }}
-          >
             {/* Page Header */}
             <Box mb="xl" ta="left">
               <Title
@@ -196,10 +141,8 @@ const ExamenFiltrosPage: React.FC = () => {
                 </Stack>
               </Alert>
             </Box>
-          </Box>
-        </Box>
       </Box>
-    </PageTransition>
+    </Box>
   );
 };
 
