@@ -9,6 +9,7 @@ import Layout from './components/Layout';
 import ExamLayout from './components/ExamLayout';
 import AdminDashboard from './pages/AdminDashboard';
 import MejorarPlanPage from './pages/MejorarPlanPage';
+import CheckoutPage from './pages/CheckoutPage';
 import EstudianteDashboard from './pages/EstudianteDashboard';
 import ProfilePage from './pages/ProfilePage';
 import SettingsPage from './pages/SettingsPage';
@@ -148,8 +149,9 @@ function App() {
                 <Route path="/examenes/:intentoId/resultado" element={<ProtectedRoute requiredRole="ESTUDIANTE"><ResultadosPage /></ProtectedRoute>} />
               </Route>
 
-              {/* Mejorar plan (sin sidebar / header) */}
+              {/* Mejorar plan y checkout (sin sidebar / header) */}
               <Route path="/mejorarplan" element={<ProtectedRoute requiredRole="ESTUDIANTE"><MejorarPlanPage /></ProtectedRoute>} />
+              <Route path="/checkout/:planId" element={<ProtectedRoute requiredRole="ESTUDIANTE"><CheckoutPage /></ProtectedRoute>} />
 
               {/* Ruta por defecto - redirige a home */}
               <Route path="*" element={<Navigate to="/" replace />} />
