@@ -1,6 +1,9 @@
 package com.example.enarm360.controllers;
 
 import com.example.enarm360.dtos.*;
+import com.example.enarm360.entities.Usuario;
+import com.example.enarm360.repositories.UsuarioRepository;
+import com.example.enarm360.security.UserDetailsImpl;
 import com.example.enarm360.services.DiscountCouponService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +25,7 @@ import java.util.Map;
 public class DiscountCouponController {
     
     private final DiscountCouponService discountCouponService;
+    private final UsuarioRepository usuarioRepository;
     
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
@@ -147,7 +151,18 @@ public class DiscountCouponController {
     
     // Métodos de utilidad
     private Long getUserIdFromAuth(Authentication auth) {
-        return Long.valueOf(auth.getName()); // Ajustar según tu implementación JWT
+        if (auth == null || !auth.isAuthenticated()) {
+            throw new RuntimeException("Usuario no autenticado");
+        }
+        Object principal = auth.getPrincipal();
+        if (principal instanceof UserDetailsImpl udi) {
+            return udi.getId();
+        }
+        // Fallback: usar username/email de auth.getName() para buscar el ID
+        String login = auth.getName(); // puede ser username o email
+        return usuarioRepository.findByUsernameOrEmail(login, login)
+                .map(Usuario::getId)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado para: " + login));
     }
     
     private BigDecimal calculateDiscountAmount(DiscountCouponDTO coupon, BigDecimal amount) {
