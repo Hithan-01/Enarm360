@@ -21,6 +21,7 @@ import {
 } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import { subscriptionPlanService, SubscriptionPlanDTO, CreateSubscriptionPlanDTO } from '../../services/subscriptionPlanService';
+import { discountCouponService, type DiscountCouponDTO, type CreateDiscountCouponDTO, type DiscountType } from '../../services/discountCouponService';
 import { IconPower, IconCircleOff } from '@tabler/icons-react';
 import { subscriptionDashboardService, SubscriptionSummaryDTO } from '../../services/subscriptionDashboardService';
 import PageTransition from '../../components/animations/PageTransition';
@@ -44,6 +45,21 @@ const SubscriptionsPage: React.FC = () => {
   const [couponModalOpen, setCouponModalOpen] = useState<boolean>(false);
   const { colorScheme } = useMantineColorScheme();
 
+  // Estado de cupones
+  const [coupons, setCoupons] = useState<DiscountCouponDTO[]>([]);
+  const [couponLoading, setCouponLoading] = useState<boolean>(false);
+  const [couponError, setCouponError] = useState<string | null>(null);
+
+  // Estado de creación/edición de cupón
+  const [isEditCoupon, setIsEditCoupon] = useState<boolean>(false);
+  const [editingCouponId, setEditingCouponId] = useState<number | null>(null);
+  const [couponCode, setCouponCode] = useState<string>('');
+  const [couponName, setCouponName] = useState<string>('');
+  const [couponDiscountType, setCouponDiscountType] = useState<DiscountType>('PERCENTAGE');
+  const [couponDiscountValue, setCouponDiscountValue] = useState<number | ''>('');
+  const [couponUsageLimit, setCouponUsageLimit] = useState<number | ''>('');
+  const [couponExpirationDate, setCouponExpirationDate] = useState<string | null>(null);
+
   // Modo edición/creación
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
   const [editingPlanId, setEditingPlanId] = useState<number | null>(null);
@@ -66,17 +82,23 @@ const SubscriptionsPage: React.FC = () => {
       try {
         setLoading(true);
         setError(null);
-        const [plansData, summaryData] = await Promise.all([
+        setCouponLoading(true);
+        setCouponError(null);
+        const [plansData, summaryData, couponsData] = await Promise.all([
           subscriptionPlanService.getAllPlans(),
           subscriptionDashboardService.getSummary(),
+          discountCouponService.getAll(),
         ]);
         setPlans(plansData);
         setSummary(summaryData);
+        setCoupons(couponsData);
       } catch (e: any) {
         console.error(e);
         setError('Error al cargar datos de suscripciones');
+        setCouponError('Error al cargar cupones');
       } finally {
         setLoading(false);
+        setCouponLoading(false);
       }
     };
     load();
@@ -127,6 +149,124 @@ const SubscriptionsPage: React.FC = () => {
       setPlans(updated);
     } catch (e) {
       console.error(e);
+    }
+  };
+
+  // Helpers acciones de cupones
+  const reloadCoupons = async () => {
+    try {
+      setCouponLoading(true);
+      const data = await discountCouponService.getAll();
+      setCoupons(data);
+    } catch (e) {
+      console.error(e);
+      setCouponError('Error al cargar cupones');
+    } finally {
+      setCouponLoading(false);
+    }
+  };
+
+  const handleOpenCreateCoupon = () => {
+    setIsEditCoupon(false);
+    setEditingCouponId(null);
+    setCouponCode('');
+    setCouponName('');
+    setCouponDiscountType('PERCENTAGE');
+    setCouponDiscountValue('');
+    setCouponUsageLimit('');
+    setCouponExpirationDate(null);
+    setCouponModalOpen(true);
+  };
+
+  const handleOpenEditCoupon = (coupon: DiscountCouponDTO) => {
+    setIsEditCoupon(true);
+    setEditingCouponId(coupon.id);
+    setCouponCode(coupon.code || '');
+    setCouponName(coupon.name || '');
+    setCouponDiscountType((coupon.discountType as DiscountType) || 'PERCENTAGE');
+    setCouponDiscountValue(typeof coupon.discountValue === 'string' ? Number(coupon.discountValue) : (coupon.discountValue ?? ''));
+    setCouponUsageLimit(coupon.usageLimit ?? '');
+    setCouponExpirationDate(coupon.expirationDate || null);
+    setCouponModalOpen(true);
+  };
+
+  const toLocalDateTime = (d: string | null | undefined): string | undefined => {
+    if (!d) return undefined;
+    // Si viene como YYYY-MM-DD, el backend espera LocalDateTime => agregar T00:00:00
+    if (/^\d{4}-\d{2}-\d{2}$/.test(d)) return `${d}T00:00:00`;
+    return d;
+  };
+
+  const handleCreateCoupon = async () => {
+    try {
+      if (!couponCode || !couponName || couponDiscountValue === '' || couponDiscountValue == null) {
+        notifications.show({ color: 'red', message: 'Código, nombre y descuento son obligatorios' });
+        return;
+      }
+      const payload: CreateDiscountCouponDTO = {
+        code: couponCode,
+        name: couponName,
+        discountType: couponDiscountType,
+        discountValue: Number(couponDiscountValue),
+        usageLimit: couponUsageLimit === '' ? undefined : Number(couponUsageLimit),
+        expirationDate: toLocalDateTime(couponExpirationDate),
+      };
+      const created = await discountCouponService.create(payload);
+      notifications.show({ color: 'green', message: `Cupón \"${created.code}\" creado` });
+      setCouponModalOpen(false);
+      await reloadCoupons();
+    } catch (e: any) {
+      console.error(e);
+      notifications.show({ color: 'red', message: e?.response?.data?.error || 'Error al crear cupón' });
+    }
+  };
+
+  const handleUpdateCoupon = async () => {
+    try {
+      if (!editingCouponId) return;
+      if (!couponCode || !couponName || couponDiscountValue === '' || couponDiscountValue == null) {
+        notifications.show({ color: 'red', message: 'Código, nombre y descuento son obligatorios' });
+        return;
+      }
+      const payload: CreateDiscountCouponDTO = {
+        code: couponCode,
+        name: couponName,
+        discountType: couponDiscountType,
+        discountValue: Number(couponDiscountValue),
+        usageLimit: couponUsageLimit === '' ? undefined : Number(couponUsageLimit),
+        expirationDate: toLocalDateTime(couponExpirationDate),
+      };
+      const updated = await discountCouponService.update(editingCouponId, payload);
+      notifications.show({ color: 'green', message: `Cupón \"${updated.code}\" actualizado` });
+      setCouponModalOpen(false);
+      setIsEditCoupon(false);
+      setEditingCouponId(null);
+      await reloadCoupons();
+    } catch (e: any) {
+      console.error(e);
+      notifications.show({ color: 'red', message: e?.response?.data?.error || 'Error al actualizar cupón' });
+    }
+  };
+
+  const handleDeactivateCoupon = async (id: number) => {
+    try {
+      await discountCouponService.deactivate(id);
+      notifications.show({ color: 'green', message: 'Cupón desactivado' });
+      await reloadCoupons();
+    } catch (e: any) {
+      console.error(e);
+      notifications.show({ color: 'red', message: e?.response?.data?.error || 'Error al desactivar cupón' });
+    }
+  };
+
+  const handleDeleteCoupon = async (id: number) => {
+    try {
+      await discountCouponService.remove(id);
+      notifications.show({ color: 'green', message: 'Cupón eliminado' });
+      await reloadCoupons();
+    } catch (e: any) {
+      console.error(e);
+      notifications.show({ color: 'red', message: e?.response?.data?.error || 'Error al eliminar cupón' });
     }
   };
 
@@ -205,29 +345,7 @@ const SubscriptionsPage: React.FC = () => {
     }
   };
 
-  // Datos de ejemplo para cupones
-  const coupons = [
-    {
-      id: 1,
-      code: 'STUDENT20',
-      discount: 20,
-      type: 'percentage',
-      uses: 156,
-      maxUses: 1000,
-      expiresAt: '2024-06-30',
-      status: 'Active'
-    },
-    {
-      id: 2,
-      code: 'WELCOME50',
-      discount: 50,
-      type: 'percentage',
-      uses: 89,
-      maxUses: 500,
-      expiresAt: '2024-05-15',
-      status: 'Active'
-    },
-  ];
+  // Lista real de cupones cargada desde backend (sin datos mock)
 
   return (
     <PageTransition type="medical" duration={800}>
@@ -256,7 +374,7 @@ const SubscriptionsPage: React.FC = () => {
                   <Button
                     leftSection={<IconGift size={16} />}
                     variant="light"
-                    onClick={() => setCouponModalOpen(true)}
+                    onClick={handleOpenCreateCoupon}
                   >
                     Create Coupon
                   </Button>
@@ -558,33 +676,41 @@ ${Number(plan.totalRevenue ?? 0).toLocaleString()} revenue
                             <Text fw={600} style={{ color: colorScheme === 'dark' ? '#ffffff' : '#1e293b' }}>
                               {coupon.code}
                             </Text>
-                          </Table.Td>
-                          <Table.Td>
-                            <Text style={{ color: colorScheme === 'dark' ? '#e2e8f0' : '#64748b' }}>
-                              {coupon.discount}%
+                            <Text size="xs" style={{ color: colorScheme === 'dark' ? '#cbd5e1' : '#64748b' }}>
+                              {coupon.name}
                             </Text>
                           </Table.Td>
                           <Table.Td>
                             <Text style={{ color: colorScheme === 'dark' ? '#e2e8f0' : '#64748b' }}>
-                              {coupon.uses}/{coupon.maxUses}
+                              {coupon.discountType === 'PERCENTAGE' ? `${coupon.discountValue}%` : `$${coupon.discountValue}`}
                             </Text>
                           </Table.Td>
                           <Table.Td>
                             <Text style={{ color: colorScheme === 'dark' ? '#e2e8f0' : '#64748b' }}>
-                              {coupon.expiresAt}
+                              {(coupon.currentUsage ?? 0)}/{coupon.usageLimit ?? '∞'}
                             </Text>
                           </Table.Td>
                           <Table.Td>
-                            <Badge color={coupon.status === 'Active' ? 'green' : 'gray'} variant="light">
-                              {coupon.status}
+                            <Text style={{ color: colorScheme === 'dark' ? '#e2e8f0' : '#64748b' }}>
+                              {coupon.expirationDate ? coupon.expirationDate : '—'}
+                            </Text>
+                          </Table.Td>
+                          <Table.Td>
+                            <Badge color={coupon.isActive ? 'green' : 'gray'} variant="light">
+                              {coupon.isActive ? 'Active' : 'Inactive'}
                             </Badge>
                           </Table.Td>
                           <Table.Td>
                             <Group gap="xs">
-                              <Button variant="light" size="xs" leftSection={<IconEdit size={12} />}>
+                              <Button variant="light" size="xs" leftSection={<IconEdit size={12} />} onClick={() => handleOpenEditCoupon(coupon)}>
                                 Edit
                               </Button>
-                              <Button variant="light" color="red" size="xs" leftSection={<IconTrash size={12} />}>
+                              {coupon.isActive && (
+                                <Button variant="light" color="orange" size="xs" onClick={() => handleDeactivateCoupon(coupon.id)}>
+                                  Deactivate
+                                </Button>
+                              )}
+                              <Button variant="light" color="red" size="xs" leftSection={<IconTrash size={12} />} onClick={() => handleDeleteCoupon(coupon.id)}>
                                 Delete
                               </Button>
                             </Group>
@@ -636,20 +762,50 @@ ${Number(plan.totalRevenue ?? 0).toLocaleString()} revenue
         <Modal
           opened={couponModalOpen}
           onClose={() => setCouponModalOpen(false)}
-          title="Create New Coupon"
+          title={isEditCoupon ? 'Edit Coupon' : 'Create New Coupon'}
           size="md"
         >
           <Stack gap="md">
-            <TextInput label="Coupon Code" placeholder="DISCOUNT20" />
+            <TextInput label="Coupon Code" placeholder="DISCOUNT20" value={couponCode} onChange={(e) => setCouponCode(e.currentTarget.value.toUpperCase())} />
+            <TextInput label="Name" placeholder="Back to school" value={couponName} onChange={(e) => setCouponName(e.currentTarget.value)} />
             <Group grow>
-              <NumberInput label="Discount %" placeholder="20" max={100} />
-              <NumberInput label="Max Uses" placeholder="100" />
+              <Select
+                label="Discount Type"
+                data={[
+                  { value: 'PERCENTAGE', label: 'Percentage (%)' },
+                  { value: 'FIXED_AMOUNT', label: 'Fixed ($)' }
+                ]}
+                value={couponDiscountType}
+                onChange={(val) => setCouponDiscountType((val as DiscountType) || 'PERCENTAGE')}
+              />
+              <NumberInput
+                label={couponDiscountType === 'PERCENTAGE' ? 'Discount %' : 'Discount $'}
+                placeholder={couponDiscountType === 'PERCENTAGE' ? '20' : '10'}
+                max={couponDiscountType === 'PERCENTAGE' ? 100 : undefined}
+                min={0}
+                value={couponDiscountValue}
+                onChange={(val) => setCouponDiscountValue(typeof val === 'number' ? val : Number(val) || '')}
+              />
             </Group>
-            <TextInput label="Expires At" placeholder="YYYY-MM-DD" />
-            <Switch label="Active" />
+            <Group grow>
+              <NumberInput label="Usage limit" placeholder="100" value={couponUsageLimit} onChange={(val) => setCouponUsageLimit(typeof val === 'number' ? val : Number(val) || '')} />
+              <TextInput
+                label="Expires At"
+                type="date"
+                placeholder="YYYY-MM-DD"
+                value={couponExpirationDate ?? ''}
+                onChange={(e) => setCouponExpirationDate(e.currentTarget.value || null)}
+                size="sm"
+                radius="md"
+              />
+            </Group>
             <Group justify="flex-end">
               <Button variant="light" onClick={() => setCouponModalOpen(false)}>Cancel</Button>
-              <Button>Create Coupon</Button>
+              {isEditCoupon ? (
+                <Button onClick={handleUpdateCoupon}>Save Changes</Button>
+              ) : (
+                <Button onClick={handleCreateCoupon}>Create Coupon</Button>
+              )}
             </Group>
           </Stack>
         </Modal>

@@ -21,6 +21,7 @@ export { subscriptionPlanService, default as SubscriptionPlanService } from './s
 export { userSubscriptionService, default as UserSubscriptionService } from './userSubscriptionService';
 export { paymentHistoryService, default as PaymentHistoryService } from './paymentHistoryService';
 export { subscriptionDashboardService, default as SubscriptionDashboardService } from './subscriptionDashboardService';
+export { discountCouponService, default as DiscountCouponService } from './discountCouponService';
 
 // Servicio de notificaciones
 export { notificationService, default as NotificationService } from './notificationService';
@@ -50,13 +51,18 @@ axios.defaults.headers.common['Accept'] = 'application/json';
 axios.interceptors.request.use(
   (config) => {
     // Solo agregar token si no está ya presente
-    if (!config.headers.Authorization) {
+    // Normalizar headers para evitar problemas de casing
+    const headers: any = (config.headers || {});
+
+    if (!headers.Authorization && !headers.authorization) {
       const token = localStorage.getItem('accessToken');
       if (token && token !== 'undefined' && token !== 'null') {
         // Validar formato básico del JWT antes de usarlo
         const parts = token.split('.');
         if (parts.length === 3 && parts.every(part => part.length > 0)) {
-          config.headers.Authorization = `Bearer ${token}`;
+          headers.Authorization = `Bearer ${token}`;
+          headers.authorization = `Bearer ${token}`; // asegurar key en minúsculas también
+          config.headers = headers;
         } else {
           // Token malformado, limpiarlo
           localStorage.removeItem('accessToken');
@@ -64,6 +70,12 @@ axios.interceptors.request.use(
           localStorage.removeItem('user');
         }
       }
+    } else {
+      // Si ya hay header, asegurar ambas variantes
+      const authVal = headers.Authorization || headers.authorization;
+      headers.Authorization = authVal;
+      headers.authorization = authVal;
+      config.headers = headers;
     }
     
     // Logging para desarrollo
@@ -131,7 +143,10 @@ axios.interceptors.response.use(
         return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject });
         }).then(token => {
+          // Normalizar headers en reintento
+          originalRequest.headers = originalRequest.headers || {};
           originalRequest.headers.Authorization = `Bearer ${token}`;
+          originalRequest.headers.authorization = `Bearer ${token}`;
           return axios.request(originalRequest);
         }).catch(err => {
           return Promise.reject(err);
@@ -150,7 +165,9 @@ axios.interceptors.response.use(
         const newToken = localStorage.getItem('accessToken');
         if (newToken) {
           processQueue(null, newToken);
+          originalRequest.headers = originalRequest.headers || {};
           originalRequest.headers.Authorization = `Bearer ${newToken}`;
+          originalRequest.headers.authorization = `Bearer ${newToken}`;
           return axios.request(originalRequest);
         }
       } catch (refreshError) {

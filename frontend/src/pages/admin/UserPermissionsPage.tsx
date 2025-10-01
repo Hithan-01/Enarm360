@@ -87,7 +87,7 @@ const UserPermissionsPage: React.FC = () => {
       name: 'Juan Pérez',
       email: 'juan.perez@email.com',
       role: 'student',
-      subscriptionType: 'Basic',
+      subscriptionType: 'Básico',
       canSubmitQuestions: false,
       canAccessClinicalCases: false,
       canViewStatistics: false,
@@ -99,7 +99,7 @@ const UserPermissionsPage: React.FC = () => {
       name: 'Ana Torres',
       email: 'ana.torres@email.com',
       role: 'instructor',
-      subscriptionType: 'Professional',
+      subscriptionType: 'Profesional',
       canSubmitQuestions: true,
       canAccessClinicalCases: true,
       canViewStatistics: true,
@@ -109,9 +109,9 @@ const UserPermissionsPage: React.FC = () => {
   ];
 
   const permissions: Permission[] = [
-    { id: 'submit_questions', name: 'Submit Questions', description: 'Allow user to submit questions for review', category: 'submission' },
-    { id: 'access_clinical_cases', name: 'Clinical Cases Access', description: 'Access to clinical cases module', category: 'access' },
-    { id: 'view_statistics', name: 'View Statistics', description: 'Access to personal statistics and analytics', category: 'features' }
+    { id: 'submit_questions', name: 'Enviar Preguntas', description: 'Permitir al usuario enviar preguntas para revisión', category: 'submission' },
+    { id: 'access_clinical_cases', name: 'Acceso a Casos Clínicos', description: 'Acceso al módulo de casos clínicos', category: 'access' },
+    { id: 'view_statistics', name: 'Ver Estadísticas', description: 'Acceso a estadísticas personales y análisis', category: 'features' }
   ];
 
   const stats = {
@@ -165,7 +165,7 @@ const UserPermissionsPage: React.FC = () => {
             mb="xl"
             style={{ color: colorScheme === 'dark' ? '#f1f5f9' : '#1e293b' }}
           >
-            User Permissions Management
+            Gestión de Permisos de Usuario
           </Text>
 
           <Grid mb="xl">
@@ -186,7 +186,7 @@ const UserPermissionsPage: React.FC = () => {
               >
                 <Group justify="apart" align="flex-start">
                   <div>
-                    <Text size="sm" c="dimmed">Total Users</Text>
+                    <Text size="sm" c="dimmed">Total de Usuarios</Text>
                     <CountUpNumber
                       value={stats.totalUsers}
                       style={{ color: colorScheme === 'dark' ? '#f1f5f9' : '#1e293b' }}
@@ -216,7 +216,7 @@ const UserPermissionsPage: React.FC = () => {
               >
                 <Group justify="apart" align="flex-start">
                   <div>
-                    <Text size="sm" c="dimmed">Active Users</Text>
+                    <Text size="sm" c="dimmed">Usuarios Activos</Text>
                     <CountUpNumber
                       value={stats.activeUsers}
                       style={{ color: colorScheme === 'dark' ? '#f1f5f9' : '#1e293b' }}
@@ -246,7 +246,7 @@ const UserPermissionsPage: React.FC = () => {
               >
                 <Group justify="apart" align="flex-start">
                   <div>
-                    <Text size="sm" c="dimmed">Submission Rights</Text>
+                    <Text size="sm" c="dimmed">Derechos de Envío</Text>
                     <CountUpNumber
                       value={stats.usersWithSubmissionRights}
                       style={{ color: colorScheme === 'dark' ? '#f1f5f9' : '#1e293b' }}
@@ -276,7 +276,7 @@ const UserPermissionsPage: React.FC = () => {
               >
                 <Group justify="apart" align="flex-start">
                   <div>
-                    <Text size="sm" c="dimmed">Suspended</Text>
+                    <Text size="sm" c="dimmed">Suspendidos</Text>
                     <CountUpNumber
                       value={stats.suspendedUsers}
                       style={{ color: colorScheme === 'dark' ? '#f1f5f9' : '#1e293b' }}
@@ -305,31 +305,31 @@ const UserPermissionsPage: React.FC = () => {
             }}
           >
             <Group justify="space-between" mb="md">
-              <Text fw={600} style={{ color: colorScheme === 'dark' ? '#f1f5f9' : '#1e293b' }}>User Management</Text>
+              <Text fw={600} style={{ color: colorScheme === 'dark' ? '#f1f5f9' : '#1e293b' }}>Gestión de Usuarios</Text>
               <Group>
                 <TextInput
-                  placeholder="Search users..."
+                  placeholder="Buscar usuarios..."
                   leftSection={<IconSearch size={16} />}
                   value={searchTerm}
                   onChange={(event) => setSearchTerm(event.currentTarget.value)}
                 />
                 <Select
-                  placeholder="Status"
+                  placeholder="Estado"
                   leftSection={<IconFilter size={16} />}
                   data={[
-                    { value: 'all', label: 'All Status' },
-                    { value: 'active', label: 'Active' },
-                    { value: 'suspended', label: 'Suspended' },
-                    { value: 'pending', label: 'Pending' }
+                    { value: 'all', label: 'Todos los Estados' },
+                    { value: 'active', label: 'Activo' },
+                    { value: 'suspended', label: 'Suspendido' },
+                    { value: 'pending', label: 'Pendiente' }
                   ]}
                   value={filterStatus}
                   onChange={(value) => setFilterStatus(value || 'all')}
                 />
                 <Select
-                  placeholder="Role"
+                  placeholder="Rol"
                   data={[
-                    { value: 'all', label: 'All Roles' },
-                    { value: 'student', label: 'Student' },
+                    { value: 'all', label: 'Todos los Roles' },
+                    { value: 'student', label: 'Estudiante' },
                     { value: 'instructor', label: 'Instructor' }
                   ]}
                   value={filterRole}
@@ -341,13 +341,13 @@ const UserPermissionsPage: React.FC = () => {
             <Table>
               <Table.Thead>
                 <Table.Tr>
-                  <Table.Th>User</Table.Th>
-                  <Table.Th>Role</Table.Th>
-                  <Table.Th>Subscription</Table.Th>
-                  <Table.Th>Permissions</Table.Th>
-                  <Table.Th>Status</Table.Th>
-                  <Table.Th>Last Activity</Table.Th>
-                  <Table.Th>Actions</Table.Th>
+                  <Table.Th>Usuario</Table.Th>
+                  <Table.Th>Rol</Table.Th>
+                  <Table.Th>Suscripción</Table.Th>
+                  <Table.Th>Permisos</Table.Th>
+                  <Table.Th>Estado</Table.Th>
+                  <Table.Th>Última Actividad</Table.Th>
+                  <Table.Th>Acciones</Table.Th>
                 </Table.Tr>
               </Table.Thead>
               <Table.Tbody>
@@ -361,7 +361,7 @@ const UserPermissionsPage: React.FC = () => {
                     </Table.Td>
                     <Table.Td>
                       <Badge variant="light" color={user.role === 'instructor' ? 'blue' : 'gray'}>
-                        {user.role}
+                        {user.role === 'student' ? 'Estudiante' : 'Instructor'}
                       </Badge>
                     </Table.Td>
                     <Table.Td>
@@ -372,25 +372,25 @@ const UserPermissionsPage: React.FC = () => {
                     <Table.Td>
                       <Group gap="xs">
                         {user.canSubmitQuestions && (
-                          <Tooltip label="Can submit questions">
-                            <Badge size="sm" variant="light" color="blue">Submit</Badge>
+                          <Tooltip label="Puede enviar preguntas">
+                            <Badge size="sm" variant="light" color="blue">Enviar</Badge>
                           </Tooltip>
                         )}
                         {user.canAccessClinicalCases && (
-                          <Tooltip label="Clinical cases access">
-                            <Badge size="sm" variant="light" color="green">Cases</Badge>
+                          <Tooltip label="Acceso a casos clínicos">
+                            <Badge size="sm" variant="light" color="green">Casos</Badge>
                           </Tooltip>
                         )}
                         {user.canViewStatistics && (
-                          <Tooltip label="Statistics access">
-                            <Badge size="sm" variant="light" color="purple">Stats</Badge>
+                          <Tooltip label="Acceso a estadísticas">
+                            <Badge size="sm" variant="light" color="purple">Estad.</Badge>
                           </Tooltip>
                         )}
                       </Group>
                     </Table.Td>
                     <Table.Td>
                       <Badge variant="light" color={getStatusColor(user.status)}>
-                        {user.status}
+                        {user.status === 'active' ? 'Activo' : user.status === 'suspended' ? 'Suspendido' : 'Pendiente'}
                       </Badge>
                     </Table.Td>
                     <Table.Td>
@@ -398,7 +398,7 @@ const UserPermissionsPage: React.FC = () => {
                     </Table.Td>
                     <Table.Td>
                       <Group gap="xs">
-                        <Tooltip label="Edit permissions">
+                        <Tooltip label="Editar permisos">
                           <ActionIcon
                             variant="light"
                             color="blue"
@@ -420,19 +420,19 @@ const UserPermissionsPage: React.FC = () => {
       <Modal
         opened={opened}
         onClose={() => setOpened(false)}
-        title="Edit User Permissions"
+        title="Editar Permisos de Usuario"
         size="md"
       >
         {selectedUser && (
           <Stack gap="md">
             <Alert icon={<IconAlertCircle size={16} />} color="blue">
-              Editing permissions for: <strong>{selectedUser.name}</strong>
+              Editando permisos para: <strong>{selectedUser.name}</strong>
             </Alert>
 
-            <Text fw={500} style={{ color: colorScheme === 'dark' ? '#f1f5f9' : '#1e293b' }}>Submission Permissions</Text>
+            <Text fw={500} style={{ color: colorScheme === 'dark' ? '#f1f5f9' : '#1e293b' }}>Permisos de Envío</Text>
             <Switch
-              label="Allow question submissions"
-              description="User can submit questions for admin review"
+              label="Permitir envío de preguntas"
+              description="El usuario puede enviar preguntas para revisión del administrador"
               checked={selectedUser.canSubmitQuestions}
               onChange={(event) => setSelectedUser({
                 ...selectedUser,
@@ -440,10 +440,10 @@ const UserPermissionsPage: React.FC = () => {
               })}
             />
 
-            <Text fw={500} style={{ color: colorScheme === 'dark' ? '#f1f5f9' : '#1e293b' }}>Access Permissions</Text>
+            <Text fw={500} style={{ color: colorScheme === 'dark' ? '#f1f5f9' : '#1e293b' }}>Permisos de Acceso</Text>
             <Switch
-              label="Clinical cases access"
-              description="User can access clinical cases module"
+              label="Acceso a casos clínicos"
+              description="El usuario puede acceder al módulo de casos clínicos"
               checked={selectedUser.canAccessClinicalCases}
               onChange={(event) => setSelectedUser({
                 ...selectedUser,
@@ -451,10 +451,10 @@ const UserPermissionsPage: React.FC = () => {
               })}
             />
 
-            <Text fw={500} style={{ color: colorScheme === 'dark' ? '#f1f5f9' : '#1e293b' }}>Feature Permissions</Text>
+            <Text fw={500} style={{ color: colorScheme === 'dark' ? '#f1f5f9' : '#1e293b' }}>Permisos de Funciones</Text>
             <Switch
-              label="Statistics access"
-              description="User can view personal statistics and analytics"
+              label="Acceso a estadísticas"
+              description="El usuario puede ver estadísticas personales y análisis"
               checked={selectedUser.canViewStatistics}
               onChange={(event) => setSelectedUser({
                 ...selectedUser,
@@ -463,11 +463,11 @@ const UserPermissionsPage: React.FC = () => {
             />
 
             <Select
-              label="User Status"
+              label="Estado del Usuario"
               data={[
-                { value: 'active', label: 'Active' },
-                { value: 'suspended', label: 'Suspended' },
-                { value: 'pending', label: 'Pending' }
+                { value: 'active', label: 'Activo' },
+                { value: 'suspended', label: 'Suspendido' },
+                { value: 'pending', label: 'Pendiente' }
               ]}
               value={selectedUser.status}
               onChange={(value) => setSelectedUser({
@@ -478,10 +478,10 @@ const UserPermissionsPage: React.FC = () => {
 
             <Group justify="flex-end" mt="md">
               <Button variant="subtle" onClick={() => setOpened(false)}>
-                Cancel
+                Cancelar
               </Button>
               <Button onClick={handleSavePermissions}>
-                Save Changes
+                Guardar Cambios
               </Button>
             </Group>
           </Stack>

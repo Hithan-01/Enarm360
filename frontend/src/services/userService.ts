@@ -6,6 +6,9 @@ export interface UserMinDTO {
   email: string;
   nombre: string;
   apellidos: string;
+  activo?: boolean;
+  subscriptionStatus?: string;
+  roles?: string[];
 }
 
 class UserService {

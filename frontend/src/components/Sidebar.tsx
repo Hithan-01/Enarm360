@@ -517,8 +517,8 @@ const Sidebar: React.FC<SidebarProps> = ({ user, onLogout, onCollapseChange, ini
                 <Menu.Dropdown
                   style={{
                     backgroundColor: colorScheme === 'dark'
-                      ? 'rgba(30, 41, 59, 0.95)'
-                      : 'rgba(255, 255, 255, 0.1)',
+                      ? '#1e293b'
+                      : '#ffffff',
                     border: `2px solid ${
                       colorScheme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.3)'
                     }`,
@@ -685,8 +685,8 @@ const Sidebar: React.FC<SidebarProps> = ({ user, onLogout, onCollapseChange, ini
               <Menu.Dropdown
                 style={{
                   backgroundColor: colorScheme === 'dark'
-                    ? 'rgba(30, 41, 59, 0.95)'
-                    : 'rgba(255, 255, 255, 0.1)',
+                    ? '#1e293b'
+                    : '#ffffff',
                   border: `2px solid ${
                     colorScheme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.3)'
                   }`,

@@ -48,10 +48,18 @@ class AdminPermissionsService {
     const { data } = await axios.delete<UsuarioPermisosDTO>(`/api/admin/usuarios/${userId}/permisos/${codigo}`);
     return data;
   }
-  async getLogs(userId: number, limit = 20): Promise<Array<{ permisoCodigo: string; accion: string; actorId: number; actorUsername: string; creadoEn: string }>> {
+  async getLogs(userId: number, limit = 20): Promise<UsuarioPermisoLogDTO[]> {
     const { data } = await axios.get(`/api/admin/usuarios/${userId}/permisos/logs`, { params: { limit } });
     return data;
   }
+}
+
+export interface UsuarioPermisoLogDTO {
+  permisoCodigo: string;
+  accion: string;
+  actorId: number;
+  actorUsername: string;
+  creadoEn: string;
 }
 
 export const adminPermissionsService = new AdminPermissionsService();
