@@ -64,6 +64,7 @@ public SecurityFilterChain filterChain(HttpSecurity http,
 
               .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers("/api/especialidades/**").permitAll() // 👈 acceso libre
+                .requestMatchers("/api/subscription-plans").permitAll() // 👈 planes públicos
              
             
             // URLs de testing

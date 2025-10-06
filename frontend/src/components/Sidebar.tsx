@@ -14,6 +14,7 @@ import {
   Tooltip,
   Menu,
 } from '@mantine/core';
+import { profileService } from '../services/profileService';
 import enarmLogo from '../assets/enarm_logo.png';
 import {
   IconDashboard,
@@ -46,6 +47,7 @@ interface SidebarProps {
     roles?: string[];
     nombre?: string;
     apellidos?: string;
+    avatar?: string;
   };
   onLogout: () => void;
   onCollapseChange?: (collapsed: boolean) => void;
@@ -497,19 +499,22 @@ const Sidebar: React.FC<SidebarProps> = ({ user, onLogout, onCollapseChange, ini
                           : '0 4px 16px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.6)',
                       }}
                     >
-                      <Avatar
-                        size={28}
-                        style={{
-                          backgroundColor: colorScheme === 'dark' ? '#374151' : '#e2e8f0',
-                          color: colorScheme === 'dark' ? '#e2e8f0' : '#1e293b',
-                          fontSize: '12px',
-                          fontWeight: 600,
-                        }}
-                      >
-                        {user.nombre && user.apellidos
+                    <Avatar
+                      src={user.avatar ? profileService.getAvatarUrl(user.avatar) : null}
+                      size={28}
+                      style={{
+                        backgroundColor: colorScheme === 'dark' ? '#374151' : '#e2e8f0',
+                        color: colorScheme === 'dark' ? '#e2e8f0' : '#1e293b',
+                        fontSize: '12px',
+                        fontWeight: 600,
+                      }}
+                    >
+                      {!user.avatar && (
+                        user.nombre && user.apellidos
                           ? `${user.nombre.charAt(0)}${user.apellidos.charAt(0)}`.toUpperCase()
-                          : user.username.charAt(0).toUpperCase()}
-                      </Avatar>
+                          : user.username.charAt(0).toUpperCase()
+                      )}
+                    </Avatar>
                     </UnstyledButton>
                   </Tooltip>
                 </Menu.Target>
@@ -550,16 +555,18 @@ const Sidebar: React.FC<SidebarProps> = ({ user, onLogout, onCollapseChange, ini
                     Configuración
                   </Menu.Item>
 
-                  <Menu.Item
-                    leftSection={<IconCreditCard size={16} />}
-                    onClick={() => window.location.href = '/mejorarplan'}
-                    style={{
-                      color: colorScheme === 'dark' ? '#e2e8f0' : '#1e293b',
-                      fontFamily: 'Inter, sans-serif',
-                    }}
-                  >
-                    Mejorar Plan
-                  </Menu.Item>
+                  {!isAdmin && (
+                    <Menu.Item
+                      leftSection={<IconCreditCard size={16} />}
+                      onClick={() => window.location.href = '/mejorarplan'}
+                      style={{
+                        color: colorScheme === 'dark' ? '#e2e8f0' : '#1e293b',
+                        fontFamily: 'Inter, sans-serif',
+                      }}
+                    >
+                      Mejorar Plan
+                    </Menu.Item>
+                  )}
 
                   <Menu.Item
                     leftSection={colorScheme === 'dark' ? <IconSun size={16} /> : <IconMoon size={16} />}
@@ -624,6 +631,7 @@ const Sidebar: React.FC<SidebarProps> = ({ user, onLogout, onCollapseChange, ini
                 >
                   <Group gap="xs">
                     <Avatar
+                      src={user.avatar ? profileService.getAvatarUrl(user.avatar) : null}
                       size={24}
                       style={{
                         backgroundColor: colorScheme === 'dark' ? '#374151' : '#e2e8f0',
@@ -632,9 +640,11 @@ const Sidebar: React.FC<SidebarProps> = ({ user, onLogout, onCollapseChange, ini
                         fontWeight: 600,
                       }}
                     >
-                      {user.nombre && user.apellidos
-                        ? `${user.nombre.charAt(0)}${user.apellidos.charAt(0)}`.toUpperCase()
-                        : user.username.charAt(0).toUpperCase()}
+                      {!user.avatar && (
+                        user.nombre && user.apellidos
+                          ? `${user.nombre.charAt(0)}${user.apellidos.charAt(0)}`.toUpperCase()
+                          : user.username.charAt(0).toUpperCase()
+                      )}
                     </Avatar>
                     <Box style={{ flex: 1, minWidth: 0 }}>
                       <Text
@@ -716,16 +726,18 @@ const Sidebar: React.FC<SidebarProps> = ({ user, onLogout, onCollapseChange, ini
                   Configuración
                 </Menu.Item>
 
-                <Menu.Item
-                  leftSection={<IconCreditCard size={16} />}
-                  onClick={() => window.location.href = '/mejorarplan'}
-                  style={{
-                    color: colorScheme === 'dark' ? '#e2e8f0' : '#1e293b',
-                    fontFamily: 'Inter, sans-serif',
-                  }}
-                >
-                  Mejorar Plan
-                </Menu.Item>
+                {!isAdmin && (
+                  <Menu.Item
+                    leftSection={<IconCreditCard size={16} />}
+                    onClick={() => window.location.href = '/mejorarplan'}
+                    style={{
+                      color: colorScheme === 'dark' ? '#e2e8f0' : '#1e293b',
+                      fontFamily: 'Inter, sans-serif',
+                    }}
+                  >
+                    Mejorar Plan
+                  </Menu.Item>
+                )}
 
                 <Menu.Item
                   leftSection={colorScheme === 'dark' ? <IconSun size={16} /> : <IconMoon size={16} />}

@@ -19,10 +19,11 @@ import {
   ActionIcon
 } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
-import { IconStethoscope, IconUser, IconLock, IconAlertCircle, IconSun, IconMoon, IconBrandGoogle, IconBrandFacebook, IconBrandApple } from '@tabler/icons-react';
+import { IconStethoscope, IconUser, IconLock, IconAlertCircle, IconSun, IconMoon, IconBrandGoogle, IconBrandFacebook, IconBrandApple, IconArrowLeft, IconHome } from '@tabler/icons-react';
 import authService from '../services/authService';
 import { LoginRequest, UserRole } from '../types/auth';
 import enarmLogo from '../assets/enarm_logo.png';
+// import GoogleLoginButton from './GoogleLoginButton'; // REMOVIDO TEMPORALMENTE
 
 const Login: React.FC = () => {
   const [credentials, setCredentials] = useState<LoginRequest>({
@@ -70,8 +71,8 @@ const Login: React.FC = () => {
       console.log('Response completa:', JSON.stringify(response, null, 2));
       
       notifications.show({
-        title: 'Login Successful',
-        message: 'Redirecting to dashboard...',
+        title: 'Inicio de Sesión Exitoso',
+        message: 'Redirigiendo al panel...',
         color: 'teal',
         autoClose: 2000,
         styles: {
@@ -131,21 +132,22 @@ const Login: React.FC = () => {
     } catch (err: any) {
       console.error('Error en login:', err);
       
-      let errorMessage = 'Server error. Please try again.';
+      let errorMessage = 'Error del servidor. Inténtalo de nuevo.';
       
       if (err.response?.status === 401) {
-        errorMessage = 'Invalid credentials';
+        errorMessage = 'Credenciales incorrectas';
       } else if (err.response?.status === 423) {
-        errorMessage = 'User blocked';
+        errorMessage = 'Usuario bloqueado';
       } else if (err.response?.status === 403) {
-        errorMessage = 'User disabled';
+        errorMessage = 'Usuario deshabilitado';
       } else if (err.response?.data?.message) {
+        // Si el backend envía un mensaje en español, usarlo
         errorMessage = err.response.data.message;
       }
       
       setError(errorMessage);
       notifications.show({
-        title: 'Authentication Error',
+        title: 'Error de Autenticación',
         message: errorMessage,
         color: 'red',
         autoClose: 4000,
@@ -210,6 +212,32 @@ const Login: React.FC = () => {
           zIndex: 0,
         }}
       />
+
+      {/* Back to Landing Button */}
+      <ActionIcon
+        onClick={() => navigate('/')}
+        variant="light"
+        size="lg"
+        radius="xl"
+        style={{
+          position: 'absolute',
+          top: '2rem',
+          left: '2rem',
+          zIndex: 10,
+          backgroundColor: colorScheme === 'dark'
+            ? 'rgba(30, 41, 59, 0.8)'
+            : 'rgba(247, 243, 238, 0.8)',
+          backdropFilter: 'blur(20px) saturate(180%)',
+          WebkitBackdropFilter: 'blur(20px) saturate(180%)',
+          border: `1px solid ${colorScheme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(221, 216, 209, 0.8)'}`,
+          boxShadow: colorScheme === 'dark'
+            ? '0 4px 16px rgba(0, 0, 0, 0.3)'
+            : '0 4px 16px rgba(0, 0, 0, 0.1)',
+          transition: 'all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+        }}
+      >
+        <IconArrowLeft size={20} />
+      </ActionIcon>
 
       {/* Dark Mode Toggle */}
       <ActionIcon
@@ -431,26 +459,7 @@ const Login: React.FC = () => {
 
             {/* Social Login Buttons */}
             <Group justify="center" gap="md" mb="lg">
-              <ActionIcon
-                size="xl"
-                radius="xl"
-                variant="light"
-                style={{
-                  backgroundColor: colorScheme === 'dark'
-                    ? 'rgba(219, 68, 55, 0.1)'
-                    : 'rgba(219, 68, 55, 0.05)',
-                  color: '#db4437',
-                  border: `1px solid rgba(219, 68, 55, 0.2)`,
-                  backdropFilter: 'blur(20px) saturate(180%)',
-                  WebkitBackdropFilter: 'blur(20px) saturate(180%)',
-                }}
-                onClick={() => {
-                  // TODO: Implement Google OAuth
-                  console.log('Login with Google');
-                }}
-              >
-                <IconBrandGoogle size={20} />
-              </ActionIcon>
+              {/* Google Login Button - REMOVIDO TEMPORALMENTE */}
 
               <ActionIcon
                 size="xl"

@@ -4,6 +4,8 @@ import { Box, useMantineColorScheme } from '@mantine/core';
 import Sidebar from './Sidebar';
 import TopHeader from './TopHeader';
 import { authService } from '../services/authService';
+import { profileService } from '../services/profileService';
+import { UsuarioProfile } from '../types/profile';
 import PageTransition from './animations/PageTransition';
 
 const Layout: React.FC = () => {
@@ -11,7 +13,25 @@ const Layout: React.FC = () => {
   const location = useLocation();
   const { colorScheme } = useMantineColorScheme();
   const [user] = useState(authService.getCurrentUserFromStorage());
+  const [profile, setProfile] = useState<UsuarioProfile | null>(null);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+
+  // Load user profile on mount
+  useEffect(() => {
+    const loadProfile = async () => {
+      try {
+        const profileData = await profileService.getMyProfile();
+        setProfile(profileData);
+      } catch (error) {
+        console.error('Error loading profile:', error);
+        // Si no se puede cargar el perfil, continuar sin él
+      }
+    };
+
+    if (authService.isAuthenticated()) {
+      loadProfile();
+    }
+  }, []);
 
   // Auto-collapse sidebar ONLY when in settings page
   useEffect(() => {
@@ -47,7 +67,10 @@ const Layout: React.FC = () => {
         user={{
           username: user?.username || '',
           email: user?.email || '',
-          roles: user?.roles || []
+          roles: user?.roles || [],
+          nombre: profile?.nombre || user?.nombre,
+          apellidos: profile?.apellido || user?.apellidos,
+          avatar: profile?.avatar
         }}
         onLogout={handleLogout}
         onCollapseChange={setSidebarCollapsed}

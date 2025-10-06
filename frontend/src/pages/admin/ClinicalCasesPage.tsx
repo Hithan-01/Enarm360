@@ -67,10 +67,10 @@ const ClinicalCasesPage: React.FC = () => {
           background: colorScheme === 'dark'
             ? 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)'
             : 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
-          padding: '32px',
+          padding: '25.6px',
         }}
       >
-            <Stack gap="xl">
+            <Stack gap="lg">
               {/* Header */}
               <Group justify="space-between" align="center">
                 <div>
@@ -94,7 +94,7 @@ const ClinicalCasesPage: React.FC = () => {
               </Group>
 
               {/* Stats Cards */}
-              <SimpleGrid cols={{ base: 1, sm: 2, lg: 4 }} spacing="lg">
+              <SimpleGrid cols={{ base: 1, sm: 2, lg: 4 }} spacing="md">
                 <Card
                   radius="xl"
                   p="lg"
@@ -111,11 +111,11 @@ const ClinicalCasesPage: React.FC = () => {
                   }}
                 >
                   <Group>
-                    <ThemeIcon size="xl" variant="light" color="blue" radius="xl">
-                      <IconStethoscope size={28} />
+                    <ThemeIcon size="lg" variant="light" color="blue" radius="lg">
+                      <IconStethoscope size={22} />
                     </ThemeIcon>
                     <div>
-                      <Text size="xl" fw={700}>24</Text>
+                      <Text size="lg" fw={700}>24</Text>
                       <Text size="sm" c="dimmed">Total Cases</Text>
                     </div>
                   </Group>

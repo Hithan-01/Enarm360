@@ -2,19 +2,17 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
   Box,
-  Title,
   Text,
-  Radio,
-  Button,
+  Paper,
   Stack,
   Group,
-  Paper,
-  Progress,
+  Button,
+  Title,
   Badge,
-  useMantineColorScheme,
-  Flex,
   Center,
-} from "@mantine/core";
+  Flex,
+  useMantineColorScheme,
+} from '@mantine/core';
 import { authService } from "../services/authService";
 import { examenService } from "../services/examenService";
 
@@ -46,7 +44,8 @@ const ExamenPage: React.FC = () => {
   const { colorScheme } = useMantineColorScheme();
 
   const [examen, setExamen] = useState<Examen | null>(null);
-  const [respuestas, setRespuestas] = useState<Record<number, string>>({});
+  const [respuestas, setRespuestas] = useState<Record<number, string>>({});  // Respuestas confirmadas
+  const [respuestasTempo, setRespuestasTempo] = useState<Record<number, string>>({}); // Respuestas temporales
   const [intentoId, setIntentoId] = useState<number | null>(null);
 
   // índice de la pregunta actual
@@ -96,6 +95,24 @@ const ExamenPage: React.FC = () => {
     };
   }, [isRunning, startTime]);
 
+  // =======================
+  // Cargar respuesta temporal cuando cambiamos de pregunta
+  // =======================
+  useEffect(() => {
+    if (examen && examen.preguntas && examen.preguntas[currentIndex]) {
+      const preguntaActual = examen.preguntas[currentIndex];
+      const respuestaConfirmada = respuestas[preguntaActual.reactivoId];
+      
+      // Si ya hay una respuesta confirmada, cargarla como temporal para permitir cambios
+      if (respuestaConfirmada && !respuestasTempo[preguntaActual.reactivoId]) {
+        setRespuestasTempo((prev) => ({
+          ...prev,
+          [preguntaActual.reactivoId]: respuestaConfirmada
+        }));
+      }
+    }
+  }, [currentIndex, examen, respuestas, respuestasTempo]);
+
   const formatTime = (ms: number) => {
     const totalSeconds = Math.floor(ms / 1000);
     const minutes = Math.floor(totalSeconds / 60);
@@ -106,10 +123,10 @@ const ExamenPage: React.FC = () => {
   };
 
   // =======================
-  // Responder reactivo
+  // Responder reactivo (temporal)
   // =======================
  const handleResponder = (reactivoId: number, respuesta: string) => {
-  setRespuestas((prev) => ({ ...prev, [reactivoId]: respuesta }));
+  setRespuestasTempo((prev) => ({ ...prev, [reactivoId]: respuesta }));
 };
 
   // =======================
@@ -117,6 +134,14 @@ const ExamenPage: React.FC = () => {
   // =======================
   const handleNext = () => {
     if (!examen) return;
+    
+    // Confirmar respuesta temporal antes de avanzar
+    const preguntaActual = examen.preguntas[currentIndex];
+    const respuestaTempo = respuestasTempo[preguntaActual.reactivoId];
+    if (respuestaTempo) {
+      setRespuestas((prev) => ({ ...prev, [preguntaActual.reactivoId]: respuestaTempo }));
+    }
+    
     if (currentIndex < examen.preguntas.length - 1) {
       setCurrentIndex((prev) => prev + 1);
     }
@@ -124,6 +149,16 @@ const ExamenPage: React.FC = () => {
 
   const handlePrev = () => {
     if (currentIndex > 0) {
+      // Limpiar respuesta temporal al retroceder sin confirmar
+      const preguntaActual = examen?.preguntas[currentIndex];
+      if (preguntaActual) {
+        setRespuestasTempo((prev) => {
+          const nuevas = { ...prev };
+          delete nuevas[preguntaActual.reactivoId];
+          return nuevas;
+        });
+      }
+      
       setCurrentIndex((prev) => prev - 1);
     }
   };
@@ -132,11 +167,18 @@ const ExamenPage: React.FC = () => {
   // Finalizar intento
   // =======================
  const handleFinalizar = async () => {
-  if (!intentoId) return;
+  if (!intentoId || !examen) return;
   setIsRunning(false);
   try {
+    // Confirmar respuesta temporal de la última pregunta
+    const preguntaActual = examen.preguntas[currentIndex];
+    const respuestaTempo = respuestasTempo[preguntaActual.reactivoId];
+    let respuestasFinales = { ...respuestas };
+    if (respuestaTempo) {
+      respuestasFinales[preguntaActual.reactivoId] = respuestaTempo;
+    }
    
-    await examenService.enviarRespuestas(intentoId, respuestas);
+    await examenService.enviarRespuestas(intentoId, respuestasFinales);
 
     const res = await examenService.finalizarIntento(intentoId);
 
@@ -163,7 +205,10 @@ const ExamenPage: React.FC = () => {
     return <Text>Error: pregunta no encontrada.</Text>;
   }
 
-  const respuestaSeleccionada = respuestas[preguntaActual.reactivoId] || "";
+  // Mostrar respuesta confirmada o temporal según el estado
+  const respuestaConfirmada = respuestas[preguntaActual.reactivoId];
+  const respuestaTemporal = respuestasTempo[preguntaActual.reactivoId];
+  const respuestaSeleccionada = respuestaConfirmada || respuestaTemporal || "";
   const progressPercentage = ((currentIndex + 1) / examen.preguntas.length) * 100;
   const totalRespuestas = Object.keys(respuestas).length;
 
@@ -269,57 +314,110 @@ const ExamenPage: React.FC = () => {
           {preguntaActual.reactivoTexto}
         </Text>
 
-        <Radio.Group
-          value={respuestas[preguntaActual.reactivoId] ?? null}
-          onChange={(val) => {
-            if (val) handleResponder(preguntaActual.reactivoId, val);
-          }}
-        >
-          <Stack gap="sm">
-            {[
-              { value: 'a', text: preguntaActual.respuestaA },
-              { value: 'b', text: preguntaActual.respuestaB },
-              { value: 'c', text: preguntaActual.respuestaC },
-              { value: 'd', text: preguntaActual.respuestaD }
-            ].map((opcion) => (
+        <Stack gap="sm">
+          {[
+            { value: 'a', text: preguntaActual.respuestaA },
+            { value: 'b', text: preguntaActual.respuestaB },
+            { value: 'c', text: preguntaActual.respuestaC },
+            { value: 'd', text: preguntaActual.respuestaD }
+          ].map((opcion) => {
+            const respuestaConfirmada = respuestas[preguntaActual.reactivoId];
+            const respuestaTemporal = respuestasTempo[preguntaActual.reactivoId];
+            const isSelected = (respuestaConfirmada || respuestaTemporal) === opcion.value;
+            return (
               <Paper
                 key={opcion.value}
                 p="sm"
+                onClick={() => handleResponder(preguntaActual.reactivoId, opcion.value)}
                 style={{
-                  backgroundColor: respuestas[preguntaActual.reactivoId] === opcion.value
+                  backgroundColor: isSelected
                     ? (colorScheme === 'dark' ? 'rgba(59, 130, 246, 0.2)' : 'rgba(59, 130, 246, 0.1)')
                     : (colorScheme === 'dark' ? 'rgba(15, 23, 42, 0.5)' : 'rgba(255, 255, 255, 0.5)'),
-                  border: respuestas[preguntaActual.reactivoId] === opcion.value
+                  border: isSelected
                     ? `2px solid ${colorScheme === 'dark' ? '#3b82f6' : '#2563eb'}`
                     : `1px solid ${colorScheme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(221, 216, 209, 0.5)'}`,
                   borderRadius: '8px',
                   cursor: 'pointer',
                   transition: 'all 0.2s ease',
+                  userSelect: 'none',
+                  position: 'relative'
+                }}
+                onMouseEnter={(e) => {
+                  if (!isSelected) {
+                    e.currentTarget.style.backgroundColor = colorScheme === 'dark' 
+                      ? 'rgba(59, 130, 246, 0.1)' 
+                      : 'rgba(59, 130, 246, 0.05)';
+                    e.currentTarget.style.borderColor = colorScheme === 'dark' 
+                      ? 'rgba(59, 130, 246, 0.3)' 
+                      : 'rgba(59, 130, 246, 0.2)';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!isSelected) {
+                    e.currentTarget.style.backgroundColor = colorScheme === 'dark' 
+                      ? 'rgba(15, 23, 42, 0.5)' 
+                      : 'rgba(255, 255, 255, 0.5)';
+                    e.currentTarget.style.borderColor = colorScheme === 'dark' 
+                      ? 'rgba(255, 255, 255, 0.1)' 
+                      : 'rgba(221, 216, 209, 0.5)';
+                  }
                 }}
               >
-                <Radio
-                  value={opcion.value}
-                  label={
-                    <Text
-                      style={{
-                        color: colorScheme === 'dark' ? '#e2e8f0' : '#2d2a26',
-                        fontFamily: 'Inter, sans-serif',
-                        fontSize: '14px',
-                        fontWeight: 500,
-                      }}
-                    >
-                      <Text component="span" fw={700} mr="xs">
-                        {opcion.value.toUpperCase()})
-                      </Text>
-                      {opcion.text}
+                <Group align="flex-start" gap="sm" style={{ width: '100%', justifyContent: 'flex-start' }}>
+                  {/* Radio visual indicator */}
+                  <div
+                    style={{
+                      width: '20px',
+                      height: '20px',
+                      borderRadius: '50%',
+                      border: isSelected 
+                        ? `2px solid ${colorScheme === 'dark' ? '#3b82f6' : '#2563eb'}`
+                        : `2px solid ${colorScheme === 'dark' ? 'rgba(255, 255, 255, 0.3)' : 'rgba(0, 0, 0, 0.3)'}`,
+                      backgroundColor: isSelected 
+                        ? (colorScheme === 'dark' ? '#3b82f6' : '#2563eb')
+                        : 'transparent',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      transition: 'all 0.2s ease',
+                      flexShrink: 0,
+                      marginTop: '2px'  // Alinear con la primera línea del texto
+                    }}
+                  >
+                    {isSelected && (
+                      <div
+                        style={{
+                          width: '8px',
+                          height: '8px',
+                          borderRadius: '50%',
+                          backgroundColor: 'white'
+                        }}
+                      />
+                    )}
+                  </div>
+                  
+                  {/* Option text */}
+                  <Text
+                    style={{
+                      color: colorScheme === 'dark' ? '#e2e8f0' : '#2d2a26',
+                      fontFamily: 'Inter, sans-serif',
+                      fontSize: '14px',
+                      fontWeight: 500,
+                      flex: 1,
+                      textAlign: 'left',
+                      lineHeight: '1.4'
+                    }}
+                  >
+                    <Text component="span" fw={700} mr="xs">
+                      {opcion.value.toUpperCase()})
                     </Text>
-                  }
-                  style={{ width: '100%' }}
-                />
+                    {opcion.text}
+                  </Text>
+                </Group>
               </Paper>
-            ))}
-          </Stack>
-        </Radio.Group>
+            );
+          })}
+        </Stack>
       </Paper>
 
       {/* Botones de navegación */}
@@ -403,7 +501,18 @@ const ExamenPage: React.FC = () => {
                   transition: 'all 0.2s ease',
                   border: isCurrent ? '2px solid rgba(255, 255, 255, 0.8)' : '1px solid transparent',
                 }}
-                onClick={() => setCurrentIndex(index)}
+                onClick={() => {
+                  // Limpiar respuesta temporal al navegar por números sin confirmar
+                  const preguntaActual = examen.preguntas[currentIndex];
+                  if (preguntaActual) {
+                    setRespuestasTempo((prev) => {
+                      const nuevas = { ...prev };
+                      delete nuevas[preguntaActual.reactivoId];
+                      return nuevas;
+                    });
+                  }
+                  setCurrentIndex(index);
+                }}
               >
                 {index + 1}
               </Center>

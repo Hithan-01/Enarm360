@@ -142,9 +142,9 @@ class ProfileService {
     return phone;
   }
 
-  getAvatarUrl(avatarPath: string | null): string {
+  getAvatarUrl(avatarPath: string | null): string | null {
     if (!avatarPath) {
-      return '/default-avatar.png'; // Imagen por defecto
+      return null; // No hay imagen, devolver null para mostrar iniciales
     }
     
     // Si ya es una URL completa
@@ -152,8 +152,14 @@ class ProfileService {
       return avatarPath;
     }
     
-    // Si es un path relativo, construir URL completa
-    return `/api/uploads/avatars/${avatarPath}`;
+    // El backend guarda las imágenes con path /static/avatars/
+    // Si el path ya incluye /static/, usar directamente
+    if (avatarPath.startsWith('/static/')) {
+      return avatarPath;
+    }
+    
+    // Si es solo el nombre del archivo, construir la URL completa
+    return `/static/avatars/${avatarPath}`;
   }
 
   getFullName(profile: UsuarioProfile): string {

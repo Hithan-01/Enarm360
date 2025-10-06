@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Title, Text, useMantineColorScheme, Card, SimpleGrid, Stack, Group, Badge, Button, Container, Center } from '@mantine/core';
+import { Box, Title, Text, useMantineColorScheme, Card, SimpleGrid, Stack, Group, Badge, Button, Container, Center, useMantineTheme, ActionIcon } from '@mantine/core';
 import PageTransition from '../components/animations/PageTransition';
 import { subscriptionPlanService, SubscriptionPlanDTO } from '../services/subscriptionPlanService';
 import { userSubscriptionService, UserSubscriptionDTO } from '../services/userSubscriptionService';
 import { notifications } from '@mantine/notifications';
 import { useNavigate } from 'react-router-dom';
-import { IconCheck } from '@tabler/icons-react';
+import { IconCheck, IconArrowLeft } from '@tabler/icons-react';
 
 const MejorarPlanPage: React.FC = () => {
   const { colorScheme } = useMantineColorScheme();
+  const theme = useMantineTheme();
   const navigate = useNavigate();
   const [plans, setPlans] = useState<SubscriptionPlanDTO[]>([]);
   const [currentSubscription, setCurrentSubscription] = useState<UserSubscriptionDTO | null>(null);
@@ -44,18 +45,46 @@ const MejorarPlanPage: React.FC = () => {
   };
 
   return (
-    <PageTransition type="medical" duration={600}>
-      <Container size="lg" py="xl">
+    <div style={{
+      minHeight: '100vh',
+      backgroundColor: colorScheme === 'dark' ? theme.colors.dark[7] : theme.colors.gray[0],
+      transition: 'background-color 0.2s ease',
+    }}>
+      <PageTransition type="medical" duration={600}>
+        {/* Botón de navegación hacia atrás - posición absoluta */}
+        <Box 
+          style={{
+            position: 'absolute',
+            top: '2rem',
+            left: '2rem',
+            zIndex: 10,
+          }}
+        >
+          <ActionIcon
+            variant="subtle"
+            size="lg"
+            color={colorScheme === 'dark' ? 'gray.4' : 'gray.6'}
+            onClick={() => navigate('/settings/billing')}
+            style={{
+              backgroundColor: colorScheme === 'dark' 
+                ? 'rgba(255, 255, 255, 0.1)' 
+                : 'rgba(0, 0, 0, 0.05)',
+              transition: 'all 0.2s ease',
+            }}
+          >
+            <IconArrowLeft size={20} />
+          </ActionIcon>
+        </Box>
+        
+        <Container size="lg" py="xl">
+        
         <Center mb="xl">
           <Stack gap="xs" align="center">
             <Title
               order={1}
-              size="h1"
-              style={{
-                color: colorScheme === 'dark' ? '#ffffff' : '#1e293b',
-                fontSize: '2.5rem',
-                fontWeight: 600
-              }}
+              size="2.5rem"
+              fw={600}
+              c={colorScheme === 'dark' ? 'white' : 'dark.6'}
             >
               Planes que crecen contigo
             </Title>
@@ -63,51 +92,49 @@ const MejorarPlanPage: React.FC = () => {
         </Center>
 
         {loading && (
-          <Text ta="center" style={{ color: colorScheme === 'dark' ? '#94a3b8' : '#64748b' }}>Cargando planes...</Text>
+          <Text ta="center" c={colorScheme === 'dark' ? 'gray.4' : 'gray.6'}>Cargando planes...</Text>
         )}
         {error && (
           <Text c="red" ta="center">{error}</Text>
         )}
 
-        <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="lg" style={{ maxWidth: '800px', margin: '0 auto' }}>
+        <SimpleGrid cols={{ base: 1, sm: 3 }} spacing="md" style={{ maxWidth: '1000px', margin: '0 auto' }}>
           {plans.map((plan) => {
             const isCurrent = isCurrentPlan(plan.id);
             return (
               <Card
                 key={plan.id}
-                radius="xl"
-                p="xl"
+                radius="lg"
+                p="md"
+                bg={colorScheme === 'dark' ? 'gray.9' : 'white'}
+                withBorder
+                shadow={colorScheme === 'dark' ? 'sm' : 'md'}
                 style={{
-                  backgroundColor: colorScheme === 'dark'
-                    ? 'rgba(30, 41, 59, 0.4)'
-                    : 'rgba(255, 255, 255, 0.7)',
-                  backdropFilter: 'blur(10px)',
-                  border: `1px solid ${colorScheme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0,0,0,0.05)'}`,
-                  boxShadow: colorScheme === 'dark'
-                    ? '0 8px 32px 0 rgba(0, 0, 0, 0.37)'
-                    : '0 8px 32px 0 rgba(31, 38, 135, 0.15)',
                   height: '100%',
                   display: 'flex',
                   flexDirection: 'column',
+                  borderColor: colorScheme === 'dark' ? theme.colors.gray[7] : theme.colors.gray[2],
+                  transform: 'scale(0.8)',
+                  minHeight: '400px',
                 }}
               >
-                <Stack gap="md" style={{ flex: 1 }}>
-                  {/* Icon placeholder - you can add custom icons here */}
+                <Stack gap="sm" style={{ flex: 1 }}>
+                  {/* Icon placeholder - smaller */}
                   <Center>
                     <Box
+                      w={48}
+                      h={48}
                       style={{
-                        width: 60,
-                        height: 60,
                         borderRadius: '50%',
-                        backgroundColor: colorScheme === 'dark'
-                          ? 'rgba(96, 165, 250, 0.2)'
-                          : 'rgba(96, 165, 250, 0.1)',
+                        backgroundColor: colorScheme === 'dark' 
+                          ? theme.colors.blue[9] + '40'
+                          : theme.colors.blue[0],
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
                       }}
                     >
-                      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke={colorScheme === 'dark' ? '#60a5fa' : '#3b82f6'} strokeWidth="2">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={theme.colors.blue[colorScheme === 'dark' ? 4 : 6]} strokeWidth="2">
                         <circle cx="12" cy="8" r="3"/>
                         <circle cx="8" cy="16" r="2"/>
                         <circle cx="16" cy="16" r="2"/>
@@ -118,67 +145,62 @@ const MejorarPlanPage: React.FC = () => {
                     </Box>
                   </Center>
 
-                  <Stack gap={4} align="center">
+                  <Stack gap={2} align="center">
                     <Text
                       fw={700}
-                      size="xl"
-                      style={{ color: colorScheme === 'dark' ? '#e2e8f0' : '#1e293b' }}
+                      size="lg"
+                      c={colorScheme === 'dark' ? 'white' : 'gray.9'}
                     >
                       {plan.name}
                     </Text>
                     <Text
-                      size="sm"
+                      size="xs"
                       c={colorScheme === 'dark' ? 'blue.4' : 'blue.6'}
-                      style={{ fontWeight: 500 }}
+                      fw={500}
+                      ta="center"
                     >
                       {plan.description || 'Investiga, programa y organiza'}
                     </Text>
                   </Stack>
 
-                  <Group justify="center" align="end" gap={4}>
+                  <Group justify="center" align="end" gap={2}>
                     <Text
-                      size="2.5rem"
+                      size="2rem"
                       fw={700}
-                      style={{
-                        color: colorScheme === 'dark' ? '#ffffff' : '#1e293b',
-                        lineHeight: 1,
-                      }}
+                      c={colorScheme === 'dark' ? 'white' : 'gray.9'}
+                      lh={1}
                     >
                       ${Number(plan.price)}
                     </Text>
                     <Text
-                      size="sm"
-                      style={{
-                        color: colorScheme === 'dark' ? '#cbd5e1' : '#64748b',
-                        paddingBottom: '0.3rem',
-                      }}
+                      size="xs"
+                      c={colorScheme === 'dark' ? 'gray.3' : 'gray.6'}
+                      pb="0.2rem"
                     >
                       /{plan.billingInterval === 'YEARLY' ? 'año' : plan.billingInterval === 'MONTHLY' ? 'mes' : plan.billingInterval?.toLowerCase()} facturado {plan.billingInterval === 'YEARLY' ? 'anualmente' : 'mensualmente'}
                     </Text>
                   </Group>
 
                   {/* Features */}
-                  <Stack gap="xs" mt="md" style={{ flex: 1 }}>
+                  <Stack gap="xs" mt="xs" style={{ flex: 1 }}>
                     <Text
                       size="xs"
                       fw={600}
                       tt="uppercase"
-                      style={{ color: colorScheme === 'dark' ? '#94a3b8' : '#64748b' }}
+                      c={colorScheme === 'dark' ? 'gray.4' : 'gray.6'}
                     >
                       {isCurrent ? 'Todo lo incluido en tu plan:' : 'Características incluidas:'}
                     </Text>
                     {(plan.features || []).map((f, idx) => (
                       <Group key={idx} gap="xs" wrap="nowrap">
                         <IconCheck
-                          size={16}
-                          style={{
-                            color: colorScheme === 'dark' ? '#94a3b8' : '#64748b',
-                            flexShrink: 0,
-                          }}
+                          size={14}
+                          color={theme.colors.gray[colorScheme === 'dark' ? 4 : 6]}
+                          style={{ flexShrink: 0 }}
                         />
                         <Text
-                          size="sm"
-                          style={{ color: colorScheme === 'dark' ? '#cbd5e1' : '#64748b' }}
+                          size="xs"
+                          c={colorScheme === 'dark' ? 'gray.3' : 'gray.6'}
                         >
                           {f}
                         </Text>
@@ -188,19 +210,13 @@ const MejorarPlanPage: React.FC = () => {
 
                   {/* Button - always at bottom */}
                   <Button
-                    size="md"
+                    size="sm"
                     fullWidth
                     variant={isCurrent ? 'outline' : 'filled'}
                     color={isCurrent ? 'gray' : 'blue'}
                     onClick={() => isCurrent ? null : choosePlan(plan.id)}
                     disabled={isCurrent}
-                    style={{
-                      marginTop: 'auto',
-                      backgroundColor: isCurrent
-                        ? 'transparent'
-                        : colorScheme === 'dark' ? '#60a5fa' : '#3b82f6',
-                      borderColor: colorScheme === 'dark' ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.1)',
-                    }}
+                    style={{ marginTop: 'auto' }}
                   >
                     {isCurrent ? `Permanecer en el plan ${plan.name}` : `Obtener plan ${plan.name}`}
                   </Button>
@@ -209,8 +225,9 @@ const MejorarPlanPage: React.FC = () => {
             );
           })}
         </SimpleGrid>
-      </Container>
-    </PageTransition>
+        </Container>
+      </PageTransition>
+    </div>
   );
 };
 

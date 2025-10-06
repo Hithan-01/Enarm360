@@ -49,11 +49,28 @@
   pointer-events: none;
 }
 
+/* Dark mode medical gradient */
+[data-mantine-color-scheme="dark"] .medical-gradient-bg {
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+}
+
+[data-mantine-color-scheme="dark"] .medical-gradient-bg::before {
+  background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><pattern id='grid' width='20' height='20' patternUnits='userSpaceOnUse'><path d='M 20 0 L 0 0 0 20' fill='none' stroke='%23334155' stroke-width='0.5' opacity='0.2'/></pattern></defs><rect width='100' height='100' fill='url(%23grid)'/></svg>");
+  opacity: 0.2;
+}
+
 /* Glass morphism effect */
 .glass-card {
   background: rgba(255, 255, 255, 0.95) !important;
   backdrop-filter: blur(20px);
   border: 1px solid rgba(226, 232, 240, 0.6) !important;
+}
+
+/* Dark mode glass morphism */
+[data-mantine-color-scheme="dark"] .glass-card {
+  background: rgba(30, 41, 59, 0.95) !important;
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(51, 65, 85, 0.6) !important;
 }
 
 /* Beige theme for light mode */
@@ -68,12 +85,45 @@
   --mantine-color-placeholder: #7a7069 !important;
 }
 
+/* Dark theme */
+[data-mantine-color-scheme="dark"] {
+  --mantine-color-body: #0f172a !important;
+  --mantine-color-default: #1e293b !important;
+  --mantine-color-default-border: #334155 !important;
+  --mantine-color-default-hover: #475569 !important;
+  --mantine-color-text: #f1f5f9 !important;
+  --mantine-color-dimmed: #94a3b8 !important;
+  --mantine-color-placeholder: #64748b !important;
+}
+
 /* Body background */
 body:not([data-mantine-color-scheme="dark"]),
 body[data-mantine-color-scheme="light"],
 html:not([data-mantine-color-scheme="dark"]),
 html[data-mantine-color-scheme="light"] {
   background-color: #f7f3ee !important;
+}
+
+/* Dark mode body background */
+body[data-mantine-color-scheme="dark"],
+html[data-mantine-color-scheme="dark"] {
+  background-color: #0f172a !important;
+}
+
+/* Dark mode for root div and App container */
+[data-mantine-color-scheme="dark"] #root {
+  background-color: #0f172a !important;
+  color: #f1f5f9 !important;
+}
+
+[data-mantine-color-scheme="dark"] .App {
+  background-color: #0f172a !important;
+  color: #f1f5f9 !important;
+}
+
+/* Dark mode for all div elements that might have light backgrounds */
+[data-mantine-color-scheme="dark"] div:not([class*="Card"]):not([class*="Input"]):not([class*="Button"]) {
+  background-color: transparent;
 }
 
 /* Cards and containers - more specific selectors */
@@ -85,6 +135,13 @@ html[data-mantine-color-scheme="light"] {
   border: 1px solid #ddd8d1 !important;
 }
 
+/* Dark mode cards and containers */
+[data-mantine-color-scheme="dark"] .mantine-Card-root,
+[data-mantine-color-scheme="dark"] [class*="Card"] {
+  background-color: #1e293b !important;
+  border: 1px solid #334155 !important;
+}
+
 :root:not([data-mantine-color-scheme="dark"]) .mantine-AppShell-main,
 [data-mantine-color-scheme="light"] .mantine-AppShell-main {
   background-color: #f7f3ee !important;
@@ -94,6 +151,16 @@ html[data-mantine-color-scheme="light"] {
 [data-mantine-color-scheme="light"] .mantine-Paper-root {
   background-color: #ebe8e3 !important;
   border: 1px solid #ddd8d1 !important;
+}
+
+/* Dark mode AppShell and Paper */
+[data-mantine-color-scheme="dark"] .mantine-AppShell-main {
+  background-color: #0f172a !important;
+}
+
+[data-mantine-color-scheme="dark"] .mantine-Paper-root {
+  background-color: #1e293b !important;
+  border: 1px solid #334155 !important;
 }
 
 /* Box components */
@@ -124,6 +191,95 @@ html[data-mantine-color-scheme="light"] {
 :root:not([data-mantine-color-scheme="dark"]) [style*="rgba(251, 191, 36"],
 [data-mantine-color-scheme="light"] [style*="rgba(251, 191, 36"] {
   background-color: rgba(235, 232, 227, 0.9) !important;
+}
+
+/* Dark mode dashboard cards */
+[data-mantine-color-scheme="dark"] [style*="rgba(96, 165, 250"],
+[data-mantine-color-scheme="dark"] [style*="rgba(248, 113, 113"],
+[data-mantine-color-scheme="dark"] [style*="rgba(251, 191, 36"] {
+  background-color: rgba(30, 41, 59, 0.9) !important;
+}
+
+/* Dark mode overrides for forced white backgrounds */
+[data-mantine-color-scheme="dark"] [style*="background-color: rgb(255, 255, 255)"],
+[data-mantine-color-scheme="dark"] [style*="background-color: white"],
+[data-mantine-color-scheme="dark"] [style*="rgba(255, 255, 255"] {
+  background-color: #1e293b !important;
+}
+
+/* Dark mode for all container elements */
+[data-mantine-color-scheme="dark"] .mantine-Container-root {
+  background-color: transparent !important;
+}
+
+[data-mantine-color-scheme="dark"] .mantine-Box-root {
+  background-color: transparent !important;
+}
+
+/* Dark mode text inputs and form components */
+[data-mantine-color-scheme="dark"] .mantine-TextInput-root .mantine-Input-input {
+  background-color: #374151 !important;
+  border-color: #4b5563 !important;
+  color: #f9fafb !important;
+}
+
+[data-mantine-color-scheme="dark"] .mantine-TextInput-root .mantine-Input-input::placeholder {
+  color: #9ca3af !important;
+}
+
+[data-mantine-color-scheme="dark"] .mantine-TextInput-label {
+  color: #e5e7eb !important;
+}
+
+/* Dark mode buttons */
+[data-mantine-color-scheme="dark"] .mantine-Button-root[data-variant="light"] {
+  background-color: #374151 !important;
+  color: #e5e7eb !important;
+}
+
+[data-mantine-color-scheme="dark"] .mantine-Button-root[data-variant="subtle"] {
+  color: #9ca3af !important;
+}
+
+/* Dark mode for PageTransition and animation components */
+[data-mantine-color-scheme="dark"] [class*="PageTransition"],
+[data-mantine-color-scheme="dark"] [class*="transition"],
+[data-mantine-color-scheme="dark"] [class*="animation"] {
+  background-color: transparent !important;
+}
+
+/* Force dark background on any remaining light elements */
+[data-mantine-color-scheme="dark"] * {
+  border-color: #374151;
+}
+
+[data-mantine-color-scheme="dark"] [style*="background: rgb(255, 255, 255)"],
+[data-mantine-color-scheme="dark"] [style*="background: white"],
+[data-mantine-color-scheme="dark"] [style*="background-color: #fff"],
+[data-mantine-color-scheme="dark"] [style*="background-color: #ffffff"] {
+  background-color: #1e293b !important;
+}
+
+/* Dark mode LoadingOverlay */
+[data-mantine-color-scheme="dark"] .mantine-LoadingOverlay-root {
+  background-color: rgba(15, 23, 42, 0.8) !important;
+}
+
+/* Universal dark mode background fix - highest priority */
+[data-mantine-color-scheme="dark"] {
+  background-color: #0f172a !important;
+  color: #f1f5f9 !important;
+}
+
+[data-mantine-color-scheme="dark"] *:not(.mantine-Card-root):not([class*="Input"]):not([class*="Button"]):not([class*="Icon"]):not([class*="Loader"]) {
+  background-color: transparent !important;
+}
+
+/* Force dark mode on any remaining white/light divs */
+[data-mantine-color-scheme="dark"] div[style*="background"],
+[data-mantine-color-scheme="dark"] section[style*="background"],
+[data-mantine-color-scheme="dark"] main[style*="background"] {
+  background-color: #0f172a !important;
 }
 
 /* Professional button styles - HOVER DISABLED */

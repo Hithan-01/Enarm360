@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Clear Storage</title>
+</head>
+<body>
+    <h1>Clearing localStorage...</h1>
+    <script>
+        // Limpiar todo el localStorage
+        localStorage.clear();
+        
+        // También limpiar sessionStorage por si acaso
+        sessionStorage.clear();
+        
+        console.log('Storage cleared!');
+        
+        // Redirigir a la página principal después de 2 segundos
+        setTimeout(() => {
+            window.location.href = '/';
+        }, 2000);
+    </script>
+    <p>Storage cleared. Redirecting to home page...</p>
+</body>
+</html>
