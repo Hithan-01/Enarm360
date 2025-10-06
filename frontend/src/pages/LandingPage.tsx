@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   Container, 
@@ -19,13 +19,101 @@ import {
   Grid
 } from '@mantine/core';
 import PageTransition from '../components/animations/PageTransition';
-import Navbar from '../components/Navbar';
+import SimpleNavbar from '../components/SimpleNavbar';
 import { IconChecks } from '@tabler/icons-react';
 import enarmLogo from '../assets/enarm_logo.png';
+import { subscriptionPlanService, SubscriptionPlanDTO } from '../services/subscriptionPlanService';
+import { authService } from '../services/authService';
 
 const LandingPage: React.FC = () => {
   const navigate = useNavigate();
   const { colorScheme } = useMantineColorScheme();
+  
+  // Estado para los planes de suscripción
+  const [plans, setPlans] = useState<SubscriptionPlanDTO[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  
+  // Estado para información del usuario
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [userInfo, setUserInfo] = useState<any>(null);
+  const [userRole, setUserRole] = useState<'student' | 'admin' | null>(null);
+  
+  // Verificar autenticación del usuario
+  useEffect(() => {
+    const checkAuth = () => {
+      const authenticated = authService.isAuthenticated();
+      const user = authService.getCurrentUserFromStorage();
+      
+      setIsAuthenticated(authenticated);
+      setUserInfo(user);
+      
+      if (authenticated && user) {
+        if (authService.isAdmin()) {
+          setUserRole('admin');
+        } else if (authService.isEstudiante()) {
+          setUserRole('student');
+        }
+      } else {
+        setUserRole(null);
+      }
+    };
+    
+    checkAuth();
+  }, []);
+  
+  // Función para manejar logout
+  const handleLogout = async () => {
+    try {
+      await authService.logout();
+      setIsAuthenticated(false);
+      setUserInfo(null);
+      setUserRole(null);
+      navigate('/login');
+    } catch (error) {
+      console.error('Error during logout:', error);
+    }
+  };
+  
+  // Cargar planes desde el backend
+  useEffect(() => {
+    const loadPlans = async () => {
+      try {
+        setLoading(true);
+        const activePlans = await subscriptionPlanService.getAllActivePlans();
+        // Ordenar por precio para mostrar en orden: básico -> estándar -> premium
+        const sortedPlans = activePlans.sort((a, b) => Number(a.price) - Number(b.price));
+        setPlans(sortedPlans);
+        setError(null);
+      } catch (e: any) {
+        console.error('Error loading plans:', e);
+        setError('No se pudieron cargar los planes');
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadPlans();
+  }, []);
+  
+  // Función helper para determinar el estilo del plan
+  const getPlanStyle = (index: number) => {
+    if (index === 1) { // Plan del medio (más popular)
+      return {
+        border: '3px solid rgb(54, 71, 91)',
+        badgeColors: { background: 'rgb(54, 71, 91)', color: 'white' },
+        iconColor: 'rgb(54, 71, 91)',
+        buttonStyle: { background: 'rgb(54, 71, 91)', color: 'white' },
+        isPopular: true
+      };
+    }
+    return {
+      border: '3px solid rgb(196, 213, 70)',
+      badgeColors: { background: 'rgb(196, 213, 70)', color: 'rgb(54, 71, 91)' },
+      iconColor: 'rgb(196, 213, 70)',
+      buttonStyle: { background: 'rgb(196, 213, 70)', color: 'rgb(54, 71, 91)' },
+      isPopular: false
+    };
+  };
 
   const scrollToPrecios = () => {
     const element = document.getElementById('precios');
@@ -184,9 +272,14 @@ const LandingPage: React.FC = () => {
           pointerEvents: 'none'
         }} />
 
-        <div style={{ position: 'relative', zIndex: 10 }}>
-          <Navbar showThemeToggle={false} />
-        </div>
+        <SimpleNavbar 
+          showThemeToggle={false}
+          showDropdownTheme={false}
+          showAuthButtons={!isAuthenticated}
+          userRole={userRole}
+          userInfo={userInfo}
+          onLogout={handleLogout}
+        />
 
         {/* Hero Section */}
         <div style={{ 
@@ -194,8 +287,8 @@ const LandingPage: React.FC = () => {
           marginLeft: 'calc(-50vw + 50%)', 
           background: 'transparent', 
           color: 'white',
-          padding: '8rem 0 10rem 0',
-          minHeight: '90vh',
+          padding: '6.4rem 0 8rem 0',
+          minHeight: '72vh',
           display: 'flex',
           alignItems: 'center',
           position: 'relative',
@@ -227,19 +320,19 @@ const LandingPage: React.FC = () => {
           
           
           <Container size="lg" style={{ position: 'relative', zIndex: 2 }}>
-            <Stack gap={50} align="center" ta="center">
+            <Stack gap={40} align="center" ta="center">
               <div style={{ 
                 animation: 'fadeInUp 1s ease-out',
                 animationFillMode: 'both'
               }}>
                 <Title 
                   order={1} 
-                  size="5.5rem" 
+                  size="4.4rem" 
                   fw={800}
                   c="white"
                   style={{ 
                     lineHeight: 1.05,
-                    maxWidth: '1000px',
+                    maxWidth: '800px',
                     letterSpacing: '-0.02em',
                     fontFamily: 'system-ui, -apple-system, sans-serif'
                   }}
@@ -267,17 +360,17 @@ const LandingPage: React.FC = () => {
               
               <div style={{ 
                 animation: 'fadeInUp 1s ease-out 0.3s both',
-                maxWidth: '850px'
+                maxWidth: '680px'
               }}>
                 <Text 
-                  size="xl" 
+                  size="lg" 
                   c="rgba(255, 255, 255, 0.85)" 
-                  ta="center"
-                  fw={400}
+                  ta="center" 
                   style={{ 
-                    fontSize: '1.5rem', 
-                    lineHeight: 1.7,
-                    letterSpacing: '-0.01em'
+                    fontSize: '1.2rem',
+                    lineHeight: 1.6,
+                    fontWeight: 400,
+                    letterSpacing: '-0.005em'
                   }}
                 >
                   Más de <strong style={{ color: 'rgb(196, 213, 70)' }}>27 especialidades</strong>, simuladores personalizables, medición de progreso, 
@@ -291,11 +384,11 @@ const LandingPage: React.FC = () => {
               }}>
                 <Group gap="lg" justify="center" style={{ flexWrap: 'wrap' }}>
                   <Button
-                    size="xl"
+                    size="lg"
                     onClick={scrollToPrecios}
                     style={{
-                      fontSize: '1.3rem',
-                      padding: '1.8rem 4.5rem',
+                      fontSize: '1.04rem',
+                      padding: '1.44rem 3.6rem',
                       backgroundColor: 'rgb(196, 213, 70)',
                       color: 'rgb(54, 71, 91)',
                       border: 'none',
@@ -347,10 +440,10 @@ const LandingPage: React.FC = () => {
                   
                   <Button
                     variant="outline"
-                    size="xl"
+                    size="lg"
                     style={{
-                      fontSize: '1.2rem',
-                      padding: '2rem 3.5rem',
+                      fontSize: '0.96rem',
+                      padding: '1.6rem 2.8rem',
                       backgroundColor: 'transparent',
                       color: 'white',
                       border: '2px solid rgba(255, 255, 255, 0.3)',
@@ -394,7 +487,7 @@ const LandingPage: React.FC = () => {
               rgb(248, 250, 252) 100%
             )
           `,
-          padding: '12rem 0',
+          padding: '9.6rem 0',
           position: 'relative',
           overflow: 'hidden'
         }}>
@@ -858,11 +951,11 @@ const LandingPage: React.FC = () => {
           width: '100vw', 
           marginLeft: 'calc(-50vw + 50%)', 
           background: 'rgb(248, 250, 252)',
-          padding: '8rem 0',
+          padding: '6.4rem 0',
           position: 'relative'
         }}>
           <Container size="lg">
-            <Stack gap="5rem" align="center">
+            <Stack gap="4rem" align="center">
               {/* Section Header */}
               <div style={{ textAlign: 'center', animation: 'fadeInUp 0.8s ease-out' }}>
                 <Text
@@ -880,14 +973,14 @@ const LandingPage: React.FC = () => {
                 </Text>
                 <Title 
                   order={2} 
-                  size="4rem" 
+                  size="3.2rem" 
                   fw={800}
                   ta="center"
                   style={{ 
                     color: 'rgb(54, 71, 91)',
                     lineHeight: 1.1,
                     letterSpacing: '-0.02em',
-                    maxWidth: '1100px',
+                    maxWidth: '880px',
                     margin: '0 auto'
                   }}
                 >
@@ -899,15 +992,15 @@ const LandingPage: React.FC = () => {
               </div>
 
               {/* Features Grid */}
-              <SimpleGrid cols={{ base: 1, md: 3 }} spacing={40} style={{ width: '100%' }}>
+              <SimpleGrid cols={{ base: 1, md: 3 }} spacing={32} style={{ width: '100%' }}>
                 {/* Feature 1 */}
                 <div style={{ 
                   animation: 'fadeInUp 0.8s ease-out 0.2s both'
                 }}>
                   <div style={{
                     background: 'white',
-                    borderRadius: '20px',
-                    padding: '2.5rem 2rem',
+                    borderRadius: '16px',
+                    padding: '2rem 1.6rem',
                     height: '100%',
                     boxShadow: '0 10px 30px rgba(54, 71, 91, 0.08)',
                     border: '1px solid rgba(196, 213, 70, 0.2)',
@@ -924,14 +1017,14 @@ const LandingPage: React.FC = () => {
                   }}
                   >
                     <div style={{
-                      width: '60px',
-                      height: '60px',
+                      width: '48px',
+                      height: '48px',
                       background: 'rgb(196, 213, 70)',
-                      borderRadius: '15px',
+                      borderRadius: '12px',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      marginBottom: '1.5rem'
+                      marginBottom: '1.2rem'
                     }}>
                       <Text size="2rem" fw={600} style={{ color: 'rgb(54, 71, 91)' }}>27+</Text>
                     </div>
@@ -1010,8 +1103,8 @@ const LandingPage: React.FC = () => {
                 }}>
                   <div style={{
                     background: 'white',
-                    borderRadius: '20px',
-                    padding: '2.5rem 2rem',
+                    borderRadius: '16px',
+                    padding: '2rem 1.6rem',
                     height: '100%',
                     boxShadow: '0 10px 30px rgba(54, 71, 91, 0.08)',
                     border: '1px solid rgba(196, 213, 70, 0.2)',
@@ -1028,14 +1121,14 @@ const LandingPage: React.FC = () => {
                   }}
                   >
                     <div style={{
-                      width: '60px',
-                      height: '60px',
+                      width: '48px',
+                      height: '48px',
                       background: 'rgb(196, 213, 70)',
-                      borderRadius: '15px',
+                      borderRadius: '12px',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      marginBottom: '1.5rem'
+                      marginBottom: '1.2rem'
                     }}>
                       <Text size="1.2rem" fw={700} style={{ color: 'rgb(54, 71, 91)' }}>H</Text>
                     </div>
@@ -1087,174 +1180,104 @@ const LandingPage: React.FC = () => {
           width: '100vw',
           marginLeft: 'calc(-50vw + 50%)',
           background: 'white',
-          padding: '8rem 0'
+          padding: '6.4rem 0'
         }}>
           <Container size="lg">
             <Stack gap="xl">
               <Center>
                 <Stack gap="sm" align="center">
-                  <Title order={2} ta="center" size="3rem" style={{ color: 'rgb(54, 71, 91)' }}>
+                  <Title order={2} ta="center" size="2.4rem" style={{ color: 'rgb(54, 71, 91)' }}>
                     Planes de Suscripción
                   </Title>
-                  <Text size="lg" c="rgb(100, 100, 100)" ta="center" maw={700} style={{ fontSize: '1.2rem' }}>
+                  <Text size="md" c="rgb(100, 100, 100)" ta="center" maw={560} style={{ fontSize: '0.96rem' }}>
                     Elige el plan que mejor se adapte a tus necesidades de preparación para el ENARM.
                   </Text>
                 </Stack>
               </Center>
 
-              <SimpleGrid cols={{ base: 1, md: 3 }} spacing="xl" style={{ marginTop: '3rem' }}>
-                {/* Plan Básico */}
-                <div 
-                  style={{
-                    background: 'white',
-                    border: '3px solid rgb(196, 213, 70)',
-                    borderRadius: '12px',
-                    padding: '2rem',
-                    textAlign: 'center',
-                    height: '100%',
-                    display: 'flex',
-                    flexDirection: 'column'
-                  }}
-                >
-                  <Stack gap="md" align="center" style={{ flex: 1 }}>
-                    <Badge size="lg" style={{ background: 'rgb(196, 213, 70)', color: 'rgb(54, 71, 91)', border: 'none' }}>
-                      Básico
-                    </Badge>
-                    <Title order={2} size="3rem" style={{ color: 'rgb(54, 71, 91)' }}>
-                      $299
-                      <Text span size="lg" c="rgb(100, 100, 100)">/mes</Text>
-                    </Title>
-                    <List spacing="sm" size="sm" center icon={<IconChecks size={16} color="rgb(196, 213, 70)" />}>
-                      <List.Item>5,000 preguntas</List.Item>
-                      <List.Item>10 simulacros mensuales</List.Item>
-                      <List.Item>Análisis básico</List.Item>
-                      <List.Item>Soporte por email</List.Item>
-                    </List>
-                  </Stack>
-                  <Button 
-                    fullWidth
-                    size="lg"
-                    style={{ 
-                      background: 'rgb(196, 213, 70)',
-                      color: 'rgb(54, 71, 91)',
-                      border: 'none',
-                      marginTop: '2rem'
-                    }}
-                    onClick={() => navigate('/login')}
-                  >
-                    Comenzar
-                  </Button>
-                </div>
-
-                {/* Plan Estándar */}
-                <div 
-                  style={{
-                    background: 'white',
-                    border: '3px solid rgb(54, 71, 91)',
-                    borderRadius: '12px',
-                    padding: '2rem',
-                    textAlign: 'center',
-                    position: 'relative',
-                    height: '100%',
-                    display: 'flex',
-                    flexDirection: 'column'
-                  }}
-                >
-                  <Badge 
-                    size="md" 
-                    style={{ 
-                      background: 'rgb(54, 71, 91)', 
-                      color: 'white',
-                      position: 'absolute',
-                      top: '-10px',
-                      left: '50%',
-                      transform: 'translateX(-50%)',
-                      zIndex: 10,
-                      whiteSpace: 'nowrap',
-                      fontSize: '11px',
-                      padding: '6px 16px',
-                      borderRadius: '12px',
-                      border: 'none'
-                    }}
-                  >
-                    Más Popular
-                  </Badge>
-                  <Stack gap="md" align="center" mt="md" style={{ flex: 1 }}>
-                    <Badge size="lg" style={{ background: 'rgb(54, 71, 91)', color: 'white', border: 'none' }}>
-                      Estándar
-                    </Badge>
-                    <Title order={2} size="3rem" style={{ color: 'rgb(54, 71, 91)' }}>
-                      $499
-                      <Text span size="lg" c="rgb(100, 100, 100)">/mes</Text>
-                    </Title>
-                    <List spacing="sm" size="sm" center icon={<IconChecks size={16} color="rgb(54, 71, 91)" />}>
-                      <List.Item>15,000 preguntas</List.Item>
-                      <List.Item>Simulacros ilimitados</List.Item>
-                      <List.Item>Análisis detallado</List.Item>
-                      <List.Item>Plan personalizado</List.Item>
-                      <List.Item>Soporte prioritario</List.Item>
-                    </List>
-                  </Stack>
-                  <Button 
-                    fullWidth
-                    size="lg"
-                    style={{ 
-                      background: 'rgb(54, 71, 91)',
-                      color: 'white',
-                      border: 'none',
-                      marginTop: '2rem'
-                    }}
-                    onClick={() => navigate('/login')}
-                  >
-                    Comenzar
-                  </Button>
-                </div>
-
-                {/* Plan Premium */}
-                <div 
-                  style={{
-                    background: 'white',
-                    border: '3px solid rgb(196, 213, 70)',
-                    borderRadius: '12px',
-                    padding: '2rem',
-                    textAlign: 'center',
-                    height: '100%',
-                    display: 'flex',
-                    flexDirection: 'column'
-                  }}
-                >
-                  <Stack gap="md" align="center" style={{ flex: 1 }}>
-                    <Badge size="lg" style={{ background: 'rgb(196, 213, 70)', color: 'rgb(54, 71, 91)', border: 'none' }}>
-                      Premium
-                    </Badge>
-                    <Title order={2} size="3rem" style={{ color: 'rgb(54, 71, 91)' }}>
-                      $799
-                      <Text span size="lg" c="rgb(100, 100, 100)">/mes</Text>
-                    </Title>
-                    <List spacing="sm" size="sm" center icon={<IconChecks size={16} color="rgb(196, 213, 70)" />}>
-                      <List.Item>Acceso completo</List.Item>
-                      <List.Item>Simulacros ilimitados</List.Item>
-                      <List.Item>IA personalizada</List.Item>
-                      <List.Item>Mentoría 1 a 1</List.Item>
-                      <List.Item>Soporte 24/7</List.Item>
-                      <List.Item>Garantía de aprobación</List.Item>
-                    </List>
-                  </Stack>
-                  <Button 
-                    fullWidth
-                    size="lg"
-                    style={{ 
-                      background: 'rgb(196, 213, 70)',
-                      color: 'rgb(54, 71, 91)',
-                      border: 'none',
-                      marginTop: '2rem'
-                    }}
-                    onClick={() => navigate('/login')}
-                  >
-                    Comenzar
-                  </Button>
-                </div>
-              </SimpleGrid>
+              {loading ? (
+                <Center>
+                  <Text size="lg" c="rgb(100, 100, 100)" ta="center">
+                    Cargando planes...
+                  </Text>
+                </Center>
+              ) : error ? (
+                <Center>
+                  <Text size="lg" c="red" ta="center">
+                    {error}
+                  </Text>
+                </Center>
+              ) : (
+                <SimpleGrid cols={{ base: 1, md: Math.min(plans.length, 3) }} spacing="lg" style={{ marginTop: '2.4rem' }}>
+                  {plans.map((plan, index) => {
+                    const planStyle = getPlanStyle(index);
+                    return (
+                      <div 
+                        key={plan.id}
+                        style={{
+                          background: 'white',
+                          border: planStyle.border,
+                          borderRadius: '10px',
+                          padding: '1.6rem',
+                          textAlign: 'center',
+                          position: 'relative',
+                          height: '100%',
+                          display: 'flex',
+                          flexDirection: 'column'
+                        }}
+                      >
+                        {planStyle.isPopular && (
+                          <Badge 
+                            size="md" 
+                            style={{ 
+                              background: 'rgb(54, 71, 91)', 
+                              color: 'white',
+                              position: 'absolute',
+                              top: '-10px',
+                              left: '50%',
+                              transform: 'translateX(-50%)',
+                              zIndex: 10,
+                              whiteSpace: 'nowrap',
+                              fontSize: '9px',
+                              padding: '5px 13px',
+                              borderRadius: '10px',
+                              border: 'none'
+                            }}
+                          >
+                            Más Popular
+                          </Badge>
+                        )}
+                        <Stack gap="md" align="center" mt={planStyle.isPopular ? "md" : undefined} style={{ flex: 1 }}>
+                          <Badge size="lg" style={{ ...planStyle.badgeColors, border: 'none' }}>
+                            {plan.name}
+                          </Badge>
+                          <Title order={2} size="2.4rem" style={{ color: 'rgb(54, 71, 91)' }}>
+                            ${Number(plan.price)}
+                            <Text span size="md" c="rgb(100, 100, 100)">/{plan.billingInterval === 'YEARLY' ? 'año' : 'mes'}</Text>
+                          </Title>
+                          <List spacing="xs" size="xs" center icon={<IconChecks size={13} color={planStyle.iconColor} />}>
+                            {(plan.features || []).map((feature, featureIndex) => (
+                              <List.Item key={featureIndex}>{feature}</List.Item>
+                            ))}
+                          </List>
+                        </Stack>
+                        <Button 
+                          fullWidth
+                          size="md"
+                          style={{ 
+                            ...planStyle.buttonStyle,
+                            border: 'none',
+                            marginTop: '2rem'
+                          }}
+                          onClick={() => navigate('/register')}
+                        >
+                          Comenzar
+                        </Button>
+                      </div>
+                    );
+                  })}
+                </SimpleGrid>
+              )}
             </Stack>
           </Container>
         </div>
@@ -1264,10 +1287,10 @@ const LandingPage: React.FC = () => {
           width: '100vw', 
           marginLeft: 'calc(-50vw + 50%)', 
           background: 'rgb(248, 250, 252)',
-          padding: '8rem 0'
+          padding: '6.4rem 0'
         }}>
           <Container size="lg">
-            <Stack gap="4rem" align="center">
+            <Stack gap="3.2rem" align="center">
               {/* Section Header */}
               <div style={{ textAlign: 'center', animation: 'fadeInUp 0.8s ease-out' }}>
                 <Text

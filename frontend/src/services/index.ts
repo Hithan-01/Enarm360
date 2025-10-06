@@ -47,12 +47,56 @@ axios.defaults.timeout = 30000; // 30 segundos
 axios.defaults.headers.common['Content-Type'] = 'application/json';
 axios.defaults.headers.common['Accept'] = 'application/json';
 
+// NO establecer headers de Authorization por defecto
+
+// Endpoints públicos que NO requieren autenticación
+const PUBLIC_ENDPOINTS = [
+  '/api/subscription-plans',
+  '/api/registro/crear-cuenta',
+  '/api/auth/login',
+  '/api/auth/refresh'
+];
+
+// Función para determinar si una URL es pública
+const isPublicEndpoint = (url: string): boolean => {
+  if (!url) return false;
+  return PUBLIC_ENDPOINTS.some(endpoint => url.includes(endpoint));
+};
+
+// Función para limpiar tokens corruptos
+const cleanupCorruptedTokens = () => {
+  const token = localStorage.getItem('accessToken');
+  if (token && token !== 'undefined' && token !== 'null') {
+    const parts = token.split('.');
+    if (parts.length !== 3 || !parts.every(part => part.length > 0)) {
+      console.warn('🧹 Cleaning up corrupted tokens from localStorage');
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
+      localStorage.removeItem('user');
+    }
+  }
+};
+
+// Limpiar tokens corruptos al inicializar
+cleanupCorruptedTokens();
+
 // Interceptor global para agregar token automáticamente
 axios.interceptors.request.use(
   (config) => {
     // Solo agregar token si no está ya presente
     // Normalizar headers para evitar problemas de casing
     const headers: any = (config.headers || {});
+
+    // Si es un endpoint público, no enviar token
+    if (isPublicEndpoint(config.url || '')) {
+      // Logging para desarrollo
+      if (process.env.NODE_ENV === 'development') {
+        console.log(`🔓 Public endpoint detected: ${config.url}`);
+      }
+      // Marcar como público y salir sin agregar token
+      (config as any).isPublicEndpoint = true;
+      return config;
+    }
 
     if (!headers.Authorization && !headers.authorization) {
       const token = localStorage.getItem('accessToken');
@@ -134,6 +178,14 @@ axios.interceptors.response.use(
         message: error.message,
         data: error.response?.data
       });
+    }
+    
+    // No intentar renovación de token para endpoints públicos
+    if ((originalRequest as any)?.isPublicEndpoint && error.response?.status === 401) {
+      if (process.env.NODE_ENV === 'development') {
+        console.warn(`⚠️ Public endpoint returned 401: ${originalRequest.url} - This might be a backend configuration issue`);
+      }
+      return Promise.reject(error);
     }
     
     // Manejo automático de renovación de token

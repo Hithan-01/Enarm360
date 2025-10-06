@@ -115,11 +115,10 @@ const QuestionDatabasePage: React.FC = () => {
           background: colorScheme === 'dark'
             ? 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)'
             : 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
-          padding: '32px',
+          padding: '25.6px', /* 80% of 32px */
         }}
       >
-            <Stack gap="xl">
-              {/* Header */}
+            <Stack gap="lg">
               <Group justify="space-between" align="center">
                 <div>
                   <Title order={2} mb="xs" style={{ color: colorScheme === 'dark' ? '#ffffff' : '#1e293b' }}>
@@ -142,8 +141,7 @@ const QuestionDatabasePage: React.FC = () => {
                 </Group>
               </Group>
 
-              {/* Stats Cards */}
-              <SimpleGrid cols={{ base: 1, sm: 2, lg: 4 }} spacing="lg">
+              <SimpleGrid cols={{ base: 1, sm: 2, lg: 4 }} spacing="md">
                 <Card
                   radius="xl"
                   p="lg"
@@ -283,7 +281,6 @@ const QuestionDatabasePage: React.FC = () => {
                 </Card>
               </SimpleGrid>
 
-              {/* Filters and Search */}
               <Card
                 radius="xl"
                 p="lg"
@@ -323,7 +320,6 @@ const QuestionDatabasePage: React.FC = () => {
                 </Group>
               </Card>
 
-              {/* Questions Table */}
               <Card
                 radius="xl"
                 p="xl"
@@ -445,7 +441,6 @@ const QuestionDatabasePage: React.FC = () => {
             </Stack>
         </Box>
 
-        {/* Question Modal */}
         <Modal
           opened={questionModalOpen}
           onClose={() => setQuestionModalOpen(false)}

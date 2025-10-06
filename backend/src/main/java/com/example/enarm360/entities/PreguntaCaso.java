@@ -56,7 +56,7 @@ public class PreguntaCaso {
     
     // Relaciones
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_caso", referencedColumnName = "id_caso", nullable = false)
+    @JoinColumn(name = "caso_de_estudio_id", referencedColumnName = "id", nullable = false)
     @JsonIgnoreProperties("preguntas")
     private CasoEstudio casoEstudio;
     

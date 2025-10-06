@@ -75,7 +75,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
       />
 
       <Group justify="space-between" align="flex-start">
-        <Group gap={0} align="flex-start" style={{ flex: 1 }}>
+        <Group gap="xs" align="flex-start" style={{ flex: 1 }}>
           {/* Avatar Section */}
           <Box style={{ position: 'relative' }}>
             <Box
@@ -134,7 +134,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
           </Box>
 
           {/* Profile Info */}
-          <Stack gap={0} style={{ flex: 1, marginLeft: '12px' }}>
+          <Stack gap={0} style={{ flex: 1 }}>
             <Box>
               <Title
                 order={2}

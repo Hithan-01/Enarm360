@@ -273,7 +273,10 @@ const ProfilePage: React.FC = () => {
           userRole={authService.isAdmin() ? 'admin' : (authService.isEstudiante() ? 'student' : null)}
           userInfo={{
             username: profile?.username || authService.getCurrentUserFromStorage()?.username || '',
-            email: profile?.email || authService.getCurrentUserFromStorage()?.email || ''
+            email: profile?.email || authService.getCurrentUserFromStorage()?.email || '',
+            avatar: profile?.avatar,
+            nombre: profile?.nombre,
+            apellido: profile?.apellido
           }}
           onLogout={handleLogout}
         />

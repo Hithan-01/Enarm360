@@ -285,11 +285,11 @@ const PermissionsAdminPage: React.FC = () => {
         style={{
           minHeight: '100vh',
           background: colorScheme === 'dark'
-            ? '#0a0a0a'
-            : '#fafafa',
+            ? 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)'
+            : 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
         }}
       >
-        <Container size="xl" py="md">
+        <Container size="xl" py="sm">
           {/* Header */}
           <Stack gap="lg" mb="xl">
             <Group justify="space-between" align="flex-start">

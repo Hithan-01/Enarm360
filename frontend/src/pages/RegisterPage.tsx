@@ -52,18 +52,45 @@ const RegisterPage: React.FC = () => {
   const [redirecting, setRedirecting] = useState(false);
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
 
-  // Verificar si el usuario ya está autenticado
+  // Verificar si el usuario ya está autenticado y mostrar alerta
+  const [existingSession, setExistingSession] = useState<boolean>(false);
+  const [currentUser, setCurrentUser] = useState<string>('');
+  
   useEffect(() => {
     if (authService.isAuthenticated()) {
-      setRedirecting(true);
-      const userRole = authService.isAdmin() ? 'admin' : 'estudiante';
-      setTimeout(() => {
-        navigate(`/${userRole}/dashboard`);
-      }, 100); // Pequeño delay para evitar errores de rendering
+      setExistingSession(true);
+      const user = authService.getCurrentUserFromStorage();
+      setCurrentUser(user?.username || user?.email || 'Usuario desconocido');
     }
-  }, [navigate]);
+  }, []);
 
   // Easter egg: detectar cuando se completen campos importantes
+  const handleLogoutExistingSession = async () => {
+    try {
+      await authService.logout();
+      setExistingSession(false);
+      setCurrentUser('');
+      notifications.show({
+        title: 'Sesión cerrada',
+        message: 'La sesión anterior ha sido cerrada exitosamente',
+        color: 'green',
+        icon: <IconCheck size={16} />
+      });
+    } catch (error) {
+      console.error('Error al cerrar sesión:', error);
+      // Forzar limpieza local incluso si falla la petición al servidor
+      authService.clearTokens();
+      setExistingSession(false);
+      setCurrentUser('');
+      notifications.show({
+        title: 'Sesión cerrada',
+        message: 'La sesión anterior ha sido eliminada localmente',
+        color: 'yellow',
+        icon: <IconAlertCircle size={16} />
+      });
+    }
+  };
+
   const checkEasterEgg = () => {
     const { nombre, apellido, email, password } = form.values;
     if (nombre && apellido && email && password && !easterEggTriggered) {
@@ -296,12 +323,12 @@ const RegisterPage: React.FC = () => {
           {colorScheme === 'dark' ? <IconSun size={20} /> : <IconMoon size={20} />}
         </ActionIcon>
 
-        {/* Back Button */}
-        <Button
+        {/* Back to Landing Button */}
+        <ActionIcon
+          onClick={() => navigate('/')}
           variant="light"
-          leftSection={<IconArrowLeft size={16} />}
-          onClick={() => navigate(-1)}
-          size="sm"
+          size="lg"
+          radius="xl"
           style={{
             position: 'absolute',
             top: '2rem',
@@ -316,10 +343,11 @@ const RegisterPage: React.FC = () => {
             boxShadow: colorScheme === 'dark'
               ? '0 4px 16px rgba(0, 0, 0, 0.3)'
               : '0 4px 16px rgba(0, 0, 0, 0.1)',
+            transition: 'all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
           }}
         >
-          Volver
-        </Button>
+          <IconArrowLeft size={20} />
+        </ActionIcon>
 
         <div style={{
           minHeight: '100vh',
@@ -378,6 +406,48 @@ const RegisterPage: React.FC = () => {
                     <Text c="dimmed" ta="center" size="sm">
                       Simulador Médico Profesional
                     </Text>
+
+                    {/* Alerta de sesión existente */}
+                    {existingSession && (
+                      <Alert
+                        color="yellow"
+                        variant="light"
+                        radius="md"
+                        style={{
+                          border: '1px solid rgba(245, 158, 11, 0.3)',
+                          background: colorScheme === 'dark'
+                            ? 'rgba(245, 158, 11, 0.1)'
+                            : 'rgba(245, 158, 11, 0.05)'
+                        }}
+                      >
+                        <Stack gap="sm">
+                          <Text size="sm" fw={500} ta="center">
+                             Ya tienes una sesión activa como: <strong>{currentUser}</strong>
+                          </Text>
+                          <Group justify="center" gap="sm">
+                            <Button
+                              size="xs"
+                              variant="outline"
+                              color="orange"
+                              onClick={handleLogoutExistingSession}
+                            >
+                              Cerrar sesión anterior
+                            </Button>
+                            <Button
+                              size="xs"
+                              variant="filled"
+                              color="blue"
+                              onClick={() => {
+                                const userRole = authService.isAdmin() ? 'admin' : 'estudiante';
+                                navigate(`/${userRole}/dashboard`);
+                              }}
+                            >
+                              Ir al dashboard
+                            </Button>
+                          </Group>
+                        </Stack>
+                      </Alert>
+                    )}
 
                     {/* Easter Egg: Mensaje motivacional */}
                     {motivationalMessage && (

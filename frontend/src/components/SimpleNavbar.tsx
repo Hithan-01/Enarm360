@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Group,
@@ -8,17 +8,16 @@ import {
   Menu,
   Avatar,
   Text,
-  Stack,
   Switch
 } from '@mantine/core';
-import { IconSun, IconMoon, IconUserCheck, IconLogout, IconSettings } from '@tabler/icons-react';
-import NotificationDropdown from './NotificationDropdown';
+import { IconSun, IconMoon, IconUserCheck, IconLogout, IconSettings, IconDashboard } from '@tabler/icons-react';
 import { profileService } from '../services/profileService';
 import enarmLogo from '../assets/enarm_logo_noletter.png';
 
-interface NavbarProps {
+interface SimpleNavbarProps {
   showAuthButtons?: boolean;
   showThemeToggle?: boolean;
+  showDropdownTheme?: boolean;
   onLogout?: () => void;
   userRole?: 'student' | 'admin' | null;
   userInfo?: {
@@ -28,33 +27,18 @@ interface NavbarProps {
     nombre?: string;
     apellido?: string;
   };
-  disableScrollEffects?: boolean; // Nueva prop para deshabilitar efectos de scroll
 }
 
-const Navbar: React.FC<NavbarProps> = ({
+const SimpleNavbar: React.FC<SimpleNavbarProps> = ({
   showAuthButtons = true,
   showThemeToggle = true,
+  showDropdownTheme = true,
   onLogout,
   userRole,
-  userInfo,
-  disableScrollEffects = false
+  userInfo
 }) => {
-  console.log('Navbar props:', { userRole, onLogout: !!onLogout, userInfo: !!userInfo });
   const navigate = useNavigate();
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
-  const [scrolled, setScrolled] = useState(false);
-
-  useEffect(() => {
-    if (disableScrollEffects) return; // No agregar listeners si está deshabilitado
-    
-    const handleScroll = () => {
-      const isScrolled = window.scrollY > 20;
-      setScrolled(isScrolled);
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [disableScrollEffects]);
 
   const handleLogoClick = () => {
     if (userRole === 'admin') {
@@ -67,45 +51,11 @@ const Navbar: React.FC<NavbarProps> = ({
   };
 
   return (
-    <div
-      style={{
-        // Estilo completamente simple cuando disableScrollEffects está activo
-        ...(disableScrollEffects ? {
-          background: 'transparent',
-          backdropFilter: 'none',
-          WebkitBackdropFilter: 'none',
-          borderBottom: 'none',
-          position: 'static',
-          zIndex: 'auto',
-          transition: 'none',
-          boxShadow: 'none',
-          marginBottom: 0,
-          padding: '24px'
-        } : {
-          // Estilo normal con efectos de scroll
-          background: scrolled
-            ? colorScheme === 'dark'
-              ? 'rgba(30, 41, 59, 0.7)'
-              : 'rgba(255, 255, 255, 0.25)'
-            : 'transparent',
-          backdropFilter: scrolled ? 'blur(40px) saturate(200%)' : 'none',
-          WebkitBackdropFilter: scrolled ? 'blur(40px) saturate(200%)' : 'none',
-          borderBottom: scrolled
-            ? `1px solid ${colorScheme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.5)'}`
-            : 'none',
-          position: 'static',
-          zIndex: 1,
-          transition: 'all 0.3s ease',
-          boxShadow: scrolled
-            ? colorScheme === 'dark'
-              ? 'inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 4px 20px rgba(0, 0, 0, 0.3)'
-              : '0 4px 16px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.6)'
-            : 'none',
-          marginBottom: 0,
-          padding: '24px'
-        })
-      }}
-    >
+    <div style={{
+      background: 'transparent',
+      padding: '24px',
+      // Sin position, sin z-index, sin nada - completamente normal
+    }}>
       <div style={{ 
         display: 'flex', 
         justifyContent: 'space-between', 
@@ -194,27 +144,50 @@ const Navbar: React.FC<NavbarProps> = ({
                 
                 <Menu.Divider />
                 
-                <Menu.Label>Configuración</Menu.Label>
-                <Menu.Item closeMenuOnClick={false}>
-                  <Group justify="space-between" align="center" w="100%">
-                    <Group gap="xs">
-                      {colorScheme === 'dark' ? <IconSun size={16} /> : <IconMoon size={16} />}
-                      <Text size="sm">
-                        Modo {colorScheme === 'dark' ? 'Claro' : 'Oscuro'}
-                      </Text>
-                    </Group>
-                    <Switch
-                      checked={colorScheme === 'dark'}
-                      onChange={toggleColorScheme}
-                      size="sm"
-                      onLabel={<IconMoon size={12} />}
-                      offLabel={<IconSun size={12} />}
-                    />
-                  </Group>
+                {/* Navegación */}
+                <Menu.Label>Navegación</Menu.Label>
+                <Menu.Item
+                  leftSection={<IconDashboard size={14} />}
+                  onClick={() => {
+                    if (userRole === 'admin') {
+                      navigate('/admin/dashboard');
+                    } else if (userRole === 'student') {
+                      navigate('/estudiante/dashboard');
+                    }
+                  }}
+                >
+                  Ir al Dashboard
                 </Menu.Item>
                 
                 <Menu.Divider />
                 
+                {/* Configuración - solo mostrar tema si showDropdownTheme es true */}
+                {showDropdownTheme && (
+                  <>
+                    <Menu.Label>Configuración</Menu.Label>
+                    <Menu.Item closeMenuOnClick={false}>
+                      <Group justify="space-between" align="center" w="100%">
+                        <Group gap="xs">
+                          {colorScheme === 'dark' ? <IconSun size={16} /> : <IconMoon size={16} />}
+                          <Text size="sm">
+                            Modo {colorScheme === 'dark' ? 'Claro' : 'Oscuro'}
+                          </Text>
+                        </Group>
+                        <Switch
+                          checked={colorScheme === 'dark'}
+                          onChange={toggleColorScheme}
+                          size="sm"
+                          onLabel={<IconMoon size={12} />}
+                          offLabel={<IconSun size={12} />}
+                        />
+                      </Group>
+                    </Menu.Item>
+                    
+                    <Menu.Divider />
+                  </>
+                )}
+                
+                {/* Cuenta */}
                 <Menu.Label>Cuenta</Menu.Label>
                 <Menu.Item
                   leftSection={<IconSettings size={14} />}
@@ -241,4 +214,4 @@ const Navbar: React.FC<NavbarProps> = ({
   );
 };
 
-export default Navbar;
+export default SimpleNavbar;

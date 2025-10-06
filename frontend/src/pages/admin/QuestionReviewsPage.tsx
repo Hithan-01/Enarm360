@@ -99,18 +99,16 @@ const QuestionReviewsPage: React.FC = () => {
           background: colorScheme === 'dark'
             ? 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)'
             : 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
-          padding: '32px',
+          padding: '25.6px', /* 80% of 32px */
         }}
       >
-            <Stack gap="xl">
-              {/* Header */}
+            <Stack gap="lg">
               <div>
                 <Title order={2} mb="xs">Question Reviews</Title>
                 <Text c="dimmed">Review and approve questions submitted by students</Text>
               </div>
 
-              {/* Stats Cards */}
-              <SimpleGrid cols={{ base: 1, sm: 2, lg: 4 }} spacing="lg">
+              <SimpleGrid cols={{ base: 1, sm: 2, lg: 4 }} spacing="md">
                 <Card
                   radius="xl"
                   p="lg"
@@ -216,7 +214,6 @@ const QuestionReviewsPage: React.FC = () => {
                 </Card>
               </SimpleGrid>
 
-              {/* Pending Questions List */}
               <Card
                 radius="xl"
                 p="xl"
@@ -312,7 +309,6 @@ const QuestionReviewsPage: React.FC = () => {
             </Stack>
         </Box>
 
-        {/* Review Modal */}
         <Modal
           opened={reviewModalOpen}
           onClose={() => setReviewModalOpen(false)}

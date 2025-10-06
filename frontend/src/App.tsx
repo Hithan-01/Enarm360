@@ -2,6 +2,9 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { MantineProvider, createTheme, ColorSchemeScript, MantineColorSchemeManager, localStorageColorSchemeManager } from '@mantine/core';
 import { Notifications } from '@mantine/notifications';
+// import { GoogleOAuthProvider } from '@react-oauth/google'; // REMOVIDO TEMPORALMENTE
+import SessionTimeoutProvider from './components/SessionTimeoutProvider';
+import { getSessionConfig } from './config/sessionConfig';
 import LandingPage from './pages/LandingPage';
 import Login from './components/Login';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -95,6 +98,8 @@ const colorSchemeManager = localStorageColorSchemeManager({
 });
 
 function App() {
+  // Obtener configuración de sesión según el entorno
+  const sessionConfig = getSessionConfig();
 
   return (
     <>
@@ -102,6 +107,11 @@ function App() {
       <MantineProvider theme={theme} colorSchemeManager={colorSchemeManager} defaultColorScheme="light">
         <Notifications position="top-right" />
         <Router>
+          <SessionTimeoutProvider 
+            timeout={sessionConfig.timeout}
+            warningTime={sessionConfig.warningTime}
+            enabled={sessionConfig.enabled}
+          >
           <div className="App">
             <Routes>
               {/* Rutas públicas */}
@@ -157,6 +167,7 @@ function App() {
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </div>
+          </SessionTimeoutProvider>
         </Router>
       </MantineProvider>
     </>

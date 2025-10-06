@@ -25,9 +25,7 @@ public class CasoEstudio {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    @Column(name = "id_caso", nullable = false, unique = true, length = 50)
-    @NotBlank(message = "El ID del caso es obligatorio")
-    private String idCaso;
+    // Removido id_caso ya que no existe en la tabla actual
     
     @Column(nullable = false, columnDefinition = "TEXT")
     @NotBlank(message = "El contenido del caso es obligatorio")

@@ -356,11 +356,10 @@ const SubscriptionsPage: React.FC = () => {
           background: colorScheme === 'dark'
             ? 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)'
             : 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
-          padding: '32px',
+          padding: '25.6px', /* 80% of 32px */
         }}
       >
-            <Stack gap="xl">
-              {/* Header */}
+            <Stack gap="lg">
               <Group justify="space-between" align="center">
                 <div>
                   <Title order={2} mb="xs" style={{ color: colorScheme === 'dark' ? '#ffffff' : '#1e293b' }}>
@@ -397,8 +396,7 @@ const SubscriptionsPage: React.FC = () => {
                 </Group>
               </Group>
 
-              {/* Revenue Stats */}
-              <SimpleGrid cols={{ base: 1, sm: 2, lg: 4 }} spacing="lg">
+              <SimpleGrid cols={{ base: 1, sm: 2, lg: 4 }} spacing="md">
                 <Card
                   radius="xl"
                   p="lg"
@@ -415,8 +413,8 @@ const SubscriptionsPage: React.FC = () => {
                   }}
                 >
                   <Group>
-                    <ThemeIcon size="xl" variant="light" color="green" radius="xl">
-                      <IconCoin size={28} />
+                    <ThemeIcon size="lg" variant="light" color="green" radius="lg">
+                      <IconCoin size={22} />
                     </ThemeIcon>
                     <div>
 <CountUpNumber
@@ -426,7 +424,7 @@ const SubscriptionsPage: React.FC = () => {
                         decimals={2}
                         style={{
                           color: colorScheme === 'dark' ? '#ffffff' : '#1e293b',
-                          fontSize: '2rem',
+                          fontSize: '1.6rem', /* 80% of 2rem */
                           fontWeight: 700
                         }}
                       />
@@ -534,7 +532,6 @@ const SubscriptionsPage: React.FC = () => {
                 </Card>
               </SimpleGrid>
 
-              {/* Subscription Plans */}
               <Card
                 radius="xl"
                 p="xl"
@@ -637,7 +634,6 @@ ${Number(plan.totalRevenue ?? 0).toLocaleString()} revenue
                 </SimpleGrid>
               </Card>
 
-              {/* Active Coupons */}
               <Card
                 radius="xl"
                 p="xl"
@@ -724,7 +720,6 @@ ${Number(plan.totalRevenue ?? 0).toLocaleString()} revenue
             </Stack>
         </Box>
 
-        {/* Plan Modal */}
         <Modal
           opened={planModalOpen}
           onClose={() => setPlanModalOpen(false)}
@@ -758,7 +753,6 @@ ${Number(plan.totalRevenue ?? 0).toLocaleString()} revenue
           </Stack>
         </Modal>
 
-        {/* Coupon Modal */}
         <Modal
           opened={couponModalOpen}
           onClose={() => setCouponModalOpen(false)}
